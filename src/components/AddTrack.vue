@@ -27,23 +27,8 @@
             </q-field>
           </q-item>
 
-          <div class="q-btn-group row no-wrap inline q-btn-dropdown q-btn-dropdown-split no-wrap q-btn-item q-btn-group-push">
-            <button tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable q-btn-rectangle q-btn-push q-focusable q-hoverable bg-purple text-white q-btn-dropdown-current">
-              <div class="q-focus-helper"></div>
-              <div class="q-btn-inner row col items-center justify-center">
-                <i aria-hidden="true" class="q-icon material-icons on-left">map</i>
-                <div>Get directions</div>
-              </div>
-            </button>
-            <button tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable q-btn-dropdown-arrow q-btn-rectangle q-btn-push q-focusable q-hoverable bg-purple text-white">
-              <div class="q-focus-helper"></div>
-              <div class="q-btn-inner row col items-center justify-center">
-                <i aria-hidden="true" class="q-icon transition-generic material-icons">arrow_drop_down</i>
-              </div>
-            </button>
-          </div>
-
           <q-btn v-on:click="addTrack">Add Track</q-btn>
+          <q-btn v-on:click="cancel">Cancel</q-btn>
         </q-list>
       </div>
     </div>
@@ -53,6 +38,7 @@
 <script>
 import db from "../firestore/firebaseInit";
 import firebase from "firebase";
+import { mapMutations } from "vuex"
 
 export default {
   name: "add-track",
@@ -70,6 +56,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['UPDATE_ADD_TRACK']),
     validation: function(e) {
       this.errorsBool = false;
       this.track.artist.errors = [];
@@ -115,6 +102,9 @@ export default {
           })
           .catch(error => console.log(err));
       }
+    },
+    cancel: function() {
+      this.$store.commit("UPDATE_ADD_TRACK", false)
     }
   }
 };

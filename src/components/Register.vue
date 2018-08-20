@@ -4,26 +4,26 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field label="Artist name" error-label="">
+            <q-field class="inputField" label="Artist name" error-label="">
               <q-input id="artistName" v-model="user.artistName.value" />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field label="Email" error-label="">
+            <q-field class="inputField" label="Email" error-label="">
               <q-input id="email" v-model="user.email.value" />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field label="Password" error-label="">
-              <q-input id="password" v-model="user.password.value" />
+            <q-field class="inputField" label="Password" error-label="">
+              <q-input type="password" id="password" v-model="user.password.value" />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field label="Confirm password" error-label="">
-              <q-input id="passwordConfirm" v-model="user.passwordConfirm.value" />
+            <q-field class="inputField" label="Confirm password" error-label="">
+              <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value" />
             </q-field>
           </q-item>
 
@@ -131,16 +131,14 @@ export default {
         })
     },
     createUserAccount: function(userID) {
-      db
-        .collection("users")
-        .add({
+      db.collection("users").doc(userID).set({
           userID: userID,
-          artistName: this.user.artistName.value
+          artistName: this.user.artistName.value,
+          tracks: []
         })
         .then(data => {
           if (data.id) {
             this.registerMessage = "Registration successful";
-            this.$router.push("/music");
             this.registerMessage = null
           }
         })
@@ -154,5 +152,9 @@ export default {
 .validationMessage {
   color: red;
   text-align: center;
+}
+
+.inputField {
+  width: 100%;
 }
 </style>

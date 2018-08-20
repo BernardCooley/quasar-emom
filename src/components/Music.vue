@@ -1,37 +1,21 @@
 <template>
   <div class="musicContainer">
-
-    <q-item class="row self-center">
-      <q-btn><i class="fas fa-upload uploadIcon" v-on:click="openUploadPage"></i></q-btn>
-    </q-item>
-
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
-        <q-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
-          <q-card inline>
-            <q-card-media>
-              <img src="track.artworkUrl" alt="">
-            </q-card-media>
-            <q-card-title>
-              {{track.artist}} - {{track.title}}
-              <q-rating slot="subtitle" v-model="stars" :max="5" />
-            </q-card-title>
-            <q-card-main>
-              <div id="audio" class="player-wrapper">
-                <audio-player v-bind:file='track.trackUrl' v-bind:artist='track.artist' v-bind:title='track.title' v-bind:artworkUrl='track.artworkUrl'></audio-player>
-              </div>
-            </q-card-main>
-          </q-card>
-        </q-list>
+        <div v-for="track in tracks" :data="track" :key="track.index">
+          <div id="audio" class="player-wrapper">
+            <audio-player :file='track.trackUrl' :artist='track.artist' :title='track.title' :artworkurl='track.artworkurl' :trackid="track.trackid"></audio-player>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import AudioPlayer from "./AudioPlayer";
-import db from "../firestore/firebaseInit";
-import firebase from "firebase";
+import AudioPlayer from "./AudioPlayer"
+import db from "../firestore/firebaseInit"
+import firebase from "firebase"
 
 export default {
   name: "music",
@@ -56,7 +40,8 @@ export default {
               artist: doc.data().artist,
               title: doc.data().title,
               trackUrl: doc.data().trackUrl,
-              artworkUrl: doc.data().artworkUrl
+              artworkurl: doc.data().artworkurl,
+              trackid: doc.data().trackID
             };
             this.tracks.push(data);
           });
@@ -99,18 +84,5 @@ export default {
   float: right;
   font-size: 15px;
   color: white;
-}
-
-.uploadIcon {
-  font-size: 30px;
-  color: rgb(78, 78, 78);
-  background-color: lightgray;
-  border-radius: 54px;
-  width: 49px;
-  padding: 10px;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 2;
 }
 </style>

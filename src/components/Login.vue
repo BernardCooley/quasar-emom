@@ -4,13 +4,13 @@
         <div class="pageContainer">
           <q-list>
             <q-item>
-              <q-field label="Email" error-label="">
+              <q-field class="inputField" label="Email" error-label="">
                 <q-input id="email" v-model="user.email.value" />
               </q-field>
             </q-item>
 
             <q-item>
-              <q-field label="Password" error-label="">
+              <q-field class="inputField" label="Password" error-label="">
                 <q-input type="password" id="password" v-model="user.password.value" />
               </q-field>
             </q-item>
@@ -23,9 +23,9 @@
 </template>
 
 <script>
-import db from "../firestore/firebaseInit";
-import firebase from "firebase";
-import { mapMutations } from "vuex";
+import db from "../firestore/firebaseInit"
+import firebase from "firebase"
+import { mapMutations } from "vuex"
 
 export default {
   name: "login",
@@ -45,26 +45,26 @@ export default {
       userID: null,
       loginMessage: null,
       mailHasError: false
-    };
+    }
   },
   methods: {
     ...mapMutations(["UPDATE_ISLOGGED_IN"]),
     validation: function(e) {
-      this.errorsBool = false;
-      this.user.email.errors = [];
-      this.user.password.errors = [];
+      this.errorsBool = false
+      this.user.email.errors = []
+      this.user.password.errors = []
 
       if (!this.user.email.value) {
-        this.user.email.errors.push("Email required.");
+        this.user.email.errors.push("Email required.")
       }
 
-      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.");
+        this.user.email.errors.push("Invalid email format.")
       }
 
       if (!this.user.password.value) {
-        this.user.password.errors.push("Password required.");
+        this.user.password.errors.push("Password required.")
       }
 
       for (var x in this.user) {
@@ -76,7 +76,7 @@ export default {
     login: function() {
       this.validation();
       if (!this.errorsBool) {
-        console.log("Logging in.....");
+        console.log("Logging in.....")
 
         firebase
           .auth()
@@ -85,9 +85,10 @@ export default {
           this.user.password.value
           )
           .then(data => {
-            this.$store.commit("UPDATE_ISLOGGED_IN", true);
-            this.$store.commit("UPDATE_PAGE_TITLE", 'music');
-            // this.$router.push("/music");
+            this.$store.commit("UPDATE_ISLOGGED_IN", true)
+            this.$store.commit("UPDATE_PAGE_TITLE", 'music')
+            this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
+            console.log(firebase.auth().currentUser)
           });
       }
     }
@@ -102,5 +103,13 @@ export default {
 
 .pageContainer {
   padding-top: 50px;
+}
+
+.inputField {
+  width: 100%;
+}
+
+.q-if-control {
+  width: 50%;
 }
 </style>
