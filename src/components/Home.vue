@@ -1,12 +1,12 @@
 <template>
     <div class="homeContainer">
-        <ion-content class="content">
+        <div class="content">
             <div class="pageContainer">
                 <p>
                     Welcome to the Electronic Music Open Mic community.
                 </p>
             </div>
-        </ion-content>
+        </div>
     </div>
 </template>
 

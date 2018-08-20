@@ -1,11 +1,13 @@
 <template>
     <div>
         <q-tabs>
-            <q-tab :disable=isLoggedIn slot="title" name="tab-1" icon="fas fa-sign-in-alt" />
-            <q-tab :disable=isLoggedIn slot="title" name="tab-2" icon="fas fa-user-plus" />
-            <q-tab :disable=!isLoggedIn :count="newTracksCount" slot="title" name="tab-3" icon="fas fa-music" />
-            <q-tab :disable=!isLoggedIn slot="title" name="tab-4" icon="fas fa-user-alt" />
-            <q-tab :disable=!isLoggedIn slot="title" v-on:click="logout" icon="fas fa-sign-out-alt"/>
+            <div class="tabContainer row justify-between">
+                <q-tab class="col-2" :disable=false slot="title" name="tab-1" icon="fas fa-sign-in-alt" />
+                <q-tab class="col-2" :disable=false slot="title" name="tab-2" icon="fas fa-user-plus" />
+                <q-tab class="col-2" :disable=false :count="newTracksCount" slot="title" name="tab-3" icon="fas fa-music" />
+                <q-tab class="col-2" :disable=false slot="title" name="tab-4" icon="fas fa-user-alt" />
+                <q-tab class="col-2" :disable=false slot="title" v-on:click="logout" icon="fas fa-sign-out-alt"/>
+            </div>
 
             <q-tab-pane name="tab-1"><login /></q-tab-pane>
             <q-tab-pane name="tab-2"><register /></q-tab-pane>
@@ -45,16 +47,16 @@ export default {
   },
   computed: {
     ...mapState(["isLoggedIn"])
-  },
-  created() {
-      if(this.isLoggedIn) {
-          console.log('logged in')
-      }else {
-          console.log('not logged in')
-      }
   }
 };
 </script>
 
 <style>
+.tabContainer {
+    position: fixed;
+    top: 0;
+    background-color: rgb(2, 123, 227);
+    z-index: 1;
+    width: 100%;
+}
 </style>

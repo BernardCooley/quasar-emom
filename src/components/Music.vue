@@ -1,5 +1,10 @@
 <template>
   <div class="musicContainer">
+
+    <q-item class="row self-center">
+      <q-btn><i class="fas fa-upload uploadIcon" v-on:click="openUploadPage"></i></q-btn>
+    </q-item>
+
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
         <q-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
@@ -59,6 +64,9 @@ export default {
             this.dataLoaded = true;
           }
         });
+    },
+    openUploadPage: function() {
+
     }
   },
   beforeCreate() { },
@@ -91,5 +99,18 @@ export default {
   float: right;
   font-size: 15px;
   color: white;
+}
+
+.uploadIcon {
+  font-size: 30px;
+  color: rgb(78, 78, 78);
+  background-color: lightgray;
+  border-radius: 54px;
+  width: 49px;
+  padding: 10px;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
 }
 </style>

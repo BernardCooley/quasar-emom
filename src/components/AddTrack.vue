@@ -1,39 +1,31 @@
 <template>
   <div class="addTrackContainer">
-    <ion-content class="content">
+    <div class="content">
       <div class="pageContainer">
-        <ion-list>
-          <ion-item>
-            <ion-label for="artist">Artist</ion-label>
-            <ion-input type="text" id="artist" v-bind:value="track.artist.value" v-on:input="track.artist.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in track.artist.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
+        <q-list>
+          <q-item>
+            <q-field label="Artist" error-label="">
+              <q-input id="artist" v-model="track.artist.value" />
+            </q-field>
+          </q-item>
 
-          <ion-item>
-            <ion-label for="trackTitle">Title</ion-label>
-            <ion-input type="text" id="trackTitle" v-bind:value="track.title.value" v-on:input="track.title.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in track.title.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
+          <q-item>
+            <q-field label="Title" error-label="">
+              <q-input id="trackTitle" v-model="track.title.value" />
+            </q-field>
+          </q-item>
 
-          <ion-item>
-            <ion-label for="trackUrl">Track Url</ion-label>
-            <ion-input type="text" id="trackUrl" v-bind:value="track.trackUrl.value" v-on:input="track.trackUrl.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in track.trackUrl.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
+          <q-item>
+            <q-field label="Track Url" error-label="">
+              <q-input id="trackUrl" v-model="track.trackUrl.value" />
+            </q-field>
+          </q-item>
 
-          <ion-item>
-            <ion-label for="artworkUrl">Artwork Url (optional)</ion-label>
-            <ion-input type="text" id="artworkUrl" v-bind:value="track.artworkUrl.value" v-on:input="track.artworkUrl.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in track.artworkUrl.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
+          <q-item>
+            <q-field label="Artwork Url (optional)" error-label="">
+              <q-input id="artworkUrl" v-model="track.artworkUrl.value" />
+            </q-field>
+          </q-item>
 
           <div class="q-btn-group row no-wrap inline q-btn-dropdown q-btn-dropdown-split no-wrap q-btn-item q-btn-group-push">
             <button tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable q-btn-rectangle q-btn-push q-focusable q-hoverable bg-purple text-white q-btn-dropdown-current">
@@ -51,10 +43,10 @@
             </button>
           </div>
 
-          <ion-button v-on:click="addTrack">Add Track</ion-button>
-        </ion-list>
+          <q-btn v-on:click="addTrack">Add Track</q-btn>
+        </q-list>
       </div>
-    </ion-content>
+    </div>
   </div>
 </template>
 
