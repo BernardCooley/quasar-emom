@@ -1,19 +1,26 @@
 <template>
-  <ion-content class="content" v-if="dataLoaded">
-    <div class="pageContainer">
-      <ion-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
-        <ion-card class="ionCard">
-          <ion-card-header>
-            <h4>Artist: {{track.artist}}</h4>
-            <h4>Title: {{track.title}}</h4>
-          </ion-card-header>
-          <div id="audio" class="player-wrapper">
-            <audio-player v-bind:file='track.trackUrl' v-bind:artist='track.artist' v-bind:title='track.title' v-bind:artworkUrl='track.artworkUrl'></audio-player>
-          </div>
-        </ion-card>
-      </ion-list>
+  <div class="musicContainer">
+    <div class="content" v-if="dataLoaded">
+      <div class="pageContainer">
+        <q-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
+          <q-card inline>
+            <q-card-media>
+              <img src="track.artworkUrl" alt="">
+            </q-card-media>
+            <q-card-title>
+              {{track.artist}} - {{track.title}}
+              <q-rating slot="subtitle" v-model="stars" :max="5" />
+            </q-card-title>
+            <q-card-main>
+              <div id="audio" class="player-wrapper">
+                <audio-player v-bind:file='track.trackUrl' v-bind:artist='track.artist' v-bind:title='track.title' v-bind:artworkUrl='track.artworkUrl'></audio-player>
+              </div>
+            </q-card-main>
+          </q-card>
+        </q-list>
+      </div>
     </div>
-  </ion-content>
+  </div>
 </template>
 
 <script>

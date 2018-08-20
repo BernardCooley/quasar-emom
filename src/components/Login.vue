@@ -1,31 +1,24 @@
 <template>
   <div class="loginContainer">
-    <ion-page>
-
-      <ion-content class="content">
+      <div class="content">
         <div class="pageContainer">
-          <ion-list>
-            <ion-item>
-              <ion-label for="email">Email</ion-label>
-              <ion-input type="text" id="email" v-bind:value="user.email.value" v-on:input="user.email.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.email.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
+          <q-list>
+            <q-item>
+              <q-field label="Email" error-label="">
+                <q-input id="email" v-model="user.email.value" />
+              </q-field>
+            </q-item>
 
-            <ion-item>
-              <ion-label for="password">Password</ion-label>
-              <ion-input type="password" id="password" v-bind:value="user.password.value" v-on:input="user.password.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.password.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
-
-            <ion-button v-on:click="login">Log In</ion-button>
-          </ion-list>
+            <q-item>
+              <q-field label="Password" error-label="">
+                <q-input type="password" id="password" v-model="user.password.value" />
+              </q-field>
+            </q-item>
+            <q-btn v-on:click="login">Log In</q-btn>
+          </q-list>
         </div>
-      </ion-content>
-    </ion-page>
+      </div>
+
   </div>
 </template>
 
@@ -50,7 +43,8 @@ export default {
       },
       errorsBool: null,
       userID: null,
-      loginMessage: null
+      loginMessage: null,
+      mailHasError: false
     };
   },
   methods: {
@@ -92,7 +86,8 @@ export default {
           )
           .then(data => {
             this.$store.commit("UPDATE_ISLOGGED_IN", true);
-            this.$router.push("/music");
+            this.$store.commit("UPDATE_PAGE_TITLE", 'music');
+            // this.$router.push("/music");
           });
       }
     }

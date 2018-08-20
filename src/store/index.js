@@ -19,7 +19,8 @@ export default function (/* { ssrContext } */) {
       isLoggedIn: false,
       loggedInUser: null,
       menuDisplayed: false,
-      pageTitle: null
+      pageTitle: null,
+      currentTab: null
   },
   mutations: {
       UPDATE_ISLOGGED_IN: (state, value) => {
@@ -33,7 +34,10 @@ export default function (/* { ssrContext } */) {
       },
       UPDATE_PAGE_TITLE: (state, value) => {
           state.pageTitle = value
-      }
+      },
+      UPDATE_CURRENT_TAB: (state, value) => {
+        state.currentTab = value
+    }
   },
   actions: {
 

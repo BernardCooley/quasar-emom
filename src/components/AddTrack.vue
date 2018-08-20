@@ -35,6 +35,22 @@
             </div>
           </ion-item>
 
+          <div class="q-btn-group row no-wrap inline q-btn-dropdown q-btn-dropdown-split no-wrap q-btn-item q-btn-group-push">
+            <button tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable q-btn-rectangle q-btn-push q-focusable q-hoverable bg-purple text-white q-btn-dropdown-current">
+              <div class="q-focus-helper"></div>
+              <div class="q-btn-inner row col items-center justify-center">
+                <i aria-hidden="true" class="q-icon material-icons on-left">map</i>
+                <div>Get directions</div>
+              </div>
+            </button>
+            <button tabindex="0" type="button" class="q-btn inline relative-position q-btn-item non-selectable q-btn-dropdown-arrow q-btn-rectangle q-btn-push q-focusable q-hoverable bg-purple text-white">
+              <div class="q-focus-helper"></div>
+              <div class="q-btn-inner row col items-center justify-center">
+                <i aria-hidden="true" class="q-icon transition-generic material-icons">arrow_drop_down</i>
+              </div>
+            </button>
+          </div>
+
           <ion-button v-on:click="addTrack">Add Track</ion-button>
         </ion-list>
       </div>
@@ -52,9 +68,9 @@ export default {
     return {
       track: {
         artist: { value: null, errors: [] },
-        title: {value: null, errors: [] },
-        trackUrl: {value: null, errors: [] },
-        artworkUrl: {value: null, errors: [] }
+        title: { value: null, errors: [] },
+        trackUrl: { value: null, errors: [] },
+        artworkUrl: { value: null, errors: [] }
       },
       errorsBool: null,
       userID: null,
