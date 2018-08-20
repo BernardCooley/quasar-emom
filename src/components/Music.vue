@@ -1,21 +1,19 @@
 <template>
-  <ion-page>
-    <ion-content class="content" v-if="dataLoaded">
-      <div class="pageContainer">
-        <ion-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
-          <ion-card class="ionCard">
-            <ion-card-header>
-              <h4>Artist: {{track.artist}}</h4>
-              <h4>Title: {{track.title}}</h4>
-            </ion-card-header>
-            <div id="audio" class="player-wrapper">
-              <audio-player v-bind:file='track.trackUrl' v-bind:artist='track.artist' v-bind:title='track.title' v-bind:artworkUrl='track.artworkUrl'></audio-player>
-            </div>
-          </ion-card>
-        </ion-list>
-      </div>
-    </ion-content>
-  </ion-page>
+  <ion-content class="content" v-if="dataLoaded">
+    <div class="pageContainer">
+      <ion-list v-for="track in tracks" v-bind:data="track" v-bind:key="track.index">
+        <ion-card class="ionCard">
+          <ion-card-header>
+            <h4>Artist: {{track.artist}}</h4>
+            <h4>Title: {{track.title}}</h4>
+          </ion-card-header>
+          <div id="audio" class="player-wrapper">
+            <audio-player v-bind:file='track.trackUrl' v-bind:artist='track.artist' v-bind:title='track.title' v-bind:artworkUrl='track.artworkUrl'></audio-player>
+          </div>
+        </ion-card>
+      </ion-list>
+    </div>
+  </ion-content>
 </template>
 
 <script>

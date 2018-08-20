@@ -1,49 +1,47 @@
 <template>
   <div class="registerContainer">
-    <ion-page>
-      <ion-content class="content">
-        <div class="pageContainer">
-          <ion-list>
-            <ion-item>
+    <ion-content class="content">
+      <div class="pageContainer">
+        <ion-list>
+          <ion-item>
 
-              <ion-label for="artistName">Artist name</ion-label>
-              <ion-input type="text" id="artistName" v-bind:value="user.artistName.value" v-on:input="user.artistName.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.artistName.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
+            <ion-label for="artistName">Artist name</ion-label>
+            <ion-input type="text" id="artistName" v-bind:value="user.artistName.value" v-on:input="user.artistName.value = $event.target.value"></ion-input>
+            <div v-for="(errorMessage) in user.artistName.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
+              <span class="validationMessage">{{errorMessage}}</span>
+            </div>
+          </ion-item>
 
-            <ion-item>
-              <ion-label for="email">Email</ion-label>
-              <ion-input type="email" id="email" v-bind:value="user.email.value" v-on:input="user.email.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.email.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
+          <ion-item>
+            <ion-label for="email">Email</ion-label>
+            <ion-input type="email" id="email" v-bind:value="user.email.value" v-on:input="user.email.value = $event.target.value"></ion-input>
+            <div v-for="(errorMessage) in user.email.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
+              <span class="validationMessage">{{errorMessage}}</span>
+            </div>
+          </ion-item>
 
-            <ion-item>
-              <ion-label for="password">Password</ion-label>
-              <ion-input type="password" id="password" v-bind:value="user.password.value" v-on:input="user.password.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.password.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
+          <ion-item>
+            <ion-label for="password">Password</ion-label>
+            <ion-input type="password" id="password" v-bind:value="user.password.value" v-on:input="user.password.value = $event.target.value"></ion-input>
+            <div v-for="(errorMessage) in user.password.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
+              <span class="validationMessage">{{errorMessage}}</span>
+            </div>
+          </ion-item>
 
-            <ion-item>
-              <ion-label for="passwordConfirm">Confirm password</ion-label>
-              <ion-input type="password" id="passwordConfirm" v-bind:value="user.passwordConfirm.value" v-on:input="user.passwordConfirm.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.passwordConfirm.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
-              </div>
-            </ion-item>
+          <ion-item>
+            <ion-label for="passwordConfirm">Confirm password</ion-label>
+            <ion-input type="password" id="passwordConfirm" v-bind:value="user.passwordConfirm.value" v-on:input="user.passwordConfirm.value = $event.target.value"></ion-input>
+            <div v-for="(errorMessage) in user.passwordConfirm.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
+              <span class="validationMessage">{{errorMessage}}</span>
+            </div>
+          </ion-item>
 
-            <ion-button v-on:click="register">Register</ion-button>
+          <ion-button v-on:click="register">Register</ion-button>
 
-            <span>{{registerMessage}}</span>
-          </ion-list>
-        </div>
-      </ion-content>
-    </ion-page>
+          <span>{{registerMessage}}</span>
+        </ion-list>
+      </div>
+    </ion-content>
   </div>
 </template>
 

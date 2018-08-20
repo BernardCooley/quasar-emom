@@ -1,14 +1,12 @@
 <template>
 <div id="q-app">
     <div class="appContainer">
-        <ion-app>
-            <app-header />
-            <slide-menu />
-            <div class="pageContainer">
-                <router-view />
-            </div>
-            <navigation />
-        </ion-app>
+        <app-header />
+        <slide-menu />
+        <div class="pageContainer">
+            <router-view />
+        </div>
+        <navigation />
     </div>
     </div>
 </template>
