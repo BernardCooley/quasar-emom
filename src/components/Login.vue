@@ -101,10 +101,6 @@ export default {
   background-color: transparent;
 }
 
-.pageContainer {
-  padding-top: 50px;
-}
-
 .inputField {
   width: 100%;
 }

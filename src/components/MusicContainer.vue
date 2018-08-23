@@ -11,6 +11,8 @@
 <script>
 import Music from '../components/Music'
 import AddTrack from '../components/AddTrack'
+
+
 import { mapMutations, mapState } from "vuex"
 
 export default {
@@ -34,16 +36,14 @@ export default {
 
 <style>
 .uploadIcon {
-  font-size: 30px;
-  color: white;
-  background-color: rgb(2, 123, 227);
-  border-radius: 24px;
-  width: 49px;
-  padding: 10px;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  z-index: 2;
-  text-align: center;
+  font-size: 50px;
+    color: rgb(2, 123, 227);
+    background-color: white;
+    border-radius: 24px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 2;
+    text-align: center;
 }
 </style>

@@ -2,7 +2,14 @@
   <div class="musicContainer">
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
-        <div v-for="track in tracks" :data="track" :key="track.index">
+
+        <q-item class="searchContainer">
+          <q-field class="inputField" label="Search" error-label="">
+            <q-input type="text" v-model="search"/>
+          </q-field>
+        </q-item>
+
+        <div v-for="track in filteredList" :data="track" :key="track.index">
           <div id="audio" class="player-wrapper">
             <audio-player :file='track.trackUrl' :artist='track.artist' :title='track.title' :artworkurl='track.artworkurl' :trackid="track.trackid"></audio-player>
           </div>
@@ -22,7 +29,8 @@ export default {
   data: function() {
     return {
       tracks: [],
-      dataLoaded: false
+      dataLoaded: false,
+      search: ""
     };
   },
   components: {
@@ -57,11 +65,20 @@ export default {
   beforeCreate() { },
   created() {
     this.loadTracks();
+  },
+  computed: {
+    filteredList() {
+      return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
+    }
   }
 };
 </script>
 
 <style>
+.searchContainer {
+  padding-bottom: 30px;
+}
+
 .track {
   margin: auto;
 }
