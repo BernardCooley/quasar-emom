@@ -1,9 +1,6 @@
 <template>
 	<div class="audioPlayerContainer">
 		<q-card inline class="audioCard">
-			<q-card-media>
-        
-			</q-card-media>
 			<q-card-title>
 				{{artist}} - {{title}}
 			</q-card-title>
