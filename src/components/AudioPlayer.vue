@@ -32,7 +32,7 @@
 					</div>
 				</div>
 				<audio v-bind:loop="innerLoop" ref="audiofile" preload="auto" style="display: none;">
-					<source v-bind:src="file"></source>
+					<source v-bind:src="file">
 				</audio>
 			</q-card-main>
 			<q-card-separator />
