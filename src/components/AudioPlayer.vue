@@ -2,8 +2,7 @@
 	<div class="audioPlayerContainer">
 		<q-card inline class="audioCard">
 			<q-card-media>
-				<img v-if="artworkUrl" :src="artworkUrl" alt="">
-				<img v-else src="../assets/main-open-mic.jpg" alt="">
+        
 			</q-card-media>
 			<q-card-title>
 				{{artist}} - {{title}}
