@@ -4,28 +4,40 @@ const routes = [
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('components/Home.vue') }
+      { 
+        path: '',
+        component: () => import('components/Home.vue')
+      }
     ]
   },
   {
     path: '/login',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('components/Login.vue') }
+      { 
+        path: '',
+        component: () => import('components/Login.vue')
+      }
     ]
   },
   {
     path: '/register',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('components/Register.vue') }
+      {
+        path: '',
+        component: () => import('components/Register.vue')
+      }
     ]
   },
   {
     path: '/add-track',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('components/AddTrack.vue') }
+      {
+        path: '',
+        component: () => import('components/AddTrack.vue')
+      }
     ]
   }
 ]

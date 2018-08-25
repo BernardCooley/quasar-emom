@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import example from './module-example'
+import musicModule from './modules/music-module'
 
 Vue.use(Vuex)
 
@@ -10,11 +10,8 @@ Vue.use(Vuex)
  * directly export the Store instantiation
  */
 
-export default function (/* { ssrContext } */) {
-    const Store = new Vuex.Store({
-        modules: {
-            example
-        },
+export default function() {
+    const store = new Vuex.Store({
         state: {
             isLoggedIn: false,
             loggedInUser: null,
@@ -24,29 +21,27 @@ export default function (/* { ssrContext } */) {
             addTrack: false
         },
         mutations: {
-            UPDATE_ISLOGGED_IN: (state, value) => {
+            UPDATE_ISLOGGED_IN (state, value) {
                 state.isLoggedIn = value
             },
-            UPDATE_LOGGED_IN_USER: (state, value) => {
+            UPDATE_LOGGED_IN_USER (state, value) {
                 state.loggedInUser = value
             },
-            TOGGLE_MENU: (state, value) => {
+            TOGGLE_MENU (state, value) {
                 state.menuDisplayed = value
             },
-            UPDATE_PAGE_TITLE: (state, value) => {
+            UPDATE_PAGE_TITLE (state, value) {
                 state.pageTitle = value
             },
-            UPDATE_CURRENT_TAB: (state, value) => {
+            UPDATE_CURRENT_TAB (state, value) {
                 state.currentTab = value
             },
-            UPDATE_ADD_TRACK: (state, value) => {
+            UPDATE_ADD_TRACK (state, value) {
                 state.addTrack = value
             }
-        },
-        actions: {
-
         }
     })
 
-    return Store
+    return store
 }
+
