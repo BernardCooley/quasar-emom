@@ -8,12 +8,13 @@
             <q-input type="text" v-model="search"/>
           </q-field>
         </q-item>
-
-        <div v-for="track in filteredList" :data="track" :key="track.index">
-          <div id="audio" class="player-wrapper">
-            <audio-player :file='track.trackUrl' :artist='track.artist' :title='track.title' :artworkurl='track.artworkurl' :trackid="track.trackid"></audio-player>
-          </div>
+        <div id="audio" class="player-wrapper">
+          <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :file='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
         </div>
+        <q-item class="trackControls">
+          <q-btn class="trackControlButton" v-on:click="previousTrack">Prev</q-btn>
+          <q-btn class="trackControlButton" v-on:click="nextTrack">Next</q-btn>
+        </q-item>
       </div>
     </div>
   </div>
@@ -30,7 +31,8 @@ export default {
     return {
       tracks: [],
       dataLoaded: false,
-      search: ""
+      search: "",
+      currentTrackIndexNumber: 0
     };
   },
   components: {
@@ -58,17 +60,26 @@ export default {
           }
         });
     },
-    openUploadPage: function() {
-
+    previousTrack: function() {
+      if(this.currentTrackIndexNumber > 0) {
+        this.currentTrackIndexNumber--
+      }
+    },
+    nextTrack: function() {
+      if(this.currentTrackIndexNumber < (this.tracks.length-1)) {
+        this.currentTrackIndexNumber++
+      }
     }
   },
-  beforeCreate() { },
   created() {
     this.loadTracks();
   },
   computed: {
     filteredList() {
       return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
+    },
+    currentTrack() {
+      return this.tracks[this.currentTrackIndexNumber]
     }
   }
 };
@@ -101,5 +112,15 @@ export default {
   float: right;
   font-size: 15px;
   color: white;
+}
+
+.trackControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trackControlButton {
+  width: 50%;
 }
 </style>

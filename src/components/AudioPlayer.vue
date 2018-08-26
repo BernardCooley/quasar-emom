@@ -1,8 +1,10 @@
 <template>
 	<div class="audioPlayerContainer">
 		<q-card inline class="audioCard">
-			<q-card-title>
-				{{artist}} - {{title}}
+			<q-card-title class="titleAndArtist">
+        <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
+        <div class="artist">{{artist}}</div>
+        <div class="title">{{title}}</div>
 			</q-card-title>
 			<q-card-main>
 				<div>
@@ -31,25 +33,24 @@
 					<source v-bind:src="file">
 				</audio>
 			</q-card-main>
-			<q-card-separator />
 			<q-card-actions>
-				<div class="row audioActions">
-					<a class="col-2" v-on:click.prevent="playing = !playing" title="Play/Pause">
+				<div class="row audioActions justify-between">
+					<a class="audioControl" v-on:click.prevent="playing = !playing" title="Play/Pause">
 						<i v-if="!playing" class="fas fa-play audioControl"></i>
 						<i v-else class="fas fa-pause"></i>
 					</a>
-					<a class="col-2" v-on:click.prevent="stop" title="Stop">
+					<a class="audioControl" v-on:click.prevent="stop" title="Stop">
 						<i class="fas fa-stop audioControl"></i>
 					</a>
-					<a class="col-2" v-on:click.prevent="download">
-						<i class="fas fa-download audioControl"></i>
-					</a>
-					<a class="col-2" v-on:click.prevent="innerLoop = !innerLoop">
+          <a class="audioControl" v-on:click.prevent="innerLoop = !innerLoop">
 						<i v-if="innerLoop" class="fas fa-redo-alt audioControl"></i>
 						<i v-else class="fas fa-redo-alt audioControl"></i>
 					</a>
-					<a class="col-4 saveButton" v-on:click.prevent="addToAccount($event)">
-						<q-btn>Save to account</q-btn>
+					<a class="audioControl" v-on:click.prevent="download">
+						<i class="fas fa-download audioControl"></i>
+					</a>
+					<a class="audioControl" v-on:click.prevent="addToAccount($event)">
+            <i class="fas fa-cloud-upload-alt"></i>
 					</a>
 				</div>
 			</q-card-actions>
@@ -98,7 +99,9 @@ export default {
     trackid: {
       type: String,
       default: null
-    }
+    },
+    currenttracknumber: null,
+    totaltracks: null
   },
   data: function() {
     return {
@@ -402,9 +405,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .audioControl {
-  font-size: 20px;
+  font-size: 25px;
   color: #333333;
-  width: 70%;
+  // width: 70%;
   text-align: center;
 }
 
@@ -428,5 +431,24 @@ input[type="range"].slider:focus::-ms-fill-upper {
   background-color: rgb(2, 123, 227);
   color: white;
   font-weight: bold;
+}
+
+.titleAndArtist {
+  text-align: center;
+
+  .artist {
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .trackNumber {
+    position: fixed;
+    right: 0;
+    padding-right: 30px;
+  }
+}
+
+.q-card-main {
+  font-size: 18px;
 }
 </style>
