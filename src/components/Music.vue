@@ -3,11 +3,11 @@
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
 
-        <q-item class="searchContainer">
+        <!-- <q-item class="searchContainer">
           <q-field class="inputField" label="Search" error-label="">
             <q-input type="text" v-model="search"/>
           </q-field>
-        </q-item>
+        </q-item> -->
         <div id="audio" class="player-wrapper">
           <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :file='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
         </div>
@@ -16,6 +16,12 @@
           <q-btn class="trackControlButton" v-on:click="nextTrack">Next</q-btn>
         </q-item>
       </div>
+      <q-list>
+        <h3>All tracks</h3>
+        <q-item v-for="(track, index) in tracks" :index="track">
+          <a v-on:click="loadTrack($event)">{{track.artist}} - {{track.title}}</a>
+        </q-item>
+      </q-list>
     </div>
   </div>
 </template>
@@ -69,6 +75,9 @@ export default {
       if(this.currentTrackIndexNumber < (this.tracks.length-1)) {
         this.currentTrackIndexNumber++
       }
+    },
+    loadTrack: function(event) {
+      console.log(event.target)
     }
   },
   created() {
