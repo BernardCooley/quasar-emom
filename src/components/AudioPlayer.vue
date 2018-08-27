@@ -50,7 +50,7 @@
 						<i class="fas fa-download audioControl"></i>
 					</a>
 					<a class="audioControl" v-on:click.prevent="addToAccount($event)">
-            <i class="fas fa-cloud-upload-alt"></i>
+            <i class="fas fa-cloud-download-alt"></i>
 					</a>
 				</div>
 			</q-card-actions>

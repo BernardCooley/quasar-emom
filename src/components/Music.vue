@@ -8,20 +8,32 @@
             <q-input type="text" v-model="search"/>
           </q-field>
         </q-item> -->
-        <div id="audio" class="player-wrapper">
-          <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :file='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
+        <div class="playerAndAllTracksContainer">
+          <div class="playerContainer">
+            <div id="audio" class="player-wrapper">
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :file='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
+            </div>
+            <q-item class="trackControls">
+              <q-btn class="trackControlButton" v-on:click="previousTrack">Prev</q-btn>
+              <q-btn class="trackControlButton" v-on:click="nextTrack">Next</q-btn>
+            </q-item>
+          </div>
         </div>
-        <q-item class="trackControls">
-          <q-btn class="trackControlButton" v-on:click="previousTrack">Prev</q-btn>
-          <q-btn class="trackControlButton" v-on:click="nextTrack">Next</q-btn>
-        </q-item>
+        <div class="allTracksContainer">
+          <q-list>
+            <h2 class="allTracksTitle">All tracks</h2>
+            <q-item v-for="(track, index) in tracks" :index="track">
+              <div class="row" v-on:click="changeTrack(track.artist, track.title)">
+                <div class="allTracksArtistAndTitle col-9">
+                  <div class="allTracksArtists">{{track.artist}}</div>
+                  <div class="allTracksTitles">{{track.title}}</div>
+                </div>
+                <img class="col-3 thumbNail" src="../assets/images/music_thumb.jpg">
+              </div>
+            </q-item>
+          </q-list>
+        </div>
       </div>
-      <q-list>
-        <h3>All tracks</h3>
-        <q-item v-for="(track, index) in tracks" :index="track">
-          <a v-on:click="loadTrack($event)">{{track.artist}} - {{track.title}}</a>
-        </q-item>
-      </q-list>
     </div>
   </div>
 </template>
@@ -51,15 +63,18 @@ export default {
         .collection("tracks")
         .get()
         .then(querySnapshot => {
+          var index = 0
           querySnapshot.forEach(doc => {
             const data = {
               artist: doc.data().artist,
               title: doc.data().title,
               trackUrl: doc.data().trackUrl,
               artworkurl: doc.data().artworkurl,
-              trackid: doc.data().trackID
+              trackid: doc.data().trackID,
+              trackIndex: index
             };
-            this.tracks.push(data);
+            this.tracks.push(data)
+            index++
           });
           if (this.tracks) {
             this.dataLoaded = true;
@@ -76,9 +91,9 @@ export default {
         this.currentTrackIndexNumber++
       }
     },
-    loadTrack: function(event) {
-      console.log(event.target)
-    }
+    changeTrack: function(artist, title) {
+      this.currentTrackIndexNumber = this.tracks.filter(track => track.title.toLowerCase() == title.toLowerCase() && track.artist.toLowerCase() == artist.toLowerCase())[0].trackIndex
+    },
   },
   created() {
     this.loadTracks();
@@ -131,5 +146,44 @@ export default {
 
 .trackControlButton {
   width: 50%;
+}
+
+.playerAndAllTracksContainer {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playerContainer {
+  width: 100%;
+  height: 70%;
+}
+
+.allTracksContainer {
+  width: 100%;
+  height: 300px;
+  overflow: auto;
+}
+
+.allTracksArtistAndTitle {
+  background-color: rgb(244, 244, 244);
+  padding: 8px;
+}
+
+.allTracksArtists {
+  font-size: 30px;
+}
+
+.allTracksTitles {
+  font-size: 20px;
+}
+
+.allTracksTitle {
+  padding-left: 17px;
+}
+
+.thumbNail {
+  height: 100% !important;
 }
 </style>
