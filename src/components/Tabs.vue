@@ -30,7 +30,7 @@ import Music from "../components/Music"
 import AddTrack from "../components/AddTrack"
 
 import { mapState } from "vuex"
-import firebase from "firebase"
+import firebase from "firebase/app"
 
 export default {
   data() {

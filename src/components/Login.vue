@@ -24,7 +24,7 @@
 
 <script>
 import db from "../firestore/firebaseInit"
-import firebase from "firebase"
+import firebase from "firebase/app"
 import { mapMutations } from "vuex"
 
 export default {

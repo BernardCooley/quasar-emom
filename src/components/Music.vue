@@ -24,7 +24,7 @@
         <div class="allTracksContainer">
           <q-list>
             <h2 class="allTracksTitle">All tracks</h2>
-            <q-item v-for="(track, index) in tracks" :index="track">
+            <q-item v-for="(track, index) in tracks" :key="index">
               <div class="row" v-on:click="changeTrack(track.artist, track.title)">
                 <div class="allTracksArtistAndTitle col-9">
                   <div class="allTracksArtists">{{track.artist}}</div>
@@ -43,7 +43,7 @@
 <script>
 import AudioPlayer from "./AudioPlayer"
 import db from "../firestore/firebaseInit"
-import firebase from "firebase"
+import firebase from "firebase/app"
 
 export default {
   name: "music",

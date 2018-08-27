@@ -6,7 +6,7 @@
         <div class="artist">{{artist}}</div>
         <div class="title">{{title}}</div>
 			</q-card-title>
-			<q-card-main>
+			<q-card-main v-if="true">
 				<div>
 					<div v-on:click="seek" class="player-progress" title="Time played : Total time">
 						<div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
@@ -16,13 +16,14 @@
 						<div class="player-time-total">{{ durationTime }}</div>
 					</div>
 					<div class="artworkContainer">
-						<img v-bind:src="artworkUrl">
+						<img v-bind:src="artworkurl">
 					</div>
 				</div>
-				<audio v-bind:loop="innerLoop" ref="audiofile" preload="auto" style="display: none;">
+				<audio v-bind:loop="innerLoop" ref="player" preload="auto" style="display: none;">
 					<source v-bind:src="trackurl">
 				</audio>
 			</q-card-main>
+      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
 			<q-card-actions>
 				<div class="row audioActions justify-between">
 					<a class="audioControl" v-on:click.prevent="playing = !playing" title="Play/Pause">
@@ -51,7 +52,7 @@
 <script>
 import { mapMutations, mapState } from "vuex";
 import db from "../firestore/firebaseInit";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 const convertTimeHHMMSS = val => {
   let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
@@ -82,7 +83,7 @@ export default {
       type: String,
       default: null
     },
-    artworkUrl: {
+    artworkurl: {
       type: String,
       default: null
     },
@@ -92,11 +93,6 @@ export default {
     },
     currenttracknumber: null,
     totaltracks: null
-  },
-  mounted: function () {
-      this.$watch('trackurl', () => {
-          this.$refs.audiofile.load().play()
-      })
   },
   data: function() {
     return {
@@ -124,7 +120,10 @@ export default {
     muted() {
       return this.volume / 100 === 0;
     },
-    ...mapState(["loggedInUser"])
+    ...mapState(["loggedInUser"]),
+    isFileATrack: function() {
+      return this.trackurl.endsWith(".mp3") || this.track.endsWith(".wav") || this.track.endsWith(".aif") ? true : false;
+    }
   },
   watch: {
     playing(value) {
@@ -178,9 +177,10 @@ export default {
       this.currentSeconds = parseInt(this.audio.currentTime);
     },
     addToAccount: function(event) {
-
-		var ref = firebase.database().ref("users/" + this.uid + "/tracks").push()
-	
+      var ref = firebase
+        .database()
+        .ref("users/" + this.uid + "/tracks")
+        .push();
 
       ref.set({
         id: this.trackid
@@ -191,6 +191,8 @@ export default {
     this.innerLoop = this.loop;
   },
   mounted() {
+    
+
     this.audio = this.$el.querySelectorAll("audio")[0];
     this.audio.addEventListener("timeupdate", this.update);
     this.audio.addEventListener("loadeddata", this.load);
@@ -199,6 +201,9 @@ export default {
     });
     this.audio.addEventListener("play", () => {
       this.playing = true;
+    });
+    this.$watch("trackurl", () => {
+      this.$refs.player.load()
     });
   }
 };
@@ -424,5 +429,12 @@ input[type="range"].slider:focus::-ms-fill-upper {
   font-size: 18px;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
+}
+
+.unsupportedFormatMessage {
+  display: flex !important;
+  text-align: center;
+  font-size: 20px;
+  margin: 10px;
 }
 </style>

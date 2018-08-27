@@ -38,7 +38,7 @@
 
 <script>
 import db from "../firestore/firebaseInit";
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 export default {
   name: 'register',

@@ -9,7 +9,7 @@
 <script>
 import db from "./firestore/firebaseInit"
 import Tabs from "./components/Tabs"
-import firebase from "firebase"
+import firebase from "firebase/app"
 import { mapMutations, Vuex } from "vuex"
 import store from "./store"
 

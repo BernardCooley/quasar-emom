@@ -62,7 +62,8 @@ module.exports = function (ctx) {
         'QCardActions',
         'QUploader',
         'QPageSticky',
-        'QItemSeparator'
+        'QItemSeparator',
+        'QChip'
       ],
       directives: [
         'Ripple'
