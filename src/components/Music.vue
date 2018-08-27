@@ -8,17 +8,19 @@
             <q-input type="text" v-model="search"/>
           </q-field>
         </q-item> -->
+
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
             <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :file='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn class="trackControlButton" v-on:click="previousTrack">Prev</q-btn>
-              <q-btn class="trackControlButton" v-on:click="nextTrack">Next</q-btn>
+              <q-btn class="trackControlButton" v-on:click="previousTrack"><i class="fas fa-fast-backward"></i></q-btn>
+              <q-btn class="trackControlButton" v-on:click="nextTrack"><i class="fas fa-fast-forward"></i></q-btn>
             </q-item>
           </div>
         </div>
+        <q-item-separator />
         <div class="allTracksContainer">
           <q-list>
             <h2 class="allTracksTitle">All tracks</h2>
@@ -109,7 +111,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .searchContainer {
   padding-bottom: 30px;
 }
@@ -121,15 +123,6 @@ export default {
 .trackContainer {
   margin: 5px;
   padding: 5px;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.content {
-  background-color: white;
-}
-
-.card-header {
-  background-color: #f4f4f4;
 }
 
 .loggedInUser {
@@ -146,6 +139,7 @@ export default {
 
 .trackControlButton {
   width: 50%;
+  font-size: 20px;
 }
 
 .playerAndAllTracksContainer {
@@ -164,11 +158,14 @@ export default {
   width: 100%;
   height: 300px;
   overflow: auto;
+
+  .q-list {
+    border: none;
+  }
 }
 
 .allTracksArtistAndTitle {
-  background-color: rgb(244, 244, 244);
-  padding: 8px;
+  margin: auto;
 }
 
 .allTracksArtists {
@@ -181,6 +178,7 @@ export default {
 
 .allTracksTitle {
   padding-left: 17px;
+  margin-bottom: 10px;
 }
 
 .thumbNail {

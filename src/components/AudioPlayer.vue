@@ -1,6 +1,6 @@
 <template>
 	<div class="audioPlayerContainer">
-		<q-card inline class="audioCard">
+		<q-card inline class="audioCard no-shadow">
 			<q-card-title class="titleAndArtist">
         <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
         <div class="artist">{{artist}}</div>
@@ -19,18 +19,8 @@
 						<img v-bind:src="artworkUrl">
 					</div>
 				</div>
-				<div class="volumeContainer">
-					<span>Vol</span>
-					<div class="volumeControl">
-						<a class="muteControl" v-on:click.prevent="mute" title="Mute">
-							<i v-if="!muted" class="fas fa-volume-off audioControl"></i>
-							<i v-else class="fas fa-volume-off audioControl"></i>
-						</a>
-						<input class="volumeControl slider" v-model.lazy.number="volume" type="range" min="0" max="100" />
-					</div>
-				</div>
 				<audio v-bind:loop="innerLoop" ref="audiofile" preload="auto" style="display: none;">
-					<source v-bind:src="file">
+					<source v-bind:src="trackurl">
 				</audio>
 			</q-card-main>
 			<q-card-actions>
@@ -72,7 +62,7 @@ const convertTimeHHMMSS = val => {
 export default {
   name: "audio-player",
   props: {
-    file: {
+    trackurl: {
       type: String,
       default: null
     },
@@ -102,6 +92,11 @@ export default {
     },
     currenttracknumber: null,
     totaltracks: null
+  },
+  mounted: function () {
+      this.$watch('trackurl', () => {
+          this.$refs.audiofile.load().play()
+      })
   },
   data: function() {
     return {
@@ -146,7 +141,7 @@ export default {
   methods: {
     download() {
       this.stop();
-      window.open(this.file, "download");
+      window.open(this.trackurl, "download");
     },
     load() {
       if (this.audio.readyState >= 2) {
@@ -227,7 +222,6 @@ $player-seeker-color: $player-link-color;
 $player-text-color: $player-link-color;
 
 .player-wrapper {
-  background-color: $player-background;
   display: flex;
   justify-content: center;
   padding-bottom: 20px;
@@ -252,7 +246,6 @@ input[type="range"].slider::-webkit-slider-runnable-track {
   border: 0px solid rgba(0, 0, 0, 0);
 }
 input[type="range"].slider::-webkit-slider-thumb {
-  box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
   height: 11px;
   width: 24px;
@@ -328,7 +321,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .player {
-  background-color: white;
   border: 1px solid $player-border-color;
   border-radius: 5px;
   box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
@@ -336,17 +328,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   display: inline-block;
   line-height: 1.5625;
   padding: 20px;
-
-  .volumeControl {
-    width: 100%;
-  }
-  .volumeContainer {
-    display: flex;
-
-    span {
-      padding-right: 10px;
-    }
-  }
 }
 
 .player-controls {
@@ -377,7 +358,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   position: relative;
 
   .player-seeker {
-    background-color: $player-seeker-color;
     bottom: 0;
     left: 0;
     position: absolute;
@@ -419,14 +399,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   width: 100%;
 }
 
-.volumeControl {
-  display: flex;
-}
-
-.muteControl {
-  padding-right: 10px;
-}
-
 .saveButton {
   background-color: rgb(2, 123, 227);
   color: white;
@@ -450,5 +422,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 
 .q-card-main {
   font-size: 18px;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
 </style>

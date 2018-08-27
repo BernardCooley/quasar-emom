@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-tabs no-scroll>
+        <q-tabs>
             <div class="tabContainer row justify-between" v-if="isLoggedIn">
                 <q-tab class="col-3 tabItem" :count="newTracksCount" slot="title" name="music" icon="fas fa-music" />
                 <q-tab class="col-3 tabItem" slot="title" name="addTrack" icon="fas fa-plus-circle" />
@@ -55,9 +55,16 @@ export default {
 .tabContainer {
     position: fixed;
     top: 0;
-    background-color: rgb(2, 123, 227);
     z-index: 1;
     width: 100%;
     height: 60px;
+}
+
+.bg-primary {
+    background-color: transparent !important;
+}
+
+.q-tabs-head {
+    box-shadow: none !important;
 }
 </style>
