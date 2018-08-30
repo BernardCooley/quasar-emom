@@ -1,23 +1,23 @@
 <template>
   <div class="loginContainer">
-      <div class="content">
-        <div class="pageContainer">
-          <q-list>
-            <q-item>
-              <q-field class="inputField" label="Email" error-label="">
-                <q-input id="email" v-model="user.email.value" />
-              </q-field>
-            </q-item>
+    <div class="content">
+      <div class="pageContainer">
+        <q-list>
+          <q-item>
+            <q-field class="inputField" label="Email" error-label="">
+              <q-input id="email" v-model="user.email.value" />
+            </q-field>
+          </q-item>
 
-            <q-item>
-              <q-field class="inputField" label="Password" error-label="">
-                <q-input type="password" id="password" v-model="user.password.value" />
-              </q-field>
-            </q-item>
-            <q-btn v-on:click="login">Log In</q-btn>
-          </q-list>
-        </div>
+          <q-item>
+            <q-field class="inputField" label="Password" error-label="">
+              <q-input type="password" id="password" v-model="user.password.value" />
+            </q-field>
+          </q-item>
+          <q-btn v-on:click="login">Log In</q-btn>
+        </q-list>
       </div>
+    </div>
 
   </div>
 </template>
@@ -29,7 +29,7 @@ import { mapMutations } from "vuex"
 
 export default {
   name: "login",
-  data: function() {
+  data: function () {
     return {
       user: {
         email: {
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     ...mapMutations(["UPDATE_ISLOGGED_IN"]),
-    validation: function(e) {
+    validation: function (e) {
       this.errorsBool = false
       this.user.email.errors = []
       this.user.password.errors = []
@@ -73,7 +73,7 @@ export default {
         }
       }
     },
-    login: function() {
+    login: function () {
       this.validation();
       if (!this.errorsBool) {
         console.log("Logging in.....")
@@ -81,14 +81,13 @@ export default {
         firebase
           .auth()
           .signInWithEmailAndPassword(
-          this.user.email.value,
-          this.user.password.value
+            this.user.email.value,
+            this.user.password.value
           )
           .then(data => {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", 'music')
             this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
-            console.log(firebase.auth().currentUser)
           });
       }
     }

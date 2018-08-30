@@ -20,7 +20,8 @@ const store = new Vuex.Store({
         addTrack: false,
         trackActionsModalOpen: false,
         currentTrack: null,
-        trackList: null
+        trackList: null,
+        likes: null
     },
     mutations: {
         UPDATE_ISLOGGED_IN(state, value) {
@@ -52,6 +53,9 @@ const store = new Vuex.Store({
         },
         UPDATE_TRACK_LIST(state, value) {
             state.trackList = value
+        },
+        UPDATE_LIKES(state, value) {
+            state.likes = value
         }
     }
 })

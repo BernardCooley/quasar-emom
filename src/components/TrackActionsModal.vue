@@ -4,6 +4,7 @@
             <i class="fas fa-times closeModal" v-on:click="closeModal"></i>
             <div class="modalContent">
                 <q-list>
+                    Likes: {{likes}}
                     <a v-on:click="showUsersTracks('otherUsers'); closeModal();">
                         <q-item class="menuItem">View user's tracks</q-item>
                     </a>
@@ -79,7 +80,6 @@ export default {
             db.collection('users').where("userID", "==", this.loggedInUserId).get()
                 .then(querySnapshot => {
                     querySnapshot.forEach(doc => {
-                        // console.log(doc.data())
                         favourites = doc.data().favourites
 
                         favourites.forEach(fav => {
@@ -96,12 +96,11 @@ export default {
         },
         downloadTrack: function () {
             this.stop();
-            console.log(this.currentTrack.trackUrl)
             window.open(this.currentTrack.trackUrl, "download");
         }
     },
     computed: {
-        ...mapState(["trackActionsModalOpen", "currentTrack", "loggedInUserId"]),
+        ...mapState(["trackActionsModalOpen", "currentTrack", "loggedInUserId", "likes"]),
         trackUploadedByUser: function () {
             if (this.loggedInUserId == this.currentTrack.uploadedBy) {
                 return true;

@@ -41,7 +41,7 @@
             <i v-if="innerLoop" class="fas fa-redo-alt audioControl"></i>
             <i v-else class="fas fa-redo-alt audioControl"></i>
           </a>
-          <a class="audioControl" v-on:click.prevent="favourite">
+          <a class="audioControl" v-on:click="favourite">
             <i class="fas fa-heart"></i>
           </a>
         </div>
@@ -148,13 +148,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES']),
     showTrackDetails() {
       this.$store.commit("UPDATE_TRACK_DETAILS_POPOVER", true)
     },
     download() {
       this.stop();
-      console.log(this.trackurl)
       window.open(this.trackurl, "download");
     },
     load() {
@@ -205,12 +204,26 @@ export default {
               db.collection('users').doc(this.loggedInUserId).update({
                 favourites
               })
+
+              let likes = 0;
+              db.collection('tracks').where("trackID", "==", this.currentTrack.trackID).get()
+                .then(querySnapshot => {
+                  querySnapshot.forEach(doc => {
+
+                    if (doc.data().likes) {
+                      likes = doc.data().likes
+                    }
+                    likes++
+                    db.collection('tracks').doc(this.currentTrack.trackID).update({
+                      likes
+                    }).then(this.$store.commit('UPDATE_LIKES', likes))
+                  })
+                })
             }
           })
         })
     },
     openTrackActionsModal: function () {
-      console.log('openTrackActionsModal displayed')
       this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     }
   },

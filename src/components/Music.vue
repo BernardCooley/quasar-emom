@@ -78,6 +78,7 @@ export default {
             this.dataLoaded = true;
           }
           this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
+          this.$store.commit('UPDATE_LIKES', this.tracks[this.currentTrackIndexNumber].likes)
         });
     },
     previousTrack: function () {
@@ -92,7 +93,6 @@ export default {
     },
     changeTrack: function (artist, title) {
       this.currentTrackIndexNumber = this.tracks.filter(track => track.title.toLowerCase() == title.toLowerCase() && track.artist.toLowerCase() == artist.toLowerCase())[0].trackIndex
-      console.log(this.currentTrackIndexNumber)
       this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
     }
   },
