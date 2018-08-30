@@ -398,6 +398,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
     left: 0;
     position: absolute;
     top: 0;
+    background-color: #333333;
   }
 }
 
