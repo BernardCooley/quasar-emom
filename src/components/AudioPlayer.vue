@@ -1,58 +1,60 @@
 <template>
-	<div class="audioPlayerContainer">
-		<q-card inline class="audioCard no-shadow">
-			<q-card-title class="titleAndArtist">
-        <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
-        <div class="artist">{{artist}}</div>
-        <div class="title">{{title}}</div>
-			</q-card-title>
-			<q-card-main v-if="true">
-				<div>
-					<div v-on:click="seek" class="player-progress" title="Time played : Total time">
-						<div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
-					</div>
-					<div class="player-time">
-						<div class="player-time-current">{{ currentTime }}</div>
-						<div class="player-time-total">{{ durationTime }}</div>
-					</div>
-					<div class="artworkContainer">
-						<img v-bind:src="artworkurl">
-					</div>
-				</div>
-				<audio v-bind:loop="innerLoop" ref="player" preload="auto" style="display: none;">
-					<source v-bind:src="trackurl">
-				</audio>
-			</q-card-main>
+  <div class="audioPlayerContainer">
+    <track-actions-modal />
+    <q-card inline class="audioCard no-shadow">
+      <q-card-title class="titleAndArtist row">
+        <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
+        <div class="col-8">
+          <div class="artist">{{artist}}</div>
+          <div class="title">{{title}}</div>
+        </div>
+        <i class="fas fa-ellipsis-v trackInfoIcon col-2" v-on:click="openTrackActionsModal"></i>
+      </q-card-title>
+      <q-card-main v-if="true">
+        <div>
+          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
+            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
+          </div>
+          <div class="player-time">
+            <div class="player-time-current">{{ currentTime }}</div>
+            <div class="player-time-total">{{ durationTime }}</div>
+          </div>
+          <div class="artworkContainer">
+            <img v-bind:src="artworkurl">
+          </div>
+        </div>
+        <audio v-bind:loop="innerLoop" ref="player" preload="auto" style="display: none;">
+          <source v-bind:src="trackurl">
+        </audio>
+      </q-card-main>
       <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
-			<q-card-actions>
-				<div class="row audioActions justify-between">
-					<a class="audioControl" v-on:click.prevent="playing = !playing" title="Play/Pause">
-						<i v-if="!playing" class="fas fa-play audioControl"></i>
-						<i v-else class="fas fa-pause"></i>
-					</a>
-					<a class="audioControl" v-on:click.prevent="stop" title="Stop">
-						<i class="fas fa-stop audioControl"></i>
-					</a>
+      <q-card-actions>
+        <div class="row audioActions justify-between">
+          <a class="audioControl" v-on:click.prevent="playing = !playing" title="Play/Pause">
+            <i v-if="!playing" class="fas fa-play audioControl"></i>
+            <i v-else class="fas fa-pause"></i>
+          </a>
+          <a class="audioControl" v-on:click.prevent="stop" title="Stop">
+            <i class="fas fa-stop audioControl"></i>
+          </a>
           <a class="audioControl" v-on:click.prevent="innerLoop = !innerLoop">
-						<i v-if="innerLoop" class="fas fa-redo-alt audioControl"></i>
-						<i v-else class="fas fa-redo-alt audioControl"></i>
-					</a>
-					<a class="audioControl" v-on:click.prevent="download">
-						<i class="fas fa-download audioControl"></i>
-					</a>
-					<a class="audioControl" v-on:click.prevent="addToAccount($event)">
-            <i class="fas fa-cloud-download-alt"></i>
-					</a>
-				</div>
-			</q-card-actions>
-		</q-card>
-	</div>
+            <i v-if="innerLoop" class="fas fa-redo-alt audioControl"></i>
+            <i v-else class="fas fa-redo-alt audioControl"></i>
+          </a>
+          <a class="audioControl" v-on:click.prevent="favourite">
+            <i class="fas fa-heart"></i>
+          </a>
+        </div>
+      </q-card-actions>
+    </q-card>
+  </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from "vuex";
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
+import TrackActionsModal from "./TrackActionsModal"
 
 const convertTimeHHMMSS = val => {
   let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
@@ -61,6 +63,9 @@ const convertTimeHHMMSS = val => {
 };
 
 export default {
+  components: {
+    TrackActionsModal
+  },
   name: "audio-player",
   props: {
     trackurl: {
@@ -92,9 +97,13 @@ export default {
       default: null
     },
     currenttracknumber: null,
-    totaltracks: null
+    totaltracks: null,
+    uploadedby: {
+      type: String,
+      default: null
+    }
   },
-  data: function() {
+  data: function () {
     return {
       audio: undefined,
       currentSeconds: 0,
@@ -104,7 +113,8 @@ export default {
       playing: false,
       previousVolume: 35,
       showVolume: false,
-      volume: 100
+      volume: 100,
+      uploadedByName: null
     };
   },
   computed: {
@@ -120,8 +130,8 @@ export default {
     muted() {
       return this.volume / 100 === 0;
     },
-    ...mapState(["loggedInUser"]),
-    isFileATrack: function() {
+    ...mapState(["loggedInUser", "currentTrack", "loggedInUserId"]),
+    isFileATrack: function () {
       return this.trackurl.endsWith(".mp3") || this.track.endsWith(".wav") || this.track.endsWith(".aif") ? true : false;
     }
   },
@@ -138,8 +148,13 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL']),
+    showTrackDetails() {
+      this.$store.commit("UPDATE_TRACK_DETAILS_POPOVER", true)
+    },
     download() {
       this.stop();
+      console.log(this.trackurl)
       window.open(this.trackurl, "download");
     },
     load() {
@@ -176,22 +191,38 @@ export default {
     update(e) {
       this.currentSeconds = parseInt(this.audio.currentTime);
     },
-    addToAccount: function(event) {
-      var ref = firebase
-        .database()
-        .ref("users/" + this.uid + "/tracks")
-        .push();
+    favourite: function () {
+      let favourites = [];
 
-      ref.set({
-        id: this.trackid
-      });
+      db.collection('users').where("userID", "==", this.loggedInUserId).get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            if (doc.data().favourites) {
+              favourites = doc.data().favourites
+            }
+            if (!favourites.includes(this.currentTrack.trackID)) {
+              favourites.push(this.currentTrack.trackID)
+              db.collection('users').doc(this.loggedInUserId).update({
+                favourites
+              })
+            }
+          })
+        })
+    },
+    openTrackActionsModal: function () {
+      console.log('openTrackActionsModal displayed')
+      this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     }
   },
   created() {
     this.innerLoop = this.loop;
   },
   mounted() {
-    
+    db.collection("users").where("userID", "==", this.uploadedby).get().then(snapshot => {
+      snapshot.forEach(doc => {
+        this.uploadedByName = doc.data().artistName
+      })
+    })
 
     this.audio = this.$el.querySelectorAll("audio")[0];
     this.audio.addEventListener("timeupdate", this.update);
@@ -410,18 +441,20 @@ input[type="range"].slider:focus::-ms-fill-upper {
   font-weight: bold;
 }
 
-.titleAndArtist {
+.q-card-title {
   text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
 
+.titleAndArtist {
   .artist {
     font-size: 22px;
     font-weight: bold;
   }
 
-  .trackNumber {
-    position: fixed;
-    right: 0;
-    padding-right: 30px;
+  .trackInfoIcon {
+    font-size: 25px;
   }
 }
 
@@ -436,5 +469,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
   text-align: center;
   font-size: 20px;
   margin: 10px;
+}
+
+.trackDetailsPopoverContainer {
+  width: 80%;
 }
 </style>

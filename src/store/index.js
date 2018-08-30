@@ -13,10 +13,14 @@ const store = new Vuex.Store({
     state: {
         isLoggedIn: false,
         loggedInUser: null,
+        loggedInUserId: null,
         menuDisplayed: false,
         pageTitle: null,
         currentTab: null,
-        addTrack: false
+        addTrack: false,
+        trackActionsModalOpen: false,
+        currentTrack: null,
+        trackList: null
     },
     mutations: {
         UPDATE_ISLOGGED_IN(state, value) {
@@ -24,6 +28,9 @@ const store = new Vuex.Store({
         },
         UPDATE_LOGGED_IN_USER(state, value) {
             state.loggedInUser = value
+        },
+        UPDATE_LOGGED_IN_USER_ID(state, value) {
+            state.loggedInUserId = value
         },
         TOGGLE_MENU(state, value) {
             state.menuDisplayed = value
@@ -36,6 +43,15 @@ const store = new Vuex.Store({
         },
         UPDATE_ADD_TRACK(state, value) {
             state.addTrack = value
+        },
+        UPDATE_TRACK_ACTIONS_MODAL(state, value) {
+            state.trackActionsModalOpen = value
+        },
+        UPDATE_CURRENT_TRACK(state, value) {
+            state.currentTrack = value
+        },
+        UPDATE_TRACK_LIST(state, value) {
+            state.trackList = value
         }
     }
 })

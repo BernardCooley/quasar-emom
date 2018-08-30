@@ -8,15 +8,18 @@
             <q-input type="text" v-model="search"/>
           </q-field>
         </q-item> -->
-
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
             <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid="currentTrack.trackid"></audio-player>
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid='currentTrack.trackid' :uploadedby='currentTrack.uploadedBy'></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn class="trackControlButton" v-on:click="previousTrack"><i class="fas fa-fast-backward"></i></q-btn>
-              <q-btn class="trackControlButton" v-on:click="nextTrack"><i class="fas fa-fast-forward"></i></q-btn>
+              <q-btn class="trackControlButton" v-on:click="previousTrack">
+                <i class="fas fa-fast-backward"></i>
+              </q-btn>
+              <q-btn class="trackControlButton" v-on:click="nextTrack">
+                <i class="fas fa-fast-forward"></i>
+              </q-btn>
             </q-item>
           </div>
         </div>
@@ -24,13 +27,10 @@
         <div class="allTracksContainer">
           <q-list>
             <h2 class="allTracksTitle">All tracks</h2>
-            <q-item v-for="(track, index) in tracks" :key="index">
-              <div class="row" v-on:click="changeTrack(track.artist, track.title)">
-                <div class="allTracksArtistAndTitle col-9">
-                  <div class="allTracksArtists">{{track.artist}}</div>
-                  <div class="allTracksTitles">{{track.title}}</div>
-                </div>
-                <img class="col-3 thumbNail" src="../assets/images/music_thumb.jpg">
+            <q-item class="row" v-for="(track, index) in trackList" :key="index">
+              <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.artist, track.title)">
+                <div class="allTracksArtists">{{track.artist}}</div>
+                <div class="allTracksTitles">{{track.title}}</div>
               </div>
             </q-item>
           </q-list>
@@ -44,61 +44,60 @@
 import AudioPlayer from "./AudioPlayer"
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
+import { mapMutations, mapState } from "vuex"
 
 export default {
   name: "music",
-  data: function() {
+  data: function () {
     return {
       tracks: [],
       dataLoaded: false,
       search: "",
-      currentTrackIndexNumber: 0
+      currentTrackIndexNumber: 0,
+      uploadedByName: null
     };
   },
   components: {
     AudioPlayer
   },
   methods: {
-    loadTracks: function() {
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST']),
+    loadTracks: function () {
       this.tracks = [];
-      db
-        .collection("tracks")
-        .get()
+      db.collection("tracks").get()
         .then(querySnapshot => {
           var index = 0
           querySnapshot.forEach(doc => {
-            const data = {
-              artist: doc.data().artist,
-              title: doc.data().title,
-              trackUrl: doc.data().trackUrl,
-              artworkurl: doc.data().artworkurl,
-              trackid: doc.data().trackID,
-              trackIndex: index
-            };
+            var data = doc.data()
+            data['trackIndex'] = index
             this.tracks.push(data)
             index++
           });
+          this.$store.commit("UPDATE_TRACK_LIST", this.tracks)
           if (this.tracks) {
             this.dataLoaded = true;
           }
+          this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
         });
     },
-    previousTrack: function() {
-      if(this.currentTrackIndexNumber > 0) {
+    previousTrack: function () {
+      if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
       }
     },
-    nextTrack: function() {
-      if(this.currentTrackIndexNumber < (this.tracks.length-1)) {
+    nextTrack: function () {
+      if (this.currentTrackIndexNumber < (this.tracks.length - 1)) {
         this.currentTrackIndexNumber++
       }
     },
-    changeTrack: function(artist, title) {
+    changeTrack: function (artist, title) {
       this.currentTrackIndexNumber = this.tracks.filter(track => track.title.toLowerCase() == title.toLowerCase() && track.artist.toLowerCase() == artist.toLowerCase())[0].trackIndex
-    },
+      console.log(this.currentTrackIndexNumber)
+      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
+    }
   },
   created() {
-    this.loadTracks();
+    this.loadTracks()
   },
   computed: {
     filteredList() {
@@ -106,7 +105,8 @@ export default {
     },
     currentTrack() {
       return this.tracks[this.currentTrackIndexNumber]
-    }
+    },
+    ...mapState(["trackList"])
   }
 };
 </script>
@@ -166,14 +166,22 @@ export default {
 
 .allTracksArtistAndTitle {
   margin: auto;
+  width: 100%;
+  padding-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .allTracksArtists {
-  font-size: 30px;
+  font-size: 20px;
+  width: 60%;
+  margin-right: 20px;
 }
 
 .allTracksTitles {
-  font-size: 20px;
+  font-size: 15px;
+  width: 40%;
 }
 
 .allTracksTitle {
@@ -183,5 +191,14 @@ export default {
 
 .thumbNail {
   height: 100% !important;
+}
+
+.trackInfoPopover {
+  position: fixed;
+  top: 100px;
+}
+.trackMenuIcon {
+  text-align: center;
+  background-color: red;
 }
 </style>

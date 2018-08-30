@@ -11,12 +11,6 @@ export default {
 </script>
 
 <style>
-body {
-  background-image: url('/assets/images/cool-background.png');
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
 .q-list {
   border: none;
 }

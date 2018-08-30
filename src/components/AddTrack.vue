@@ -48,7 +48,8 @@ export default {
         artist: { value: null, errors: [] },
         title: { value: null, errors: [] },
         trackUrl: { value: null, errors: [] },
-        artworkUrl: { value: null, errors: [] }
+        artworkUrl: { value: null, errors: [] },
+        uploadedBy: { value: null, errors: [] }
       },
       errorsBool: null,
       userID: null,
@@ -91,7 +92,8 @@ export default {
             artist: this.track.artist.value,
             title: this.track.title.value,
             trackUrl: this.track.trackUrl.value,
-            artworkUrl: this.track.artworkUrl.value
+            artworkUrl: this.track.artworkUrl.value,
+            uploadedBy: firebase.auth().currentUser.uid
           })
           .then(data => {
             if (data.id) {

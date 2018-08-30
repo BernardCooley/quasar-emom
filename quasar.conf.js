@@ -23,7 +23,7 @@ module.exports = function (ctx) {
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
       }
     },
     devServer: {
@@ -63,7 +63,9 @@ module.exports = function (ctx) {
         'QUploader',
         'QPageSticky',
         'QItemSeparator',
-        'QChip'
+        'QChip',
+        'QPopover',
+        'QModal'
       ],
       directives: [
         'Ripple'
@@ -125,7 +127,7 @@ module.exports = function (ctx) {
     },
     electron: {
       // bundler: 'builder', // or 'packager'
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
         // do something with Electron process Webpack cfg
       },
       packager: {
