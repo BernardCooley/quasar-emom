@@ -1,7 +1,7 @@
 <template>
   <div id="q-app">
     <div class="appContainer">
-      <img class="backgroundImage" src="./assets/images/cool-background.jpg">
+      <img class="backgroundImage" src="./assets/images/soft_green_bg_cropped.jpg">
       <tabs></tabs>
     </div>
   </div>
@@ -47,6 +47,9 @@ export default {
 .pageContainer {
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: normal;
 }
 .backgroundImage {
   height: 100%;
@@ -56,6 +59,19 @@ export default {
   z-index: -1;
 }
 body {
+  color: #333333 !important;
+}
+.q-tab-pane {
+  border: none;
+  padding: 0;
+}
+.q-card-container {
+  padding-bottom: 0;
+}
+.q-field-label {
   color: #333333;
+}
+.q-field {
+  width: 100%;
 }
 </style>

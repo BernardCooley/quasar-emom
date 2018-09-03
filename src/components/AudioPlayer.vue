@@ -273,7 +273,6 @@ $player-text-color: $player-link-color;
 .player-wrapper {
   display: flex;
   justify-content: center;
-  padding-bottom: 20px;
 }
 
 input[type="range"].slider {
@@ -432,6 +431,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 
 .audioActions {
   width: 100%;
+  margin: 0 8px;
 }
 
 .audioControl {
@@ -476,6 +476,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
   font-size: 18px;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
+  height: 50px;
 }
 
 .unsupportedFormatMessage {

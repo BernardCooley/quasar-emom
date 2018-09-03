@@ -23,10 +23,9 @@
             </q-item>
           </div>
         </div>
-        <q-item-separator />
         <div class="allTracksContainer">
           <q-list>
-            <h2 class="allTracksTitle">All tracks</h2>
+            <h3 class="trackListTitle">All tracks</h3>
             <q-item class="row" v-for="(track, index) in trackList" :key="index">
               <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.artist, track.title)">
                 <div class="allTracksArtists">{{track.artist}}</div>
@@ -147,6 +146,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid white;
+  padding-bottom: 10px;
 }
 
 .playerContainer {
@@ -156,11 +157,14 @@ export default {
 
 .allTracksContainer {
   width: 100%;
-  height: 300px;
   overflow: auto;
 
   .q-list {
     border: none;
+  }
+
+  .q-item {
+    padding: 0;
   }
 }
 
@@ -184,9 +188,9 @@ export default {
   width: 40%;
 }
 
-.allTracksTitle {
-  padding-left: 17px;
-  margin-bottom: 10px;
+.trackListTitle {
+  padding-left: 15px;
+  margin: 0;
 }
 
 .thumbNail {
@@ -200,5 +204,8 @@ export default {
 .trackMenuIcon {
   text-align: center;
   background-color: red;
+}
+.musicContainer .content {
+  height: 100%;
 }
 </style>
