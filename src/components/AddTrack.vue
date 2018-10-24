@@ -52,6 +52,12 @@ import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { mapMutations } from "vuex"
 
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
+Vue.use(VueAxios, axios)
+
 export default {
   name: "add-track",
   data: function () {
@@ -122,26 +128,27 @@ export default {
 
       this.trackUpload = this.$refs.trackUpload.files[0]
 
+      let url = 'https://emomtrackstorage01bc.blob.core.windows.net/emomblobcontainer/' + this.trackUpload.name
+
       console.log(this.trackUpload)
 
-      // let url = hostUrl + '/' + blobContainer + '/' + fileName
-      // let data = fileLocation
+      let data = this.trackUpload
 
 
 
-      // axios.put(url, data)
-      //   .then(
-      //     response => {
-      //       console.log(response)
-      //       console.log('correct!!')
-      //     }
-      //   )
-      //   .catch(
-      //     error => {
-      //       console.log(error)
-      //       console.log('error here!!')
-      //     }
-      //   )
+      axios.put(url, data)
+        .then(
+          response => {
+            console.log(response)
+            console.log('correct!!')
+          }
+        )
+        .catch(
+          error => {
+            console.log(error)
+            console.log('error here!!')
+          }
+        )
     },
     cancel: function () {
       this.$store.commit("UPDATE_ADD_TRACK", false)
