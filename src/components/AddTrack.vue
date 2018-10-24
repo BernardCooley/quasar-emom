@@ -27,6 +27,18 @@
             </q-field>
           </q-item>
 
+          <q-item>
+            <q-field label="Track Url" error-label="">
+              <q-input type="file" id="trackUrl" v-model="track.trackUrl.value" />
+            </q-field>
+          </q-item>
+
+          <q-item>
+            <q-field label="Upload Track" error-label="">
+              <input type="file" ref="trackUpload" multiple @change="uploadTrack" class="input-file">
+            </q-field>
+          </q-item>
+
           <q-btn v-on:click="addTrack">Add Track</q-btn>
           <q-btn v-on:click="cancel">Cancel</q-btn>
         </q-list>
@@ -42,7 +54,7 @@ import { mapMutations } from "vuex"
 
 export default {
   name: "add-track",
-  data: function() {
+  data: function () {
     return {
       track: {
         artist: { value: null, errors: [] },
@@ -53,12 +65,13 @@ export default {
       },
       errorsBool: null,
       userID: null,
-      addTrackMessage: null
+      addTrackMessage: null,
+      trackUpload: null
     };
   },
   methods: {
     ...mapMutations(['UPDATE_ADD_TRACK']),
-    validation: function(e) {
+    validation: function (e) {
       this.errorsBool = false;
       this.track.artist.errors = [];
       this.track.title.errors = [];
@@ -83,7 +96,7 @@ export default {
         }
       }
     },
-    addTrack: function() {
+    addTrack: function () {
       this.validation();
       if (!this.errorsBool) {
         db
@@ -105,7 +118,32 @@ export default {
           .catch(error => console.log(err));
       }
     },
-    cancel: function() {
+    uploadTrack: function (hostUrl, blobContainer, fileName, fileLocation) {
+
+      this.trackUpload = this.$refs.trackUpload.files[0]
+
+      console.log(this.trackUpload)
+
+      // let url = hostUrl + '/' + blobContainer + '/' + fileName
+      // let data = fileLocation
+
+
+
+      // axios.put(url, data)
+      //   .then(
+      //     response => {
+      //       console.log(response)
+      //       console.log('correct!!')
+      //     }
+      //   )
+      //   .catch(
+      //     error => {
+      //       console.log(error)
+      //       console.log('error here!!')
+      //     }
+      //   )
+    },
+    cancel: function () {
       this.$store.commit("UPDATE_ADD_TRACK", false)
     }
   }

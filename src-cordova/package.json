@@ -1,0 +1,15 @@
+{
+  "name": "org.cordova.quasar.app",
+  "version": "1.0.0",
+  "displayName": "Quasar App",
+  "cordova": {
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "dependencies": {
+    "cordova-android": "^7.0.0",
+    "cordova-ios": "^4.5.5"
+  }
+}

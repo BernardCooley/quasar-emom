@@ -1,6 +1,6 @@
 <template>
     <div>
-        <q-modal :content-css="{width: '50%', height: '50%', background: 'rgba(67, 184, 238, 0.90)'}" class="trackActionsModal" transition v-model="trackActionsModalOpen">
+        <q-modal :content-css="{width: '50%', height: '50%', background: 'rgba(184, 202, 185, 0.90)'}" class="trackActionsModal" transition v-model="trackActionsModalOpen">
             <i class="fas fa-times closeModal" v-on:click="closeModal"></i>
             <div class="modalContent">
                 <q-list>
@@ -119,7 +119,7 @@ export default {
 }
 
 .trackActionsModal {
-  background-color: rgba(67, 184, 238, 0.72);
+  background-color: rgba(184, 202, 185, 0.72);
 }
 
 .modalContent {

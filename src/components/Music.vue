@@ -1,5 +1,8 @@
 <template>
   <div class="musicContainer">
+
+    <q-btn v-on:click="getTracks"></q-btn>
+
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
 
@@ -44,6 +47,8 @@ import AudioPlayer from "./AudioPlayer"
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 import { mapMutations, mapState } from "vuex"
+import BoxSDK from 'box-node-sdk'
+
 
 export default {
   name: "music",
@@ -54,7 +59,11 @@ export default {
       search: "",
       currentTrackIndexNumber: 0,
       uploadedByName: null
-    };
+      // sdk: new BoxSDK({
+      //   clientID: 'bob8ehwlaa6mthjlisu6giaf2h72t034',
+      //   clientSecret: 'oA4Px9RYSj1Pni1ZZ1cSIabNVwUuD99B'
+      // })
+    }
   },
   components: {
     AudioPlayer
@@ -79,6 +88,21 @@ export default {
           this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
           this.$store.commit('UPDATE_LIKES', this.tracks[this.currentTrackIndexNumber].likes)
         });
+    },
+    getTracks: function () {
+      // let client = this.sdk.getBasicClient('kQ2wdszzI69gnF0U4sYun9FIa0x3wJwu')
+      // client.users.get(client.CURRENT_USER_ID, null, function (err, currentUser) {
+      //   if (err) throw err;
+      //   console.log('Hello, ' + currentUser.name + '!');
+      // });
+      const token = 'Ek7KVd8kjUHSuvIujbGsR1iFN1olULbk'
+      return fetch('https://api.box.com/2.0/folders/0/items', {
+        headers: {
+          Authorization: `token ${token}`
+        }
+      })
+        .then(res => res.json())
+        .then(tracks => alert(tracks))
     },
     previousTrack: function () {
       if (this.currentTrackIndexNumber > 0) {
