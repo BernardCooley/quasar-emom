@@ -1,8 +1,6 @@
 <template>
   <div class="musicContainer">
 
-    <q-btn v-on:click="getTracks"></q-btn>
-
     <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
 

@@ -1,7 +1,6 @@
 <template>
   <div id="q-app">
     <div class="appContainer">
-      <img class="backgroundImage" src="./assets/images/soft_green_bg_cropped.jpg">
       <tabs></tabs>
     </div>
   </div>
@@ -60,10 +59,11 @@ export default {
 }
 body {
   color: #333333 !important;
+  /*background-image: linear-gradient(to bottom right, #267E84, #14938E);*/
 }
 .q-tab-pane {
   border: none;
-  padding: 0;
+  padding: 15px 0;
 }
 .q-card-container {
   padding-bottom: 0;

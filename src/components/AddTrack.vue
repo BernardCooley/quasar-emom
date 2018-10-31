@@ -28,18 +28,16 @@
           </q-item>
 
           <q-item>
-            <q-field label="Track Url" error-label="">
-              <q-input type="file" id="trackUrl" v-model="track.trackUrl.value" />
+            <q-field label="Upload Track" error-label="">
+              <input type="file" ref="trackUpload" multiple @change="getUploadFile" class="input-file">
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field label="Upload Track" error-label="">
-              <input type="file" ref="trackUpload" multiple @change="uploadTrack" class="input-file">
-            </q-field>
+            <q-progress :percentage="updatePercentage" />
           </q-item>
 
-          <q-btn v-on:click="addTrack">Add Track</q-btn>
+          <q-btn v-on:click="uploadFile(fileToUpload)">Add Track</q-btn>
           <q-btn v-on:click="cancel">Cancel</q-btn>
         </q-list>
       </div>
@@ -72,8 +70,15 @@ export default {
       errorsBool: null,
       userID: null,
       addTrackMessage: null,
-      trackUpload: null
+      trackUpload: null,
+      uploadPercentage: null,
+      fileToUpload: null
     };
+  },
+  computed: {
+    updatePercentage: function() {
+      return this.uploadPercentage
+    }
   },
   methods: {
     ...mapMutations(['UPDATE_ADD_TRACK']),
@@ -124,31 +129,26 @@ export default {
           .catch(error => console.log(err));
       }
     },
-    uploadTrack: function (hostUrl, blobContainer, fileName, fileLocation) {
+    getUploadFile: function() {
+      this.fileToUpload = this.$refs.trackUpload.files[0]
+    },
+    uploadFile: function (fileToUpload) {
+      let storageRef = firebase.storage().ref('tracks/' + fileToUpload.name)
 
-      this.trackUpload = this.$refs.trackUpload.files[0]
+      let task = storageRef.put(fileToUpload)
 
-      let url = 'https://emomtrackstorage01bc.blob.core.windows.net/emomblobcontainer/' + this.trackUpload.name
+      task.on('state_changed', 
+        function progress(snapshot) {
+          this.uploadPercentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          console.log(this.uploadPercentage)
+        },
+        function errors(err) {
 
-      console.log(this.trackUpload)
+        },
+        function complete() {
 
-      let data = this.trackUpload
-
-
-
-      axios.put(url, data)
-        .then(
-          response => {
-            console.log(response)
-            console.log('correct!!')
-          }
-        )
-        .catch(
-          error => {
-            console.log(error)
-            console.log('error here!!')
-          }
-        )
+        }
+      )
     },
     cancel: function () {
       this.$store.commit("UPDATE_ADD_TRACK", false)

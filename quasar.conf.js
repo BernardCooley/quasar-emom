@@ -65,7 +65,8 @@ module.exports = function (ctx) {
         'QItemSeparator',
         'QChip',
         'QPopover',
-        'QModal'
+        'QModal',
+        'QProgress'
       ],
       directives: [
         'Ripple'
