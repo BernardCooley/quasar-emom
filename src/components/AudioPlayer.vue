@@ -44,6 +44,9 @@
           <a class="audioControl" v-on:click="favourite">
             <i class="fas fa-heart"></i>
           </a>
+          <a class="audioControl" v-on:click="getTrackUrl">
+            <i class="fas fa-heart"></i>
+          </a>
         </div>
       </q-card-actions>
     </q-card>

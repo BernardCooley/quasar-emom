@@ -87,6 +87,41 @@ export default {
           this.$store.commit('UPDATE_LIKES', this.tracks[this.currentTrackIndexNumber].likes)
         });
     },
+    getTrackUrl: function () {
+      let storageRef = firebase.storage().ref()
+      // Create a reference to the file we want to download
+      var starsRef = storageRef.child('tracks/Logic_-_44_More.mp3');
+
+      console.log(starsRef.getMetadata())
+
+      // Get the download URL
+      starsRef.getDownloadURL().then(function (url) {
+        console.log(url)
+        this.trackurl = url
+        // Insert url into an <img> tag to "download"
+      }).catch(function (error) {
+
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/object-not-found':
+            // File doesn't exist
+            break;
+
+          case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            break;
+
+          case 'storage/canceled':
+            // User canceled the upload
+            break;
+
+          case 'storage/unknown':
+            // Unknown error occurred, inspect the server response
+            break;
+        }
+      });
+    },
     getTracks: function () {
       // let client = this.sdk.getBasicClient('kQ2wdszzI69gnF0U4sYun9FIa0x3wJwu')
       // client.users.get(client.CURRENT_USER_ID, null, function (err, currentUser) {
@@ -113,6 +148,7 @@ export default {
       }
     },
     changeTrack: function (artist, title) {
+      this.getTrackUrl()
       this.currentTrackIndexNumber = this.tracks.filter(track => track.title.toLowerCase() == title.toLowerCase() && track.artist.toLowerCase() == artist.toLowerCase())[0].trackIndex
       this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
     }

@@ -16,12 +16,6 @@
           </q-item>
 
           <q-item>
-            <q-field label="Track Url" error-label="">
-              <q-input id="trackUrl" v-model="track.trackUrl.value" />
-            </q-field>
-          </q-item>
-
-          <q-item>
             <q-field label="Artwork Url (optional)" error-label="">
               <q-input id="artworkUrl" v-model="track.artworkUrl.value" />
             </q-field>
@@ -76,7 +70,7 @@ export default {
     };
   },
   computed: {
-    updatePercentage: function() {
+    updatePercentage: function () {
       return this.uploadPercentage
     }
   },
@@ -107,48 +101,40 @@ export default {
         }
       }
     },
-    addTrack: function () {
-      this.validation();
-      if (!this.errorsBool) {
-        db
-          .collection("tracks")
-          .add({
-            artist: this.track.artist.value,
-            title: this.track.title.value,
-            trackUrl: this.track.trackUrl.value,
-            artworkUrl: this.track.artworkUrl.value,
-            uploadedBy: firebase.auth().currentUser.uid
-          })
-          .then(data => {
-            if (data.id) {
-              this.addTrackMessage = "Track added successfully";
-              this.$router.push("/music");
-              this.addTrackMessage = null;
-            }
-          })
-          .catch(error => console.log(err));
-      }
-    },
-    getUploadFile: function() {
+    getUploadFile: function () {
       this.fileToUpload = this.$refs.trackUpload.files[0]
     },
     uploadFile: function (fileToUpload) {
-      let storageRef = firebase.storage().ref('tracks/' + fileToUpload.name)
+      this.validation();
+      if (!this.errorsBool) {
+        let storageRef = firebase.storage().ref()
+        let tracksRef = storageRef.child('tracks')
+        let focusedTrack = tracksRef.child(fileToUpload.name)
 
-      let task = storageRef.put(fileToUpload)
-
-      task.on('state_changed', 
-        function progress(snapshot) {
-          this.uploadPercentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          console.log(this.uploadPercentage)
-        },
-        function errors(err) {
-
-        },
-        function complete() {
-
+        var metadata = {
+          customMetadata: {
+            'artist': this.track.artist.value,
+            'title': this.track.title.value,
+            'artworkUrl': this.track.artworkUrl.value,
+            'uploadedBy': firebase.auth().currentUser.uid
+          }
         }
-      )
+
+        let task = focusedTrack.put(fileToUpload, metadata)
+
+        task.on('state_changed',
+          function progress(snapshot) {
+            this.uploadPercentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            console.log(this.uploadPercentage)
+          },
+          function errors(err) {
+
+          },
+          function complete() {
+            console.log('Upload Complete')
+          }
+        )
+      }
     },
     cancel: function () {
       this.$store.commit("UPDATE_ADD_TRACK", false)
