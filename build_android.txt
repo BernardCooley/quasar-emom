@@ -1,0 +1,7 @@
+cd C:\Users\lespr\Desktop\workspace\quasar-emom
+quasar clean
+quasar build
+quasar build -m cordova -T android
+cd src-cordova/
+cordova run android
+exit
