@@ -9,29 +9,24 @@
               <div class="validationMessage">{{track.artist.errorMessage}}</div>
             </q-field>
           </q-item>
-
           <q-item>
             <q-field label="Title">
               <q-input id="trackTitle" v-model="track.title.value" />
               <div class="validationMessage">{{track.title.errorMessage}}</div>
             </q-field>
           </q-item>
-
           <q-item>
             <q-field label="Artwork Url (optional)">
               <q-input id="artworkUrl" v-model="track.artworkUrl.value" />
             </q-field>
           </q-item>
-
           <q-item>
             <q-field label="Upload Track">
               <input type="file" ref="trackUpload" multiple @change="getUploadFile" class="input-file">
             </q-field>
           </q-item>
-
         </q-list>
         <q-item>
-          <!--<q-progress :percentage="updatePercentage" />-->
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
 
@@ -50,12 +45,6 @@
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { mapMutations, mapState } from "vuex"
-
-import Vue from 'vue'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-
-Vue.use(VueAxios, axios)
 
 export default {
   name: "add-track",
@@ -90,13 +79,13 @@ export default {
     validation: function(e) {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
-      }else {
+      } else {
         this.track.artist.errorMessage = ''
       }
 
       if (!this.track.title.value) {
         this.track.title.errorMessage = 'Title is required.'
-      }else {
+      } else {
         this.track.title.errorMessage = ''
       }
 
@@ -111,18 +100,6 @@ export default {
     getUploadFile: function() {
       this.fileToUpload = this.$refs.trackUpload.files[0]
     },
-    // getMetadata: function() {
-    //   let storageRef = firebase.storage().ref()
-    //   let tracksRef = storageRef.child('tracks/Jennifer_Lopez_-_Us (2).mp3')
-
-    //   // Get metadata properties
-    //   tracksRef.getMetadata().then(function(metadata) {
-    //     console.log(metadata)
-    //     // Metadata now contains the metadata for 'images/forest.jpg'
-    //   }).catch(function(error) {
-    //     // Uh-oh, an error occurred!
-    //   });
-    // },
     doesFileExist: function() {
       firebase.storage().ref().child('tracks/' + this.fileToUpload.name).getDownloadURL().then(function() {
         return true
@@ -164,6 +141,7 @@ export default {
             function complete() {
               console.log('Upload Complete')
               self.completedUpload = true
+              self.updateUserAccount(self.fileToUpload.name)
             }
           )
         }
@@ -182,6 +160,21 @@ export default {
         artworkUrl: { value: null },
         uploadedBy: { value: null }
       }
+    },
+    updateUserAccount: function(fileName) {
+      let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
+
+      usersRef.get().then(function(doc) {
+        let tracks = doc.data().tracks
+
+        tracks.push(fileName)
+
+        usersRef.update({
+          tracks: tracks
+        })
+      }).catch(function(error) {
+        console.error("Error getting cached document:", error);
+      });
     }
   }
 };
