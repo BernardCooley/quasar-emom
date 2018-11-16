@@ -22,7 +22,8 @@ const store = new Vuex.Store({
         currentTrack: null,
         trackList: null,
         likes: null,
-        fileUploadPercentage: null
+        fileUploadPercentage: null,
+        tracksArray: []
     },
     mutations: {
         UPDATE_ISLOGGED_IN(state, value) {
@@ -60,6 +61,12 @@ const store = new Vuex.Store({
         },
         UPDATE_FILE_UPLOAD_PERCENTAGE(state, value) {
             state.fileUploadPercentage = value
+        },
+        UPDATE_TRACKS_ARRAY(state, value) {
+            state.tracksArray.push(value)
+        },
+        CLEAR_TRACKS_ARRAY(state, value) {
+            state.tracksArray = []
         }
     }
 })

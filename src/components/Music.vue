@@ -5,10 +5,10 @@
       <div class="pageContainer">
 
         <!-- <q-item class="searchContainer">
-          <q-field class="inputField" label="Search" error-label="">
-            <q-input type="text" v-model="search"/>
-          </q-field>
-        </q-item> -->
+                    <q-field class="inputField" label="Search" error-label="">
+                      <q-input type="text" v-model="search"/>
+                    </q-field>
+                  </q-item> -->
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
             <div id="audio" class="player-wrapper">
@@ -27,7 +27,7 @@
         <div class="allTracksContainer">
           <q-list>
             <h3 class="trackListTitle">All tracks</h3>
-            <q-item class="row" v-for="(track, index) in trackList" :key="index">
+            <q-item class="row" v-for="(track, index) in tracksArray" :key="index">
               <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.artist, track.title)">
                 <div class="allTracksArtists">{{track.artist}}</div>
                 <div class="allTracksTitles">{{track.title}}</div>
@@ -37,6 +37,7 @@
         </div>
       </div>
     </div>
+    <q-btn v-on:click="getUserTracks">Get tracks</q-btn>
   </div>
 </template>
 
@@ -45,30 +46,25 @@ import AudioPlayer from "./AudioPlayer"
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 import { mapMutations, mapState } from "vuex"
-import BoxSDK from 'box-node-sdk'
 
 
 export default {
   name: "music",
-  data: function () {
+  data: function() {
     return {
       tracks: [],
       dataLoaded: false,
       search: "",
       currentTrackIndexNumber: 0,
       uploadedByName: null
-      // sdk: new BoxSDK({
-      //   clientID: 'bob8ehwlaa6mthjlisu6giaf2h72t034',
-      //   clientSecret: 'oA4Px9RYSj1Pni1ZZ1cSIabNVwUuD99B'
-      // })
     }
   },
   components: {
     AudioPlayer
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST']),
-    loadTracks: function () {
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY']),
+    loadTracks: function() {
       this.tracks = [];
       db.collection("tracks").get()
         .then(querySnapshot => {
@@ -87,7 +83,46 @@ export default {
           this.$store.commit('UPDATE_LIKES', this.tracks[this.currentTrackIndexNumber].likes)
         });
     },
-    getTrackUrl: function () {
+    getUserTracks: function(metaData) {
+      let store = this.$store
+      let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
+      let self = this
+      usersRef.get().then(function(doc) {
+        let userTracks = doc.data().tracks
+        let trackData = []
+
+        store.commit("CLEAR_TRACKS_ARRAY", trackData)
+        userTracks.forEach(trackFilename => {
+          let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
+
+          trackRef.getMetadata().then(function(metadata) {
+            trackRef.getDownloadURL().then(trackURL => {
+              trackData.push({
+                metaData: {
+                  artist: metadata.customMetadata.artist,
+                  title: metadata.customMetadata.title,
+                },
+                downloadURL: trackURL
+              })
+              store.commit("UPDATE_TRACKS_ARRAY", trackData)
+            }).catch(function(error) {
+              console.error(error)
+            })
+          }).catch(function(error) {
+
+          });
+
+
+        })
+
+
+      }).catch(function(error) {
+        console.error("Error getting cached document:", error);
+      });
+
+
+    },
+    getTrackUrl: function() {
       let storageRef = firebase.storage().ref()
       // Create a reference to the file we want to download
       var starsRef = storageRef.child('tracks/Logic_-_44_More.mp3');
@@ -95,11 +130,11 @@ export default {
       console.log(starsRef.getMetadata())
 
       // Get the download URL
-      starsRef.getDownloadURL().then(function (url) {
+      starsRef.getDownloadURL().then(function(url) {
         console.log(url)
         this.trackurl = url
         // Insert url into an <img> tag to "download"
-      }).catch(function (error) {
+      }).catch(function(error) {
 
         // A full list of error codes is available at
         // https://firebase.google.com/docs/storage/web/handle-errors
@@ -122,7 +157,7 @@ export default {
         }
       });
     },
-    getTracks: function () {
+    getTracks: function() {
       // let client = this.sdk.getBasicClient('kQ2wdszzI69gnF0U4sYun9FIa0x3wJwu')
       // client.users.get(client.CURRENT_USER_ID, null, function (err, currentUser) {
       //   if (err) throw err;
@@ -137,24 +172,25 @@ export default {
         .then(res => res.json())
         .then(tracks => alert(tracks))
     },
-    previousTrack: function () {
+    previousTrack: function() {
       if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
       }
     },
-    nextTrack: function () {
+    nextTrack: function() {
       if (this.currentTrackIndexNumber < (this.tracks.length - 1)) {
         this.currentTrackIndexNumber++
       }
     },
-    changeTrack: function (artist, title) {
+    changeTrack: function(artist, title) {
       this.getTrackUrl()
       this.currentTrackIndexNumber = this.tracks.filter(track => track.title.toLowerCase() == title.toLowerCase() && track.artist.toLowerCase() == artist.toLowerCase())[0].trackIndex
       this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
     }
   },
   created() {
-    this.loadTracks()
+    // this.loadTracks()
+    // this.getUserTracks()
   },
   computed: {
     filteredList() {
@@ -163,7 +199,7 @@ export default {
     currentTrack() {
       return this.tracks[this.currentTrackIndexNumber]
     },
-    ...mapState(["trackList"])
+    ...mapState(['trackList', 'tracksArray'])
   }
 };
 </script>
@@ -259,10 +295,12 @@ export default {
   position: fixed;
   top: 100px;
 }
+
 .trackMenuIcon {
   text-align: center;
   background-color: red;
 }
+
 .musicContainer .content {
   height: 100%;
 }
