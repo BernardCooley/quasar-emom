@@ -204,16 +204,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-bottom: 1px solid lightgray;
 }
 
 .allTracksArtists {
-  font-size: 20px;
+  font-size: 16px;
   width: 60%;
   margin-right: 20px;
 }
 
 .allTracksTitles {
-  font-size: 15px;
+  font-size: 12px;
   width: 40%;
 }
 
