@@ -12,7 +12,7 @@
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
             <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.trackUrl' :artist='currentTrack.artist' :title='currentTrack.title' :artworkurl='currentTrack.artworkurl' :trackid='currentTrack.trackid' :uploadedby='currentTrack.uploadedBy'></audio-player>
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename'></audio-player>
             </div>
             <q-item class="trackControls">
               <q-btn class="trackControlButton" v-on:click="previousTrack">
@@ -27,17 +27,16 @@
         <div class="allTracksContainer">
           <q-list>
             <h3 class="trackListTitle">All tracks</h3>
-            <q-item class="row" v-for="(track, index) in tracksArray" :key="index">
-              <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.artist, track.title)">
-                <div class="allTracksArtists">{{track.artist}}</div>
-                <div class="allTracksTitles">{{track.title}}</div>
+            <q-item class="row" v-for="(track, index) in tracks" :key="index">
+              <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.metaData.artist, track.metaData.title)">
+                <div class="allTracksArtists">{{track.metaData.artist}}</div>
+                <div class="allTracksTitles">{{track.metaData.title}}</div>
               </div>
             </q-item>
           </q-list>
         </div>
       </div>
     </div>
-    <q-btn v-on:click="getUserTracks">Get tracks</q-btn>
   </div>
 </template>
 
@@ -102,12 +101,15 @@ export default {
                   artist: metadata.customMetadata.artist,
                   title: metadata.customMetadata.title,
                 },
-                downloadURL: trackURL
+                downloadURL: trackURL,
+                filename: trackFilename
               })
               store.commit("UPDATE_TRACKS_ARRAY", trackData)
             }).catch(function(error) {
               console.error(error)
             })
+            self.tracks = trackData
+            self.dataLoaded = true;
           }).catch(function(error) {
 
           });
@@ -127,11 +129,8 @@ export default {
       // Create a reference to the file we want to download
       var starsRef = storageRef.child('tracks/Logic_-_44_More.mp3');
 
-      console.log(starsRef.getMetadata())
-
       // Get the download URL
       starsRef.getDownloadURL().then(function(url) {
-        console.log(url)
         this.trackurl = url
         // Insert url into an <img> tag to "download"
       }).catch(function(error) {
@@ -190,14 +189,24 @@ export default {
   },
   created() {
     // this.loadTracks()
-    // this.getUserTracks()
+    this.getUserTracks()
   },
   computed: {
     filteredList() {
       return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
     },
     currentTrack() {
-      return this.tracks[this.currentTrackIndexNumber]
+      // return this.tracks[this.currentTrackIndexNumber]
+      // console.log(this.tracks[0])
+
+      // console.log(this.tracks[0])
+
+      // this.tracks.forEach(track => {
+      //   console.log(track.downloadURL)
+      // })
+
+
+      return this.tracks[0]
     },
     ...mapState(['trackList', 'tracksArray'])
   }

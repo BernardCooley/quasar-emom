@@ -63,7 +63,7 @@ const store = new Vuex.Store({
             state.fileUploadPercentage = value
         },
         UPDATE_TRACKS_ARRAY(state, value) {
-            state.tracksArray.push(value)
+            state.tracksArray = value
         },
         CLEAR_TRACKS_ARRAY(state, value) {
             state.tracksArray = []

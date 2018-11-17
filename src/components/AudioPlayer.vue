@@ -1,6 +1,6 @@
 <template>
   <div class="audioPlayerContainer">
-    <track-actions-modal />
+    <!--<track-actions-modal />-->
     <q-card inline class="audioCard no-shadow">
       <q-card-title class="titleAndArtist row">
         <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
@@ -42,9 +42,6 @@
             <i v-else class="fas fa-redo-alt audioControl"></i>
           </a>
           <a class="audioControl" v-on:click="favourite">
-            <i class="fas fa-heart"></i>
-          </a>
-          <a class="audioControl" v-on:click="getTrackUrl">
             <i class="fas fa-heart"></i>
           </a>
         </div>
@@ -234,11 +231,11 @@ export default {
     this.innerLoop = this.loop;
   },
   mounted() {
-    db.collection("users").where("userID", "==", this.uploadedby).get().then(snapshot => {
-      snapshot.forEach(doc => {
-        this.uploadedByName = doc.data().artistName
-      })
-    })
+    // db.collection("users").where("userID", "==", this.uploadedby).get().then(snapshot => {
+    //   snapshot.forEach(doc => {
+    //     this.uploadedByName = doc.data().artistName
+    //   })
+    // })
 
     this.audio = this.$el.querySelectorAll("audio")[0];
     this.audio.addEventListener("timeupdate", this.update);
