@@ -17,12 +17,12 @@
           </q-item>
           <q-item>
             <q-field label="Artwork Url (optional)">
-              <q-input id="artworkUrl" v-model="track.artworkUrl.value" />
+              <input type="file" ref="artworkUpload" multiple @change="getArtworkFile" class="input-file">
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Upload Track">
-              <input type="file" ref="trackUpload" multiple @change="getUploadFile" class="input-file">
+              <input type="file" ref="trackUpload" multiple @change="getAudioFile" class="input-file">
             </q-field>
           </q-item>
         </q-list>
@@ -30,7 +30,7 @@
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
 
-        <q-btn v-if="!uploadingFile" v-on:click="uploadFile(fileToUpload)">Upload</q-btn>
+        <q-btn v-if="!uploadingFile" v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
         <q-btn v-if="uploadingFile && !completedUpload" v-on:click="cancelUpload">Cancel</q-btn>
         <div class="uploadCompleteContainer" v-if="uploadComplete">
           <div class="uploadSuccessMessage">Upload Complete</div>
@@ -48,7 +48,7 @@ import { mapMutations, mapState } from "vuex"
 
 export default {
   name: "add-track",
-  data: function() {
+  data: function () {
     return {
       track: {
         artist: { value: null, errorMessage: '' },
@@ -59,8 +59,9 @@ export default {
       userID: null,
       addTrackMessage: null,
       trackUpload: null,
-      fileToUpload: null,
-      uploadTask: null,
+      audioFileToUpload: null,
+      artworkFileToUpload: null,
+      uploadAudioTask: null,
       fileUploading: false,
       completedUpload: false
     };
@@ -76,7 +77,7 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE']),
-    validation: function(e) {
+    validation: function (e) {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
       } else {
@@ -97,19 +98,23 @@ export default {
         }
       }
     },
-    getUploadFile: function() {
-      this.fileToUpload = this.$refs.trackUpload.files[0]
+    getArtworkFile: function () {
+      this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
     },
-    doesFileExist: function() {
-      firebase.storage().ref().child('tracks/' + this.fileToUpload.name).getDownloadURL().then(function() {
+    getAudioFile: function () {
+      this.audioFileToUpload = this.$refs.trackUpload.files[0]
+    },
+    doesFileExist: function () {
+      firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(function () {
         return true
-      }).catch(function() {
+      }).catch(function () {
         return false
       })
     },
-    uploadFile: function(fileToUpload) {
+    uploadFile: function (audioFileToUpload, artworkFileToUpload) {
       let self = this
-      this.fileToUpload = fileToUpload
+      this.audioFileToUpload = audioFileToUpload
+      this.artworkFileToUpload = artworkFileToUpload
       let store = this.$store
 
       if (!this.validation()) {
@@ -118,20 +123,27 @@ export default {
           self.fileUploading = true
           let storageRef = firebase.storage().ref()
           let tracksRef = storageRef.child('tracks')
-          let focusedTrack = tracksRef.child(fileToUpload.name)
+          let artworkRef = storageRef.child('artwork')
+          let focusedTrack = tracksRef.child(audioFileToUpload.name)
+          let artworkName = ''
+          if (artworkFileToUpload) {
+            let focusedArtwork = artworkRef.child(artworkFileToUpload.name)
+            this.uploadArtworkTask = focusedArtwork.put(artworkFileToUpload)
+            artworkName = artworkFileToUpload.name
+          }
 
-          var metadata = {
+          var audioMetadata = {
             customMetadata: {
               'artist': this.track.artist.value,
               'title': this.track.title.value,
-              'artworkUrl': this.track.artworkUrl.value,
-              'uploadedBy': firebase.auth().currentUser.uid
+              'uploadedBy': firebase.auth().currentUser.uid,
+              'artworkName': artworkName
             }
           }
 
-          this.uploadTask = focusedTrack.put(fileToUpload, metadata)
+          this.uploadAudioTask = focusedTrack.put(audioFileToUpload, audioMetadata)
 
-          this.uploadTask.on('state_changed',
+          this.uploadAudioTask.on('state_changed',
             function progress(snapshot) {
               store.commit("UPDATE_FILE_UPLOAD_PERCENTAGE", Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100))
             },
@@ -141,17 +153,17 @@ export default {
             function complete() {
               console.log('Upload Complete')
               self.completedUpload = true
-              self.updateUserAccount(self.fileToUpload.name)
+              self.updateUserAccount(self.audioFileToUpload.name)
             }
           )
         }
       }
     },
-    cancelUpload: function() {
-      this.uploadTask.cancel()
+    cancelUpload: function () {
+      this.uploadAudioTask.cancel()
       this.resetForm()
     },
-    resetForm: function() {
+    resetForm: function () {
       this.fileUploading = false
       this.completedUpload = false
       this.track = {
@@ -161,18 +173,26 @@ export default {
         uploadedBy: { value: null }
       }
     },
-    updateUserAccount: function(fileName) {
+    updateUserAccount: function (fileName) {
+      console.log(firebase.auth().currentUser.uid)
       let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
 
-      usersRef.get().then(function(doc) {
+      usersRef.get().then(function (doc) {
         let tracks = doc.data().tracks
+        console.log('tracks: ', tracks)
 
-        tracks.push(fileName)
+        if (tracks) {
+          tracks.push(fileName)
+          usersRef.update({
+            tracks: tracks
+          })
+        } else {
+          usersRef.update({
+            tracks: [fileName]
+          })
+        }
 
-        usersRef.update({
-          tracks: tracks
-        })
-      }).catch(function(error) {
+      }).catch(function (error) {
         console.error("Error getting cached document:", error);
       });
     }

@@ -49,7 +49,7 @@ import { mapMutations, mapState } from "vuex"
 
 export default {
   name: "music",
-  data: function() {
+  data: function () {
     return {
       tracks: [],
       dataLoaded: false,
@@ -63,11 +63,11 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY']),
-    getUserTracks: function(metaData) {
+    getUserTracks: function (metaData) {
       let store = this.$store
       let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
       let self = this
-      usersRef.get().then(function(doc) {
+      usersRef.get().then(function (doc) {
         let userTracks = doc.data().tracks
         let trackData = []
 
@@ -75,7 +75,7 @@ export default {
         userTracks.forEach(trackFilename => {
           let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
 
-          trackRef.getMetadata().then(function(metadata) {
+          trackRef.getMetadata().then(function (metadata) {
             trackRef.getDownloadURL().then(trackURL => {
               trackData.push({
                 metaData: {
@@ -86,12 +86,12 @@ export default {
                 filename: trackFilename
               })
               store.commit("UPDATE_TRACKS_ARRAY", trackData)
-            }).catch(function(error) {
+            }).catch(function (error) {
               console.error(error)
             })
             self.tracks = trackData
             self.dataLoaded = true;
-          }).catch(function(error) {
+          }).catch(function (error) {
 
           });
 
@@ -99,25 +99,25 @@ export default {
         })
 
 
-      }).catch(function(error) {
+      }).catch(function (error) {
         console.error("Error getting cached document:", error);
       });
 
 
     },
-    previousTrack: function() {
+    previousTrack: function () {
       if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
       }
     },
-    nextTrack: function() {
+    nextTrack: function () {
       if (this.currentTrackIndexNumber < (this.tracks.length - 1)) {
         this.currentTrackIndexNumber++
       }
     },
-    changeTrack: function(filename) {
+    changeTrack: function (filename) {
       this.tracks.forEach((track, index) => {
-        if(track.filename === filename) {
+        if (track.filename === filename) {
           this.currentTrackIndexNumber = index
         }
       })
