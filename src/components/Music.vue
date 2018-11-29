@@ -12,7 +12,7 @@
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
             <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename'></audio-player>
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename' :artworkname='currentTrack.metaData.artworkname'></audio-player>
             </div>
             <q-item class="trackControls">
               <q-btn class="trackControlButton" v-on:click="previousTrack">
@@ -81,6 +81,7 @@ export default {
                 metaData: {
                   artist: metadata.customMetadata.artist,
                   title: metadata.customMetadata.title,
+                  artworkname: metadata.customMetadata.artworkName
                 },
                 downloadURL: trackURL,
                 filename: trackFilename
@@ -94,11 +95,7 @@ export default {
           }).catch(function (error) {
 
           });
-
-
         })
-
-
       }).catch(function (error) {
         console.error("Error getting cached document:", error);
       });

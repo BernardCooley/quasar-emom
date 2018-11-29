@@ -20,7 +20,7 @@
             <div class="player-time-total">{{ durationTime }}</div>
           </div>
           <div class="artworkContainer">
-            <img v-bind:src="artworkurl">
+            <!-- <img v-bind:src="artworkurl"> -->
           </div>
         </div>
         <audio v-bind:loop="innerLoop" ref="player" preload="auto" style="display: none;">
@@ -88,7 +88,7 @@ export default {
       type: String,
       default: null
     },
-    artworkurl: {
+    artworkname: {
       type: String,
       default: null
     },
