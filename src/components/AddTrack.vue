@@ -5,24 +5,43 @@
         <q-list v-if="!uploadingFile">
           <q-item>
             <q-field label="Artist">
-              <q-input id="artist" v-model="track.artist.value" />
+              <q-input
+                id="artist"
+                v-model="track.artist.value"
+              />
               <div class="validationMessage">{{track.artist.errorMessage}}</div>
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Title">
-              <q-input id="trackTitle" v-model="track.title.value" />
+              <q-input
+                id="trackTitle"
+                v-model="track.title.value"
+              />
               <div class="validationMessage">{{track.title.errorMessage}}</div>
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Artwork Url (optional)">
-              <input type="file" ref="artworkUpload" multiple @change="getArtworkFile" class="input-file">
+              <input
+                type="file"
+                ref="artworkUpload"
+                multiple
+                @change="getSelectedFile('artwork')"
+                class="input-file"
+              >
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Upload Track">
-              <input type="file" ref="trackUpload" multiple @change="getAudioFile" class="input-file">
+              <input
+                type="file"
+                ref="trackUpload"
+                multiple
+                @change="getSelectedFile('audio')"
+                class="input-file"
+              >
+              <div class="validationMessage">{{track.uploadFile.errorMessage}}</div>
             </q-field>
           </q-item>
         </q-list>
@@ -30,9 +49,18 @@
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
 
-        <q-btn v-if="!uploadingFile" v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
-        <q-btn v-if="uploadingFile && !completedUpload" v-on:click="cancelUpload">Cancel</q-btn>
-        <div class="uploadCompleteContainer" v-if="uploadComplete">
+        <q-btn
+          v-if="!uploadingFile"
+          v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)"
+        >Upload</q-btn>
+        <q-btn
+          v-if="uploadingFile && !completedUpload"
+          v-on:click="cancelUpload"
+        >Cancel</q-btn>
+        <div
+          class="uploadCompleteContainer"
+          v-if="uploadComplete"
+        >
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click="resetForm">Upload Another Track</q-btn>
         </div>
@@ -53,6 +81,7 @@ export default {
       track: {
         artist: { value: null, errorMessage: '' },
         title: { value: null, errorMessage: '' },
+        uploadFile: { value: null, errorMessage: '' },
         artworkUrl: { value: null },
         uploadedBy: { value: null }
       },
@@ -90,6 +119,12 @@ export default {
         this.track.title.errorMessage = ''
       }
 
+      if (!this.track.uploadFile.value) {
+        this.track.uploadFile.errorMessage = 'File is required.'
+      } else {
+        this.track.uploadFile.errorMessage = ''
+      }
+
       for (var x in this.track) {
         if (this.track[x].errorMessage.length > 0) {
           return true
@@ -98,14 +133,22 @@ export default {
         }
       }
     },
-    getArtworkFile: function () {
-      this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
+    getSelectedFile: function (fileType) {
+      if (fileType === 'audio') {
+        this.audioFileToUpload = this.$refs.trackUpload.files[0]
+      } else if (fileType === 'artwork') {
+        this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
+      }
     },
-    getAudioFile: function () {
-      this.audioFileToUpload = this.$refs.trackUpload.files[0]
-    },
-    doesFileExist: function () {
-      firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(function () {
+    doesFileExist: function (fileType, fileName) {
+      let ref = null
+      if (fileType === 'audio') {
+        ref = 'tracks/' + fileName
+      } else if (fileType === 'artwork') {
+        ref = 'artwork/' + fileName
+      }
+
+      firebase.storage().ref().child('tracks/6LACK_-_Cutting_Ties.mp3').getDownloadURL().then(function () {
         return true
       }).catch(function () {
         return false
@@ -118,17 +161,18 @@ export default {
       let store = this.$store
 
       if (!this.validation()) {
-        if (!this.doesFileExist()) {
+        firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(function () {
+          console.log('Already exists')
+        }).catch(() => {
           self.completedUpload = false
           self.fileUploading = true
           let storageRef = firebase.storage().ref()
-          let tracksRef = storageRef.child('tracks')
-          let artworkRef = storageRef.child('artwork')
-          let focusedTrack = tracksRef.child(audioFileToUpload.name)
+          let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
           let artworkName = ''
+
           if (artworkFileToUpload) {
-            let focusedArtwork = artworkRef.child(artworkFileToUpload.name)
-            this.uploadArtworkTask = focusedArtwork.put(artworkFileToUpload)
+            let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
+            focusedArtwork.put(artworkFileToUpload)
             artworkName = artworkFileToUpload.name
           }
 
@@ -156,12 +200,24 @@ export default {
               self.updateUserAccount(self.audioFileToUpload.name)
             }
           )
-        }
+        })
       }
     },
     cancelUpload: function () {
+      this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
       this.uploadAudioTask.cancel()
       this.resetForm()
+    },
+    deleteFile: function (fileReference) {
+      if (fileReference) {
+        fileReference.delete().then(function () {
+          console.log('file deleted successfully ')
+        }).catch(function (error) {
+          console.error('error while deleting file')
+        })
+      } else {
+        console.log('File does not exist')
+      }
     },
     resetForm: function () {
       this.fileUploading = false
@@ -169,17 +225,17 @@ export default {
       this.track = {
         artist: { value: null, errorMessage: '' },
         title: { value: null, errorMessage: '' },
+        uploadFile: { value: null, errorMessage: '' },
         artworkUrl: { value: null },
         uploadedBy: { value: null }
       }
     },
     updateUserAccount: function (fileName) {
-      console.log(firebase.auth().currentUser.uid)
+      console.log('User: ', firebase.auth().currentUser.uid)
       let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
 
       usersRef.get().then(function (doc) {
         let tracks = doc.data().tracks
-        console.log('tracks: ', tracks)
 
         if (tracks) {
           tracks.push(fileName)
@@ -193,7 +249,7 @@ export default {
         }
 
       }).catch(function (error) {
-        console.error("Error getting cached document:", error);
+        console.log("Error getting document:", error);
       });
     }
   }
