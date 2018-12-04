@@ -1,24 +1,38 @@
 <template>
   <div class="musicContainer">
 
-    <div class="content" v-if="dataLoaded">
+    <div
+      class="content"
+      v-if="dataLoaded"
+    >
       <div class="pageContainer">
-
-        <!-- <q-item class="searchContainer">
-                    <q-field class="inputField" label="Search" error-label="">
-                      <q-input type="text" v-model="search"/>
-                    </q-field>
-                  </q-item> -->
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
-            <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename' :artworkname='currentTrack.metaData.artworkname'></audio-player>
+            <div
+              id="audio"
+              class="player-wrapper"
+            >
+              <audio-player
+                :currenttracknumber='currentTrackIndexNumber+1'
+                :totaltracks='tracks.length'
+                :trackurl='currentTrack.downloadURL'
+                :artist='currentTrack.metaData.artist'
+                :title='currentTrack.metaData.title'
+                :trackid='currentTrack.filename'
+                :artworkurl='currentTrack.metaData.artworkUrl'
+              ></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn class="trackControlButton" v-on:click="previousTrack">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="previousTrack"
+              >
                 <i class="fas fa-fast-backward"></i>
               </q-btn>
-              <q-btn class="trackControlButton" v-on:click="nextTrack">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="nextTrack"
+              >
                 <i class="fas fa-fast-forward"></i>
               </q-btn>
             </q-item>
@@ -27,8 +41,15 @@
         <div class="allTracksContainer">
           <q-list>
             <h3 class="trackListTitle">All tracks</h3>
-            <q-item class="row" v-for="(track, index) in tracks" :key="index">
-              <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.filename)">
+            <q-item
+              class="row"
+              v-for="(track, index) in tracks"
+              :key="index"
+            >
+              <div
+                class="allTracksArtistAndTitle col-11"
+                v-on:click="changeTrack(track.filename)"
+              >
                 <div class="allTracksArtists">{{track.metaData.artist}}</div>
                 <div class="allTracksTitles">{{track.metaData.title}}</div>
               </div>
@@ -74,21 +95,24 @@ export default {
         store.commit("CLEAR_TRACKS_ARRAY", trackData)
         userTracks.forEach(trackFilename => {
           let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
-
           trackRef.getMetadata().then(function (metadata) {
-            trackRef.getDownloadURL().then(trackURL => {
-              trackData.push({
-                metaData: {
-                  artist: metadata.customMetadata.artist,
-                  title: metadata.customMetadata.title,
-                  artworkname: metadata.customMetadata.artworkName
-                },
-                downloadURL: trackURL,
-                filename: trackFilename
+            let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
+
+            artworkRef.getDownloadURL().then(artworkUrl => {
+              trackRef.getDownloadURL().then(trackURL => {
+                trackData.push({
+                  metaData: {
+                    artist: metadata.customMetadata.artist,
+                    title: metadata.customMetadata.title,
+                    artworkUrl: artworkUrl
+                  },
+                  downloadURL: trackURL,
+                  filename: trackFilename
+                })
+                store.commit("UPDATE_TRACKS_ARRAY", trackData)
+              }).catch(function (error) {
+                console.log(error)
               })
-              store.commit("UPDATE_TRACKS_ARRAY", trackData)
-            }).catch(function (error) {
-              console.error(error)
             })
             self.tracks = trackData
             self.dataLoaded = true;
@@ -97,10 +121,8 @@ export default {
           });
         })
       }).catch(function (error) {
-        console.error("Error getting cached document:", error);
+        console.log("Error getting cached document:", error);
       });
-
-
     },
     previousTrack: function () {
       if (this.currentTrackIndexNumber > 0) {

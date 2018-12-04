@@ -4,14 +4,29 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field class="inputField" label="Email" error-label="">
-              <q-input id="email" v-model="user.email.value" />
+            <q-field
+              class="inputField"
+              label="Email"
+              error-label=""
+            >
+              <q-input
+                id="email"
+                v-model="user.email.value"
+              />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field class="inputField" label="Password" error-label="">
-              <q-input type="password" id="password" v-model="user.password.value" />
+            <q-field
+              class="inputField"
+              label="Password"
+              error-label=""
+            >
+              <q-input
+                type="password"
+                id="password"
+                v-model="user.password.value"
+              />
             </q-field>
           </q-item>
           <q-btn v-on:click="login">Log In</q-btn>
@@ -88,6 +103,7 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", 'music')
             this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
+            console.log('User: ', firebase.auth().currentUser.uid, ' logged in')
           });
       }
     }

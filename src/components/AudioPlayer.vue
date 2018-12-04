@@ -1,47 +1,93 @@
 <template>
   <div class="audioPlayerContainer">
-    <!--<track-actions-modal />-->
-    <q-card inline class="audioCard no-shadow">
-      <q-card-title class="titleAndArtist row">
+    <q-card
+      inline
+      class="audioCard no-shadow"
+    >
+      <q-card-title
+        class="titleAndArtist row"
+        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')', backgroundSize: '100% 100%', height: '400px'}"
+      >
         <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
-        <div class="col-8">
+        <div class="col-8 trackInfo">
           <div class="artist">{{artist}}</div>
           <div class="title">{{title}}</div>
         </div>
-        <i class="fas fa-ellipsis-v trackInfoIcon col-2" v-on:click="openTrackActionsModal"></i>
+        <i
+          class="fas fa-ellipsis-v trackInfoIcon col-2"
+          v-on:click="openTrackActionsModal"
+        ></i>
       </q-card-title>
       <q-card-main v-if="true">
         <div>
-          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
-            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
+          <div
+            v-on:click="seek"
+            class="player-progress"
+            title="Time played : Total time"
+          >
+            <div
+              :style="{ width: this.percentComplete + '%' }"
+              class="player-seeker"
+            ></div>
           </div>
           <div class="player-time">
             <div class="player-time-current">{{ currentTime }}</div>
             <div class="player-time-total">{{ durationTime }}</div>
           </div>
-          <div class="artworkContainer">
-            <!-- <img v-bind:src="artworkurl"> -->
-          </div>
         </div>
-        <audio v-bind:loop="innerLoop" ref="player" preload="auto" style="display: none;">
-          <source v-bind:src="trackurl">
+        <audio
+          :loop="innerLoop"
+          ref="player"
+          preload="auto"
+          style="display: none;"
+        >
+          <source :src="trackurl">
         </audio>
       </q-card-main>
-      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
+      <q-chip
+        class="unsupportedFormatMessage"
+        v-else
+      >Unsupported format</q-chip>
       <q-card-actions>
         <div class="row audioActions justify-between">
-          <a class="audioControl" v-on:click.prevent="playing = !playing" title="Play/Pause">
-            <i v-if="!playing" class="fas fa-play audioControl"></i>
-            <i v-else class="fas fa-pause"></i>
+          <a
+            class="audioControl"
+            v-on:click.prevent="playing = !playing"
+            title="Play/Pause"
+          >
+            <i
+              v-if="!playing"
+              class="fas fa-play audioControl"
+            ></i>
+            <i
+              v-else
+              class="fas fa-pause"
+            ></i>
           </a>
-          <a class="audioControl" v-on:click.prevent="stop" title="Stop">
+          <a
+            class="audioControl"
+            v-on:click.prevent="stop"
+            title="Stop"
+          >
             <i class="fas fa-stop audioControl"></i>
           </a>
-          <a class="audioControl" v-on:click.prevent="innerLoop = !innerLoop">
-            <i v-if="innerLoop" class="fas fa-redo-alt audioControl"></i>
-            <i v-else class="fas fa-redo-alt audioControl"></i>
+          <a
+            class="audioControl"
+            v-on:click.prevent="innerLoop = !innerLoop"
+          >
+            <i
+              v-if="innerLoop"
+              class="fas fa-redo-alt audioControl"
+            ></i>
+            <i
+              v-else
+              class="fas fa-redo-alt audioControl"
+            ></i>
           </a>
-          <a class="audioControl" v-on:click="favourite">
+          <a
+            class="audioControl"
+            v-on:click="favourite"
+          >
             <i class="fas fa-heart"></i>
           </a>
         </div>
@@ -88,7 +134,7 @@ export default {
       type: String,
       default: null
     },
-    artworkname: {
+    artworkurl: {
       type: String,
       default: null
     },
@@ -118,6 +164,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(['loggedInUser', 'currentTrack', 'loggedInUserId', 'artworkUrl']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },
@@ -130,9 +177,11 @@ export default {
     muted() {
       return this.volume / 100 === 0;
     },
-    ...mapState(["loggedInUser", "currentTrack", "loggedInUserId"]),
-    isFileATrack: function () {
-      return this.trackurl.endsWith(".mp3") || this.track.endsWith(".wav") || this.track.endsWith(".aif") ? true : false;
+    isFileATrack() {
+      return this.trackurl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
+    },
+    artworkURL() {
+      return this.artworkurl
     }
   },
   watch: {
@@ -148,7 +197,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL']),
     showTrackDetails() {
       this.$store.commit("UPDATE_TRACK_DETAILS_POPOVER", true)
     },
@@ -364,10 +413,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   background: rgba(13, 13, 13, 0);
 }
 
-.artworkContainer {
-  width: 200px;
-}
-
 .player {
   border: 1px solid $player-border-color;
   border-radius: 5px;
@@ -488,5 +533,19 @@ input[type="range"].slider:focus::-ms-fill-upper {
 
 .trackDetailsPopoverContainer {
   width: 80%;
+}
+
+.artworkImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.trackInfo {
+  background-color: rgba(140, 140, 140, 0.856);
+  border-radius: 10px;
+  padding: 5px;
+  color: white;
+  width: 50%;
 }
 </style>
