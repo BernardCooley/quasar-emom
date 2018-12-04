@@ -6,7 +6,7 @@
     >
       <q-card-title
         class="titleAndArtist row"
-        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')', backgroundSize: '100% 100%', height: '400px'}"
+        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
       >
         <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
         <div class="col-8 trackInfo">
@@ -507,6 +507,11 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .titleAndArtist {
+  background-size: 100% 100%;
+  height: 400px;
+  background-repeat: no-repeat;
+  background-position: center;
+
   .artist {
     font-size: 22px;
     font-weight: bold;
