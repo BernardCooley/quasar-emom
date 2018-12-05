@@ -129,17 +129,19 @@ export default {
       db.collection("users").get().then(users => {
         users.docs.map(user => {
           let tracks = user.data().tracks
-          allTrackNames = [...allTrackNames, ...tracks]
+          if(tracks.length > 0) {
+            allTrackNames = [...tracks, ...allTrackNames]
+          }
         })
+      this.getTracks(allTrackNames)
       })
-      console.log(allTrackNames)
-      return allTrackNames
     },
-    getAllTracks: function (allTrackNames) {
-      console.log(allTrackNames)
+    getTracks: function (trackNames) {
       let store = this.$store
       let self = this
-      allTrackNames.forEach(trackFilename => {
+      let trackData = []
+      store.commit("CLEAR_TRACKS_ARRAY", trackData)
+      trackNames.forEach(trackFilename => {
         let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
         trackRef.getMetadata().then(function (metadata) {
           let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
@@ -161,7 +163,6 @@ export default {
             })
           })
           self.tracks = trackData
-          console.log(self.tracks)
           self.dataLoaded = true;
         }).catch(function (error) {
 
@@ -188,15 +189,13 @@ export default {
     }
   },
   created() {
-    // this.getUserTracks()
-    this.getAllTracks(this.getAllTrackNames())
+    this.getAllTrackNames()
   },
   computed: {
     filteredList() {
       return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
     },
     currentTrack() {
-      console.log(this.tracks)
       return this.tracks[this.currentTrackIndexNumber]
     },
     ...mapState(['trackList'])
