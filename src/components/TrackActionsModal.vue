@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-modal
-      :content-css="{width: '50%', height: '50%', background: 'rgba(184, 202, 185, 0.90)'}"
+      :content-css="{width: '50%', height: '50%', background: 'rgba(140, 140, 140, 0.856)'}"
       class="trackActionsModal"
       transition
       v-model="trackActionsModalOpen"
@@ -13,9 +13,6 @@
       <div class="modalContent">
         <q-list>
           Likes: {{likes}}
-          <a v-on:click="showUsersTracks('otherUsers'); closeModal();">
-            <q-item class="menuItem">View user's tracks</q-item>
-          </a>
           <a v-on:click="showUsersTracks('yours'); closeModal();">
             <q-item class="menuItem">View your tracks</q-item>
           </a>
@@ -106,8 +103,8 @@ export default {
         })
     },
     downloadTrack: function () {
-      this.stop();
-      window.open(this.currentTrack.trackUrl, "download");
+      this.stop()
+      window.open(this.currentTrack.trackUrl, 'download')
     }
   },
   computed: {
@@ -130,11 +127,12 @@ export default {
 }
 
 .trackActionsModal {
-  background-color: rgba(184, 202, 185, 0.72);
+  background-color: rgba(140, 140, 140, 0.856);
 }
 
 .modalContent {
   padding: 40px 30px;
+  color: white;
 }
 
 .menuItem {

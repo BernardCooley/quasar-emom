@@ -58,6 +58,7 @@ export default {
     z-index: 1;
     width: 100%;
     height: 60px;
+    background: rgba(140, 140, 140, 0.856)
 }
 
 .bg-primary {

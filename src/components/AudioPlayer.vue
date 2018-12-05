@@ -1,97 +1,52 @@
 <template>
   <div class="audioPlayerContainer">
     <track-actions-modal></track-actions-modal>
-    <q-card
-      inline
-      class="audioCard no-shadow"
-    >
-      <q-card-title
-        class="titleAndArtist row"
-        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
-      >
-        <div class="col-8 trackInfo">
-          <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
-          <div class="col-8">
+    <q-card inline class="audioCard no-shadow">
+      <q-card-title class="titleAndArtist" v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}">
+        <div class=" trackInfo">
+          <div class="">{{currenttracknumber}}/{{totaltracks}}</div>
+          <div class="">
             <div class="artist">{{artist}}</div>
             <div class="title">{{title}}</div>
           </div>
-          <i
-            class="fas fa-ellipsis-v trackInfoIcon col-2"
-            v-on:click="openTrackActionsModal"
-          ></i>
+          <i class="fas fa-ellipsis-v trackInfoIcon " v-on:click="openTrackActionsModal"></i>
         </div>
       </q-card-title>
       <q-card-main v-if="true">
-        <div>
-          <div
-            v-on:click="seek"
-            class="player-progress"
-            title="Time played : Total time"
-          >
-            <div
-              :style="{ width: this.percentComplete + '%' }"
-              class="player-seeker"
-            ></div>
+        <div class="trackProgress">
+          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
+            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
           </div>
           <div class="player-time">
             <div class="player-time-current">{{ currentTime }}</div>
             <div class="player-time-total">{{ durationTime }}</div>
           </div>
         </div>
-        <audio
-          :loop="innerLoop"
-          ref="player"
-          preload="auto"
-          style="display: none;"
-        >
+        <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
           <source :src="trackurl">
         </audio>
       </q-card-main>
-      <q-chip
-        class="unsupportedFormatMessage"
-        v-else
-      >Unsupported format</q-chip>
+      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
       <q-card-actions>
-        <div class="row audioActions justify-between">
-          <a
-            class="audioControl"
-            v-on:click.prevent="playing = !playing"
-            title="Play/Pause"
-          >
-            <i
-              v-if="!playing"
-              class="fas fa-play audioControl"
-            ></i>
-            <i
-              v-else
-              class="fas fa-pause"
-            ></i>
+        <div class="audioActions">
+          <a v-on:click.prevent="stop" title="Stop">
+            <img class="audioControl" v-if="!playing" src="assets/icons/stop-inactive.svg">
+            <img class="audioControl" v-else src="assets/icons/stop-active.svg">
           </a>
-          <a
-            class="audioControl"
-            v-on:click.prevent="stop"
-            title="Stop"
-          >
-            <i class="fas fa-stop audioControl"></i>
+          <a v-on:click.prevent="innerLoop = !innerLoop">
+            <img class="audioControl" v-if="!innerLoop" src="assets/icons/repeat-inactive.svg">
+            <img class="audioControl" v-else src="assets/icons/repeat-active.svg">
           </a>
-          <a
-            class="audioControl"
-            v-on:click.prevent="innerLoop = !innerLoop"
-          >
-            <i
-              v-if="innerLoop"
-              class="fas fa-redo-alt audioControl"
-            ></i>
-            <i
-              v-else
-              class="fas fa-redo-alt audioControl"
-            ></i>
+          <a v-on:click.prevent="playing = !playing" title="Play/Pause">
+            <img class="audioControl playPause" v-if="!playing" src="assets/icons/play.svg">
+            <img class="audioControl playPause" v-else src="assets/icons/pause.svg">
           </a>
-          <a
-            class="audioControl"
-            v-on:click="favourite"
-          >
-            <i class="fas fa-heart"></i>
+          <a v-on:click="favourite">
+            <img class="audioControl" v-if="!favourited" src="assets/icons/favorite.svg">
+            <img class="audioControl" v-else src="assets/icons/favorited.svg">
+          </a>
+          <a v-on:click.prevent="download">
+            <img class="audioControl" src="assets/icons/download.svg">
           </a>
         </div>
       </q-card-actions>
@@ -152,7 +107,7 @@ export default {
       default: null
     }
   },
-  data: function () {
+  data: function() {
     return {
       audio: undefined,
       currentSeconds: 0,
@@ -242,7 +197,7 @@ export default {
     update(e) {
       this.currentSeconds = parseInt(this.audio.currentTime);
     },
-    favourite: function () {
+    favourite() {
       let favourites = [];
 
       db.collection('users').where("userID", "==", this.loggedInUserId).get()
@@ -275,7 +230,7 @@ export default {
           })
         })
     },
-    openTrackActionsModal: function () {
+    openTrackActionsModal() {
       console.log('openTrackActionsModal CLICKED')
       this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     }
@@ -317,8 +272,10 @@ body {
 }
 
 $player-background: #f4f4f4;
-$player-border-color: darken($player-background, 12%);
-$player-link-color: darken($player-background, 75%);
+$player-border-color: darken($player-background,
+12%);
+$player-link-color: darken($player-background,
+75%);
 $player-progress-color: $player-border-color;
 $player-seeker-color: $player-link-color;
 $player-text-color: $player-link-color;
@@ -333,19 +290,22 @@ input[type="range"].slider {
   width: 100%;
   margin: 0.9px 0;
 }
+
 input[type="range"].slider:focus {
   outline: none;
 }
+
 input[type="range"].slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 9.2px;
   cursor: pointer;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-    0px 0px 0px rgba(13, 13, 13, 0.41);
+  0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
+
 input[type="range"].slider::-webkit-slider-thumb {
   border: 0px solid #ffffff;
   height: 11px;
@@ -356,19 +316,22 @@ input[type="range"].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -0.9px;
 }
+
 input[type="range"].slider:focus::-webkit-slider-runnable-track {
   background: rgba(13, 13, 13, 0);
 }
+
 input[type="range"].slider::-moz-range-track {
   width: 100%;
   height: 9.2px;
   cursor: pointer;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-    0px 0px 0px rgba(13, 13, 13, 0.41);
+  0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
+
 input[type="range"].slider::-moz-range-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
@@ -378,6 +341,7 @@ input[type="range"].slider::-moz-range-thumb {
   background: rgba(0, 0, 0, 0.97);
   cursor: pointer;
 }
+
 input[type="range"].slider::-ms-track {
   width: 100%;
   height: 9.2px;
@@ -386,20 +350,23 @@ input[type="range"].slider::-ms-track {
   border-color: transparent;
   color: transparent;
 }
+
 input[type="range"].slider::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-    0px 0px 0px rgba(13, 13, 13, 0.41);
+  0px 0px 0px rgba(13, 13, 13, 0.41);
 }
+
 input[type="range"].slider::-ms-fill-upper {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-    0px 0px 0px rgba(13, 13, 13, 0.41);
+  0px 0px 0px rgba(13, 13, 13, 0.41);
 }
+
 input[type="range"].slider::-ms-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
@@ -410,9 +377,11 @@ input[type="range"].slider::-ms-thumb {
   cursor: pointer;
   height: 9.2px;
 }
+
 input[type="range"].slider:focus::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
 }
+
 input[type="range"].slider:focus::-ms-fill-upper {
   background: rgba(13, 13, 13, 0);
 }
@@ -430,7 +399,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 .player-controls {
   display: flex;
 
-  > div {
+  >div {
     border-right: 1px solid $player-border-color;
 
     &:last-child {
@@ -481,13 +450,21 @@ input[type="range"].slider:focus::-ms-fill-upper {
 .audioActions {
   width: 100%;
   margin: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .audioControl {
-  font-size: 25px;
-  color: #333333;
-  // width: 70%;
-  text-align: center;
+  height: 30px;
+}
+
+.trackProgress {
+  margin-top: 20px;
+}
+
+.playPause {
+  height: 60px;
 }
 
 .audioPlayerContainer {
