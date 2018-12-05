@@ -20,11 +20,15 @@
         </div>
         <div class="allTracksContainer">
           <q-list>
-            <h3 class="trackListTitle">All tracks</h3>
-            <q-item class="row" v-for="(track, index) in tracks" :key="index">
-              <div class="allTracksArtistAndTitle col-11" v-on:click="changeTrack(track.filename)">
-                <div class="allTracksArtists">{{track.metaData.artist}}</div>
-                <div class="allTracksTitles">{{track.metaData.title}}</div>
+            <q-item class="" v-for="(track, index) in tracks" :key="index">
+              <div class="allTracksArtistAndTitle">
+              <div class="" v-on:click="changeTrack(track.filename)">
+                <div class="trackArtist">{{track.metaData.artist}}</div>
+                <div class="trackTitle">{{track.metaData.title}}</div>
+              </div>
+              <a v-on:click.prevent="openTrackActionsModal">
+                <img class="trackInfoIcon" src="assets/icons/menu-white.svg">
+              </a>
               </div>
             </q-item>
           </q-list>
@@ -57,6 +61,10 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY']),
+    openTrackActionsModal() {
+      console.log('openTrackActionsModal CLICKED')
+      this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
+    },
     loadTracks: function(user) {
       if (user) {
         let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
@@ -191,9 +199,7 @@ export default {
 }
 
 .allTracksContainer {
-  width: 100%;
-  overflow: auto;
-
+  margin: 10px;
   .q-list {
     border: none;
   }
@@ -204,27 +210,23 @@ export default {
 }
 
 .allTracksArtistAndTitle {
-  margin: auto;
   width: 100%;
-  padding-bottom: 5px;
+  padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
   border-bottom: 1px solid lightgray;
+  background-color: rgba(140, 140, 140, 0.856);
+  color: white;
 }
 
-.allTracksArtists {
-  font-size: 16px;
-  width: 60%;
-  margin-right: 20px;
+.trackArtist {
+  font-size: 18px;
 }
 
-.allTracksTitles {
-  font-size: 12px;
-  width: 40%;
+.trackTitle {
+  font-size: 15px;
 }
 
 .trackListTitle {
@@ -249,4 +251,9 @@ export default {
 .musicContainer .content {
   height: 100%;
 }
+
+.trackInfoIcon {
+    height: 15px;
+    transform: (rotate(90deg));
+  }
 </style>

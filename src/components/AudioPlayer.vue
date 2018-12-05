@@ -9,7 +9,9 @@
             <div class="artist">{{artist}}</div>
             <div class="title">{{title}}</div>
           </div>
-          <i class="fas fa-ellipsis-v trackInfoIcon " v-on:click="openTrackActionsModal"></i>
+          <a v-on:click.prevent="openTrackActionsModal">
+            <img class="trackInfoIcon" src="assets/icons/menu-white.svg">
+          </a>
         </div>
       </q-card-title>
       <q-card-main v-if="true">
@@ -499,7 +501,8 @@ input[type="range"].slider:focus::-ms-fill-upper {
   }
 
   .trackInfoIcon {
-    font-size: 25px;
+    height: 25px;
+    transform: (rotate(90deg));
   }
 }
 
