@@ -124,6 +124,50 @@ export default {
         console.log("Error getting cached document:", error);
       });
     },
+    getAllTrackNames: function () {
+      let allTrackNames = []
+      db.collection("users").get().then(users => {
+        users.docs.map(user => {
+          let tracks = user.data().tracks
+          allTrackNames = [...allTrackNames, ...tracks]
+        })
+      })
+      console.log(allTrackNames)
+      return allTrackNames
+    },
+    getAllTracks: function (allTrackNames) {
+      console.log(allTrackNames)
+      let store = this.$store
+      let self = this
+      allTrackNames.forEach(trackFilename => {
+        let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
+        trackRef.getMetadata().then(function (metadata) {
+          let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
+
+          artworkRef.getDownloadURL().then(artworkUrl => {
+            trackRef.getDownloadURL().then(trackURL => {
+              trackData.push({
+                metaData: {
+                  artist: metadata.customMetadata.artist,
+                  title: metadata.customMetadata.title,
+                  artworkUrl: artworkUrl
+                },
+                downloadURL: trackURL,
+                filename: trackFilename
+              })
+              store.commit("UPDATE_TRACKS_ARRAY", trackData)
+            }).catch(function (error) {
+              console.log(error)
+            })
+          })
+          self.tracks = trackData
+          console.log(self.tracks)
+          self.dataLoaded = true;
+        }).catch(function (error) {
+
+        });
+      })
+    },
     previousTrack: function () {
       if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
@@ -144,13 +188,15 @@ export default {
     }
   },
   created() {
-    this.getUserTracks()
+    // this.getUserTracks()
+    this.getAllTracks(this.getAllTrackNames())
   },
   computed: {
     filteredList() {
       return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
     },
     currentTrack() {
+      console.log(this.tracks)
       return this.tracks[this.currentTrackIndexNumber]
     },
     ...mapState(['trackList'])

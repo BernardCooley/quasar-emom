@@ -174,6 +174,8 @@ export default {
             let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
             focusedArtwork.put(artworkFileToUpload)
             artworkName = artworkFileToUpload.name
+          } else {
+            artworkName = 'default.gif'
           }
 
           var audioMetadata = {

@@ -1,5 +1,6 @@
 <template>
   <div class="audioPlayerContainer">
+    <track-actions-modal></track-actions-modal>
     <q-card
       inline
       class="audioCard no-shadow"
@@ -8,15 +9,17 @@
         class="titleAndArtist row"
         v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
       >
-        <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
         <div class="col-8 trackInfo">
-          <div class="artist">{{artist}}</div>
-          <div class="title">{{title}}</div>
+          <div class="col-2">{{currenttracknumber}}/{{totaltracks}}</div>
+          <div class="col-8">
+            <div class="artist">{{artist}}</div>
+            <div class="title">{{title}}</div>
+          </div>
+          <i
+            class="fas fa-ellipsis-v trackInfoIcon col-2"
+            v-on:click="openTrackActionsModal"
+          ></i>
         </div>
-        <i
-          class="fas fa-ellipsis-v trackInfoIcon col-2"
-          v-on:click="openTrackActionsModal"
-        ></i>
       </q-card-title>
       <q-card-main v-if="true">
         <div>
@@ -273,6 +276,7 @@ export default {
         })
     },
     openTrackActionsModal: function () {
+      console.log('openTrackActionsModal CLICKED')
       this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     }
   },
@@ -551,6 +555,11 @@ input[type="range"].slider:focus::-ms-fill-upper {
   border-radius: 10px;
   padding: 5px;
   color: white;
-  width: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  box-shadow: 5px 5px 24px #888888;
 }
 </style>
