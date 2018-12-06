@@ -4,26 +4,56 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field class="inputField" label="Artist name" error-label="">
-              <q-input id="artistName" v-model="user.artistName.value" />
+            <q-field
+              class="inputField"
+              label="Artist name"
+              error-label=""
+            >
+              <q-input
+                id="artistName"
+                v-model="user.artistName.value"
+              />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field class="inputField" label="Email" error-label="">
-              <q-input id="email" v-model="user.email.value" />
+            <q-field
+              class="inputField"
+              label="Email"
+              error-label=""
+            >
+              <q-input
+                id="email"
+                v-model="user.email.value"
+              />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field class="inputField" label="Password" error-label="">
-              <q-input type="password" id="password" v-model="user.password.value" />
+            <q-field
+              class="inputField"
+              label="Password"
+              error-label=""
+            >
+              <q-input
+                type="password"
+                id="password"
+                v-model="user.password.value"
+              />
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field class="inputField" label="Confirm password" error-label="">
-              <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value" />
+            <q-field
+              class="inputField"
+              label="Confirm password"
+              error-label=""
+            >
+              <q-input
+                type="password"
+                id="passwordConfirm"
+                v-model="user.passwordConfirm.value"
+              />
             </q-field>
           </q-item>
 
@@ -42,7 +72,7 @@ import firebase from "firebase/app";
 
 export default {
   name: 'register',
-  data: function() {
+  data: function () {
     return {
       user: {
         artistName: {
@@ -68,7 +98,7 @@ export default {
     };
   },
   methods: {
-    validation: function(e) {
+    validation: function (e) {
       this.errorsBool = false;
       this.user.artistName.errors = [];
       this.user.email.errors = [];
@@ -111,7 +141,7 @@ export default {
         }
       }
     },
-    register: function(e) {
+    register: function (e) {
       this.validation();
       if (!this.errorsBool) {
         console.log("registering.....");
@@ -119,30 +149,27 @@ export default {
         e.preventDefault()
       }
     },
-    registerUser: function() {
+    registerUser: function () {
       firebase
         .auth()
         .createUserWithEmailAndPassword(
-        this.user.email.value,
-        this.user.password.value
+          this.user.email.value,
+          this.user.password.value
         )
         .then(data => {
           this.createUserAccount(data.user.uid);
         })
     },
-    createUserAccount: function(userID) {
-      db.collection("users").doc(userID).set({
-          userID: userID,
-          artistName: this.user.artistName.value,
-          tracks: []
-        })
-        .then(data => {
-          if (data.id) {
-            this.registerMessage = "Registration successful";
-            this.registerMessage = null
-          }
-        })
-        .catch(error => console.log(err));
+    createUserAccount: function (userID) {
+      db.collection('users').doc(userID).set({
+        userID: userID,
+        artistName: this.user.artistName.value,
+        tracks: []
+      }).then(() => {
+        this.registerMessage = 'Registration successful';
+        this.registerMessage = null
+        location.reload()
+      }).catch(error => console.log(error));
     }
   }
 };

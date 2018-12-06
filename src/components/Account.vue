@@ -86,6 +86,7 @@ export default {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
         this.$store.commit('TOGGLE_MENU', false);
+        location.reload()
       });
     },
     getLoggedInUserTracks() {
@@ -188,15 +189,15 @@ export default {
                     if (snapshot.data().tracks.length === 0) {
                       userRef.delete().then(() => {
                         console.log('User details deleted')
+                        user.delete().then(() => {
+                          console.log('Account deleted')
+                          clearInterval(deleteInterval)
+                        }).catch((error) => {
+                          console.log('Error deleting account', error)
+                        })
                         clearInterval(deleteInterval)
                       }).catch((error) => {
                         console.log('Error deleting user details', error)
-                      })
-                      user.delete().then(() => {
-                        console.log('Account deleted')
-                        clearInterval(deleteInterval)
-                      }).catch((error) => {
-                        console.log('Error deleting account', error)
                       })
                     }
                   })
@@ -206,14 +207,16 @@ export default {
           } else {
             userRef.delete().then(() => {
               console.log('User details deleted')
+              user.delete().then(() => {
+                console.log('Account deleted')
+                location.reload()
+              }).catch((error) => {
+                console.log('Error deleting account', error)
+              })
             }).catch((error) => {
               console.log('Error deleting user details', error)
             })
-            user.delete().then(() => {
-              console.log('Account deleted')
-            }).catch((error) => {
-              console.log('Error deleting account', error)
-            })
+
           }
         })
       }

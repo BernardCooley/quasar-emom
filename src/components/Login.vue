@@ -99,12 +99,13 @@ export default {
             this.user.email.value,
             this.user.password.value
           )
-          .then(data => {
+          .then(() => {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", 'music')
             this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
             this.$store.commit('UPDATE_USER_TRACKS_ARRAY', null)
             console.log('User: ', firebase.auth().currentUser.uid, ' logged in')
+            location.reload()
           });
       }
     }
