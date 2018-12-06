@@ -172,7 +172,14 @@ export default {
 
           if (artworkFileToUpload) {
             let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
-            focusedArtwork.put(artworkFileToUpload)
+
+            var artworkMetadata = {
+              customMetadata: {
+                'uploadedBy': firebase.auth().currentUser.uid,
+              }
+            }
+
+            focusedArtwork.put(artworkFileToUpload, artworkMetadata)
             artworkName = artworkFileToUpload.name
           } else {
             artworkName = 'default.gif'
