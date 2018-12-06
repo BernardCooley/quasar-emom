@@ -76,7 +76,7 @@ import { mapMutations, mapState } from "vuex"
 
 export default {
   name: "add-track",
-  data: function () {
+  data() {
     return {
       track: {
         artist: { value: null, errorMessage: '' },
@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE']),
-    validation: function (e) {
+    validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
       } else {
@@ -133,14 +133,14 @@ export default {
         }
       }
     },
-    getSelectedFile: function (fileType) {
+    getSelectedFile(fileType) {
       if (fileType === 'audio') {
         this.audioFileToUpload = this.$refs.trackUpload.files[0]
       } else if (fileType === 'artwork') {
         this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
       }
     },
-    doesFileExist: function (fileType, fileName) {
+    doesFileExist(fileType, fileName) {
       let ref = null
       if (fileType === 'audio') {
         ref = 'tracks/' + fileName
@@ -154,7 +154,7 @@ export default {
         return false
       })
     },
-    uploadFile: function (audioFileToUpload, artworkFileToUpload) {
+    uploadFile(audioFileToUpload, artworkFileToUpload) {
       let self = this
       this.audioFileToUpload = audioFileToUpload
       this.artworkFileToUpload = artworkFileToUpload
@@ -205,12 +205,12 @@ export default {
         })
       }
     },
-    cancelUpload: function () {
+    cancelUpload() {
       this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
       this.uploadAudioTask.cancel()
       this.resetForm()
     },
-    deleteFile: function (fileReference) {
+    deleteFile(fileReference) {
       if (fileReference) {
         fileReference.delete().then(function () {
           console.log('file deleted successfully ')
@@ -221,7 +221,7 @@ export default {
         console.log('File does not exist')
       }
     },
-    resetForm: function () {
+    resetForm() {
       this.fileUploading = false
       this.completedUpload = false
       this.track = {
@@ -232,7 +232,7 @@ export default {
         uploadedBy: { value: null }
       }
     },
-    updateUserAccount: function (fileName) {
+    updateUserAccount(fileName) {
       console.log('User: ', firebase.auth().currentUser.uid)
       let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
 
