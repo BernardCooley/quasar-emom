@@ -1,6 +1,5 @@
 quasar clean
 quasar build
 sudo quasar build -m cordova -T android
-
-sudo cd src-cordova/
-cordova run android
+cd src-cordova
+sudo cordova run android

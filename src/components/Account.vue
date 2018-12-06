@@ -9,7 +9,7 @@
         <img
           class="chevron"
           :class="[displayAccountDetails ? 'open' : 'closed']"
-          src="assets/icons/right-chevron.svg"
+          src="statics/icons/right-chevron.svg"
         />
       </div>
       <div v-if="displayAccountDetails">
@@ -31,7 +31,7 @@
         <img
           class="chevron"
           :class="[displayAccountTracks ? 'open' : 'closed']"
-          src="assets/icons/right-chevron.svg"
+          src="statics/icons/right-chevron.svg"
         />
       </div>
       <div v-if="displayAccountTracks">
@@ -52,7 +52,7 @@
             <a>
               <img
                 class="trackInfoIcon"
-                src="assets/icons/menu-white.svg"
+                src="statics/icons/menu-white.svg"
               >
             </a>
           </div>

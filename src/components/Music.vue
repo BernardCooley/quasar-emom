@@ -1,34 +1,70 @@
 <template>
   <div class="musicContainer">
 
-    <div class="content" v-if="dataLoaded">
+    <div
+      class="content"
+      v-if="dataLoaded"
+    >
       <div class="pageContainer">
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
-            <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracks.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename' :artworkurl='currentTrack.metaData.artworkUrl'></audio-player>
+            <div
+              id="audio"
+              class="player-wrapper"
+            >
+              <audio-player
+                :currenttracknumber='currentTrackIndexNumber+1'
+                :totaltracks='tracks.length'
+                :trackurl='currentTrack.downloadURL'
+                :artist='currentTrack.metaData.artist'
+                :title='currentTrack.metaData.title'
+                :trackid='currentTrack.filename'
+                :artworkurl='currentTrack.metaData.artworkUrl'
+              ></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn class="trackControlButton" v-on:click="previousTrack">
-                <img class="audioControl" src="assets/icons/previous.svg">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="previousTrack"
+              >
+                <img
+                  class="audioControl"
+                  src="statics/icons/previous.svg"
+                >
               </q-btn>
-              <q-btn class="trackControlButton" v-on:click="nextTrack">
-                <img class="audioControl" src="assets/icons/skip.svg">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="nextTrack"
+              >
+                <img
+                  class="audioControl"
+                  src="statics/icons/skip.svg"
+                >
               </q-btn>
             </q-item>
           </div>
         </div>
         <div class="allTracksContainer">
           <q-list>
-            <q-item class="" v-for="(track, index) in tracks" :key="index">
+            <q-item
+              class=""
+              v-for="(track, index) in tracks"
+              :key="index"
+            >
               <div class="allTracksArtistAndTitle">
-              <div class="" v-on:click="changeTrack(track.filename)">
-                <div class="trackArtist">{{track.metaData.artist}}</div>
-                <div class="trackTitle">{{track.metaData.title}}</div>
-              </div>
-              <a v-on:click.prevent="openTrackActionsModal">
-                <img class="trackInfoIcon" src="assets/icons/menu-white.svg">
-              </a>
+                <div
+                  class=""
+                  v-on:click="changeTrack(track.filename)"
+                >
+                  <div class="trackArtist">{{track.metaData.artist}}</div>
+                  <div class="trackTitle">{{track.metaData.title}}</div>
+                </div>
+                <a v-on:click.prevent="openTrackActionsModal">
+                  <img
+                    class="trackInfoIcon"
+                    src="statics/icons/menu-white.svg"
+                  >
+                </a>
               </div>
             </q-item>
           </q-list>
@@ -47,7 +83,7 @@ import { mapMutations, mapState } from "vuex"
 
 export default {
   name: "music",
-  data: function() {
+  data: function () {
     return {
       tracks: [],
       dataLoaded: false,
@@ -65,12 +101,12 @@ export default {
       console.log('openTrackActionsModal CLICKED')
       this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     },
-    loadTracks: function(user) {
+    loadTracks: function (user) {
       if (user) {
         let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
-        usersRef.get().then(function(doc) {
+        usersRef.get().then(function (doc) {
           this.getTracks(doc.data().tracks)
-        }).catch(function(error) {
+        }).catch(function (error) {
           console.log("Error getting cached document:", error);
         });
       } else {
@@ -86,14 +122,14 @@ export default {
         })
       }
     },
-    getTracks: function(trackNames) {
+    getTracks: function (trackNames) {
       let store = this.$store
       let self = this
       let trackData = []
       store.commit("CLEAR_TRACKS_ARRAY", trackData)
       trackNames.forEach(trackFilename => {
         let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
-        trackRef.getMetadata().then(function(metadata) {
+        trackRef.getMetadata().then(function (metadata) {
           let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
 
           artworkRef.getDownloadURL().then(artworkUrl => {
@@ -108,28 +144,28 @@ export default {
                 filename: trackFilename
               })
               store.commit("UPDATE_TRACKS_ARRAY", trackData)
-            }).catch(function(error) {
+            }).catch(function (error) {
               console.log(error)
             })
           })
           self.tracks = trackData
           self.dataLoaded = true;
-        }).catch(function(error) {
+        }).catch(function (error) {
 
         });
       })
     },
-    previousTrack: function() {
+    previousTrack: function () {
       if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
       }
     },
-    nextTrack: function() {
+    nextTrack: function () {
       if (this.currentTrackIndexNumber < (this.tracks.length - 1)) {
         this.currentTrackIndexNumber++
       }
     },
-    changeTrack: function(filename) {
+    changeTrack: function (filename) {
       this.tracks.forEach((track, index) => {
         if (track.filename === filename) {
           this.currentTrackIndexNumber = index
@@ -253,7 +289,7 @@ export default {
 }
 
 .trackInfoIcon {
-    height: 15px;
-    transform: (rotate(90deg));
-  }
+  height: 15px;
+  transform: (rotate(90deg));
+}
 </style>

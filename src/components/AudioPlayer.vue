@@ -1,8 +1,14 @@
 <template>
   <div class="audioPlayerContainer">
     <track-actions-modal></track-actions-modal>
-    <q-card inline class="audioCard no-shadow">
-      <q-card-title class="titleAndArtist" v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}">
+    <q-card
+      inline
+      class="audioCard no-shadow"
+    >
+      <q-card-title
+        class="titleAndArtist"
+        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
+      >
         <div class=" trackInfo">
           <div class="">{{currenttracknumber}}/{{totaltracks}}</div>
           <div class="">
@@ -10,45 +16,104 @@
             <div class="title">{{title}}</div>
           </div>
           <a v-on:click.prevent="openTrackActionsModal">
-            <img class="trackInfoIcon" src="assets/icons/menu-white.svg">
+            <img
+              class="trackInfoIcon"
+              src="statics/icons/menu-white.svg"
+            >
           </a>
         </div>
       </q-card-title>
       <q-card-main v-if="true">
         <div class="trackProgress">
-          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
-            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
+          <div
+            v-on:click="seek"
+            class="player-progress"
+            title="Time played : Total time"
+          >
+            <div
+              :style="{ width: this.percentComplete + '%' }"
+              class="player-seeker"
+            ></div>
           </div>
           <div class="player-time">
             <div class="player-time-current">{{ currentTime }}</div>
             <div class="player-time-total">{{ durationTime }}</div>
           </div>
         </div>
-        <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
+        <audio
+          :loop="innerLoop"
+          ref="player"
+          preload="auto"
+          style="display: none;"
+        >
           <source :src="trackurl">
         </audio>
       </q-card-main>
-      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
+      <q-chip
+        class="unsupportedFormatMessage"
+        v-else
+      >Unsupported format</q-chip>
       <q-card-actions>
         <div class="audioActions">
-          <a v-on:click.prevent="stop" title="Stop">
-            <img class="audioControl" v-if="!playing" src="assets/icons/stop-inactive.svg">
-            <img class="audioControl" v-else src="assets/icons/stop-active.svg">
+          <a
+            v-on:click.prevent="stop"
+            title="Stop"
+          >
+            <img
+              class="audioControl"
+              v-if="!playing"
+              src="statics/icons/stop-inactive.svg"
+            >
+            <img
+              class="audioControl"
+              v-else
+              src="statics/icons/stop-active.svg"
+            >
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
-            <img class="audioControl" v-if="!innerLoop" src="assets/icons/repeat-inactive.svg">
-            <img class="audioControl" v-else src="assets/icons/repeat-active.svg">
+            <img
+              class="audioControl"
+              v-if="!innerLoop"
+              src="statics/icons/repeat-inactive.svg"
+            >
+            <img
+              class="audioControl"
+              v-else
+              src="statics/icons/repeat-active.svg"
+            >
           </a>
-          <a v-on:click.prevent="playing = !playing" title="Play/Pause">
-            <img class="audioControl playPause" v-if="!playing" src="assets/icons/play.svg">
-            <img class="audioControl playPause" v-else src="assets/icons/pause.svg">
+          <a
+            v-on:click.prevent="playing = !playing"
+            title="Play/Pause"
+          >
+            <img
+              class="audioControl playPause"
+              v-if="!playing"
+              src="statics/icons/play.svg"
+            >
+            <img
+              class="audioControl playPause"
+              v-else
+              src="statics/icons/pause.svg"
+            >
           </a>
           <a v-on:click="favourite">
-            <img class="audioControl" v-if="!favourited" src="assets/icons/favorite.svg">
-            <img class="audioControl" v-else src="assets/icons/favorited.svg">
+            <img
+              class="audioControl"
+              v-if="!favourited"
+              src="statics/icons/favorite.svg"
+            >
+            <img
+              class="audioControl"
+              v-else
+              src="statics/icons/favorited.svg"
+            >
           </a>
           <a v-on:click.prevent="download">
-            <img class="audioControl" src="assets/icons/download.svg">
+            <img
+              class="audioControl"
+              src="statics/icons/download.svg"
+            >
           </a>
         </div>
       </q-card-actions>
@@ -109,7 +174,7 @@ export default {
       default: null
     }
   },
-  data: function() {
+  data: function () {
     return {
       audio: undefined,
       currentSeconds: 0,
@@ -274,10 +339,8 @@ body {
 }
 
 $player-background: #f4f4f4;
-$player-border-color: darken($player-background,
-12%);
-$player-link-color: darken($player-background,
-75%);
+$player-border-color: darken($player-background, 12%);
+$player-link-color: darken($player-background, 75%);
 $player-progress-color: $player-border-color;
 $player-seeker-color: $player-link-color;
 $player-text-color: $player-link-color;
@@ -302,7 +365,7 @@ input[type="range"].slider::-webkit-slider-runnable-track {
   height: 9.2px;
   cursor: pointer;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-  0px 0px 0px rgba(13, 13, 13, 0.41);
+    0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
@@ -328,7 +391,7 @@ input[type="range"].slider::-moz-range-track {
   height: 9.2px;
   cursor: pointer;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-  0px 0px 0px rgba(13, 13, 13, 0.41);
+    0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
@@ -358,7 +421,7 @@ input[type="range"].slider::-ms-fill-lower {
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-  0px 0px 0px rgba(13, 13, 13, 0.41);
+    0px 0px 0px rgba(13, 13, 13, 0.41);
 }
 
 input[type="range"].slider::-ms-fill-upper {
@@ -366,7 +429,7 @@ input[type="range"].slider::-ms-fill-upper {
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
-  0px 0px 0px rgba(13, 13, 13, 0.41);
+    0px 0px 0px rgba(13, 13, 13, 0.41);
 }
 
 input[type="range"].slider::-ms-thumb {
@@ -401,7 +464,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 .player-controls {
   display: flex;
 
-  >div {
+  > div {
     border-right: 1px solid $player-border-color;
 
     &:last-child {
