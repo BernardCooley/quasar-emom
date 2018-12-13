@@ -36,15 +36,15 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex"
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 
 export default {
   methods: {
-    ...mapMutations(["UPDATE_TRACK_ACTIONS_MODAL", "UPDATE_TRACK_LIST"]),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST']),
     closeModal: function () {
-      this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", false)
+      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', false)
     },
     showUsersTracks: function (viewUsersOrYourTracks) {
       var userId = null
@@ -54,17 +54,17 @@ export default {
         userId = this.loggedInUserId
       }
 
-      db.collection('users').where("userID", "==", userId).get()
+      db.collection('users').where('userID', '==', userId).get()
         .then(querySnapshot => {
           var trackList = []
           querySnapshot.forEach(doc => {
             doc.data().tracks.forEach(trackId => {
-              db.collection('tracks').where("trackID", "==", trackId).get()
+              db.collection('tracks').where('trackID', '==', trackId).get()
                 .then(querySnapshot => {
                   querySnapshot.forEach(track => {
                     trackList.push(track.data())
                   })
-                  this.$store.commit("UPDATE_TRACK_LIST", trackList)
+                  this.$store.commit('UPDATE_TRACK_LIST', trackList)
                 })
             })
           })
@@ -72,33 +72,33 @@ export default {
     },
     showAllTracks: function () {
       var tracks = []
-      db.collection("tracks").get()
+      db.collection('tracks').get()
         .then(querySnapshot => {
           var index = 0
           querySnapshot.forEach(doc => {
             tracks.push(doc.data())
             index++
           });
-          this.$store.commit("UPDATE_TRACK_LIST", tracks)
+          this.$store.commit('UPDATE_TRACK_LIST', tracks)
         });
     },
     showFavourites: function () {
       let tracks = []
       let favourites;
-      db.collection('users').where("userID", "==", this.loggedInUserId).get()
+      db.collection('users').where('userID', '==', this.loggedInUserId).get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
             favourites = doc.data().favourites
 
             favourites.forEach(fav => {
-              db.collection('tracks').where("trackID", "==", fav).get()
+              db.collection('tracks').where('trackID', '==', fav).get()
                 .then(querySnapshot => {
                   querySnapshot.forEach(doc => {
                     tracks.push(doc.data())
                   })
                 })
             })
-            this.$store.commit("UPDATE_TRACK_LIST", tracks)
+            this.$store.commit('UPDATE_TRACK_LIST', tracks)
           })
         })
     },
@@ -108,7 +108,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["trackActionsModalOpen", "currentTrack", "loggedInUserId", "likes"]),
+    ...mapState(['trackActionsModalOpen', 'currentTrack', 'loggedInUserId', 'likes']),
     trackUploadedByUser: function () {
       if (this.loggedInUserId == this.currentTrack.uploadedBy) {
         return true;

@@ -26,11 +26,13 @@
                 type="password"
                 id="password"
                 v-model="user.password.value"
+                initial-show-password="false"
               />
             </q-field>
           </q-item>
           <q-btn v-on:click="login">Log In</q-btn>
         </q-list>
+        <div class="errorMessage">{{errorMsgComputed}}</div>
       </div>
     </div>
 
@@ -43,7 +45,7 @@ import firebase from "firebase/app"
 import { mapMutations } from "vuex"
 
 export default {
-  name: "login",
+  name: 'login',
   data: function () {
     return {
       user: {
@@ -59,7 +61,13 @@ export default {
       errorsBool: null,
       userID: null,
       loginMessage: null,
-      mailHasError: false
+      mailHasError: false,
+      errorMessage: null
+    }
+  },
+  computed: {
+    errorMsgComputed() {
+      return this.errorMessage
     }
   },
   methods: {
@@ -70,16 +78,16 @@ export default {
       this.user.password.errors = []
 
       if (!this.user.email.value) {
-        this.user.email.errors.push("Email required.")
+        this.user.email.errors.push('Email required.')
       }
 
       var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.")
+        this.user.email.errors.push('Invalid email format.')
       }
 
       if (!this.user.password.value) {
-        this.user.password.errors.push("Password required.")
+        this.user.password.errors.push('Password required.')
       }
 
       for (var x in this.user) {
@@ -91,7 +99,7 @@ export default {
     login: function () {
       this.validation();
       if (!this.errorsBool) {
-        console.log("Logging in.....")
+        console.log('Logging in.....')
 
         firebase
           .auth()
@@ -100,13 +108,16 @@ export default {
             this.user.password.value
           )
           .then(() => {
-            this.$store.commit("UPDATE_ISLOGGED_IN", true)
-            this.$store.commit("UPDATE_PAGE_TITLE", 'music')
+            this.$store.commit('UPDATE_ISLOGGED_IN', true)
+            this.$store.commit('UPDATE_PAGE_TITLE', 'music')
             this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
             this.$store.commit('UPDATE_USER_TRACKS_ARRAY', null)
             console.log('User: ', firebase.auth().currentUser.uid, ' logged in')
             location.reload()
-          });
+            this.errorMessage = ''
+          }).catch(error => {
+            this.errorMessage = 'Email or password incorrect'
+          })
       }
     }
   }
@@ -124,5 +135,13 @@ export default {
 
 .q-if-control {
   width: 50%;
+}
+
+.errorMessage {
+  color: red;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 20px;
 }
 </style>

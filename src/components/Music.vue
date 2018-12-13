@@ -1,32 +1,68 @@
 <template>
   <div class="musicContainer">
-    <div class="content" v-if="dataLoaded">
+    <div
+      class="content"
+      v-if="dataLoaded"
+    >
       <div class="pageContainer">
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
-            <div id="audio" class="player-wrapper">
-              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracksList.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename' :artworkurl='currentTrack.metaData.artworkUrl'></audio-player>
+            <div
+              id="audio"
+              class="player-wrapper"
+            >
+              <audio-player
+                :currenttracknumber="currentTrackIndexNumber+1"
+                :totaltracks="tracksList.length"
+                :trackurl="currentTrack.downloadURL"
+                :artist="currentTrack.metaData.artist"
+                :title="currentTrack.metaData.title"
+                :trackid="currentTrack.filename"
+                :artworkurl="currentTrack.metaData.artworkUrl"
+              ></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn class="trackControlButton" v-on:click="previousTrack">
-                <img class="audioControl" src="statics/icons/previous.svg">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="previousTrack"
+              >
+                <img
+                  class="audioControl"
+                  src="statics/icons/previous.svg"
+                >
               </q-btn>
-              <q-btn class="trackControlButton" v-on:click="nextTrack">
-                <img class="audioControl" src="statics/icons/skip.svg">
+              <q-btn
+                class="trackControlButton"
+                v-on:click="nextTrack"
+              >
+                <img
+                  class="audioControl"
+                  src="statics/icons/skip.svg"
+                >
               </q-btn>
             </q-item>
           </div>
         </div>
         <div class="allTracksContainer">
           <q-list>
-            <q-item class="" v-for="(track, index) in tracksList" :key="index">
+            <q-item
+              class
+              v-for="(track, index) in tracksList"
+              :key="index"
+            >
               <div class="allTracksArtistAndTitle">
-                <div class="" v-on:click="changeTrack(track.filename)">
+                <div
+                  class
+                  v-on:click="changeTrack(track.filename)"
+                >
                   <div class="trackArtist">{{track.metaData.artist}}</div>
                   <div class="trackTitle">{{track.metaData.title}}</div>
                 </div>
                 <a v-on:click.prevent="openTrackActionsModal">
-                  <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
+                  <img
+                    class="trackInfoIcon"
+                    src="statics/icons/menu-white.svg"
+                  >
                 </a>
               </div>
             </q-item>
@@ -38,12 +74,10 @@
 </template>
 
 <script>
-import AudioPlayer from "./AudioPlayer"
-import db from "../firestore/firebaseInit"
-import firebase from "firebase/app"
-import { mapMutations, mapState } from "vuex"
-import GetTracks from "../components/GetTracks"
-
+import AudioPlayer from "./AudioPlayer";
+import db from "../firestore/firebaseInit";
+import firebase from "firebase/app";
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "music",
@@ -52,49 +86,50 @@ export default {
       dataLoaded: false,
       search: "",
       currentTrackIndexNumber: 0
-    }
+    };
   },
   components: {
-    AudioPlayer,
-    GetTracks
+    AudioPlayer
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL']),
     openTrackActionsModal() {
-      console.log('openTrackActionsModal CLICKED')
-      this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
+      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
     previousTrack() {
       if (this.currentTrackIndexNumber > 0) {
-        this.currentTrackIndexNumber--
+        this.currentTrackIndexNumber--;
       }
     },
     nextTrack() {
-      if (this.currentTrackIndexNumber < (this.tracksArray.length - 1)) {
-        this.currentTrackIndexNumber++
+      if (this.currentTrackIndexNumber < this.tracksArray.length - 1) {
+        this.currentTrackIndexNumber++;
       }
     },
     changeTrack(filename) {
       this.tracksArray.forEach((track, index) => {
         if (track.filename === filename) {
-          this.currentTrackIndexNumber = index
+          this.currentTrackIndexNumber = index;
         }
-      })
-      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracksArray[this.currentTrackIndexNumber])
+      });
+      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracksArray[this.currentTrackIndexNumber]);
     }
   },
   created() {
-    this.dataLoaded = this.tracksArray ? true : false
+    this.dataLoaded = this.tracksArray ? true : false;
   },
   computed: {
     tracksList() {
-      return this.tracksArray
+      return this.tracksArray;
     },
     filteredList() {
-      return this.tracksArray.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
+      return this.tracksArray.filter(
+        track =>
+          track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase())
+      );
     },
     currentTrack() {
-      return this.tracksArray[this.currentTrackIndexNumber]
+      return this.tracksArray[this.currentTrackIndexNumber];
     },
     ...mapState(['trackList', 'tracksArray'])
   }

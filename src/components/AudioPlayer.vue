@@ -97,15 +97,13 @@
               src="statics/icons/pause.svg"
             >
           </a>
-          <a v-on:click="favourite">
+          <a>
             <img
               class="audioControl"
-              v-if="!favourited"
               src="statics/icons/favorite.svg"
             >
             <img
               class="audioControl"
-              v-else
               src="statics/icons/favorited.svg"
             >
           </a>
@@ -224,11 +222,11 @@ export default {
   methods: {
     ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL']),
     showTrackDetails() {
-      this.$store.commit("UPDATE_TRACK_DETAILS_POPOVER", true)
+      this.$store.commit('UPDATE_TRACK_DETAILS_POPOVER', true)
     },
     download() {
       this.stop();
-      window.open(this.trackurl, "download");
+      window.open(this.trackurl, 'download');
     },
     load() {
       if (this.audio.readyState >= 2) {
@@ -237,7 +235,7 @@ export default {
         return (this.playing = this.autoPlay);
       }
 
-      throw new Error("Failed to load sound file.");
+      throw new Error('Failed to load sound file.');
     },
     mute() {
       if (this.muted) {
@@ -248,7 +246,7 @@ export default {
       this.volume = 0;
     },
     seek(e) {
-      if (!this.playing || e.target.tagName === "SPAN") {
+      if (!this.playing || e.target.tagName === 'SPAN') {
         return;
       }
 
@@ -267,7 +265,7 @@ export default {
     favourite() {
       let favourites = [];
 
-      db.collection('users').where("userID", "==", this.loggedInUserId).get()
+      db.collection('users').where('userID', '==', this.loggedInUserId).get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
             if (doc.data().favourites) {
@@ -280,7 +278,7 @@ export default {
               })
 
               let likes = 0;
-              db.collection('tracks').where("trackID", "==", this.currentTrack.trackID).get()
+              db.collection('tracks').where('trackID', '==', this.currentTrack.trackID).get()
                 .then(querySnapshot => {
                   querySnapshot.forEach(doc => {
 
@@ -299,29 +297,29 @@ export default {
     },
     openTrackActionsModal() {
       console.log('openTrackActionsModal CLICKED')
-      this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
+      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true)
     }
   },
   created() {
     this.innerLoop = this.loop;
   },
   mounted() {
-    // db.collection("users").where("userID", "==", this.uploadedby).get().then(snapshot => {
+    // db.collection('users').where('userID', '==', this.uploadedby).get().then(snapshot => {
     //   snapshot.forEach(doc => {
     //     this.uploadedByName = doc.data().artistName
     //   })
     // })
 
-    this.audio = this.$el.querySelectorAll("audio")[0];
-    this.audio.addEventListener("timeupdate", this.update);
-    this.audio.addEventListener("loadeddata", this.load);
-    this.audio.addEventListener("pause", () => {
+    this.audio = this.$el.querySelectorAll('audio')[0];
+    this.audio.addEventListener('timeupdate', this.update);
+    this.audio.addEventListener('loadeddata', this.load);
+    this.audio.addEventListener('pause', () => {
       this.playing = false;
     });
-    this.audio.addEventListener("play", () => {
+    this.audio.addEventListener('play', () => {
       this.playing = true;
     });
-    this.$watch("trackurl", () => {
+    this.$watch('trackurl', () => {
       this.$refs.player.load()
     });
   }
