@@ -162,7 +162,6 @@ export default {
       let userRef = db.collection('users').doc(firebase.auth().currentUser.uid)
       userRef.get().then(userSnapshot => {
         this.user['artistName'] = userSnapshot.data().artistName
-        console.log(JSON.stringify(this.user))
       })
 
     },

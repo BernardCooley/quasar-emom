@@ -66,7 +66,7 @@ const store = new Vuex.Store({
         UPDATE_TRACKS_ARRAY(state, value) {
             state.tracksArray = value
         },
-        CLEAR_TRACKS_ARRAY(state, value) {
+        CLEAR_TRACKS_ARRAY(state) {
             state.tracksArray = []
         },
         UPDATE_USER_TRACKS_ARRAY(state, value) {

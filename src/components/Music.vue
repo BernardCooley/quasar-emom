@@ -1,69 +1,32 @@
 <template>
   <div class="musicContainer">
-
-    <div
-      class="content"
-      v-if="dataLoaded"
-    >
+    <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
-            <div
-              id="audio"
-              class="player-wrapper"
-            >
-              <audio-player
-                :currenttracknumber='currentTrackIndexNumber+1'
-                :totaltracks='tracks.length'
-                :trackurl='currentTrack.downloadURL'
-                :artist='currentTrack.metaData.artist'
-                :title='currentTrack.metaData.title'
-                :trackid='currentTrack.filename'
-                :artworkurl='currentTrack.metaData.artworkUrl'
-              ></audio-player>
+            <div id="audio" class="player-wrapper">
+              <audio-player :currenttracknumber='currentTrackIndexNumber+1' :totaltracks='tracksList.length' :trackurl='currentTrack.downloadURL' :artist='currentTrack.metaData.artist' :title='currentTrack.metaData.title' :trackid='currentTrack.filename' :artworkurl='currentTrack.metaData.artworkUrl'></audio-player>
             </div>
             <q-item class="trackControls">
-              <q-btn
-                class="trackControlButton"
-                v-on:click="previousTrack"
-              >
-                <img
-                  class="audioControl"
-                  src="statics/icons/previous.svg"
-                >
+              <q-btn class="trackControlButton" v-on:click="previousTrack">
+                <img class="audioControl" src="statics/icons/previous.svg">
               </q-btn>
-              <q-btn
-                class="trackControlButton"
-                v-on:click="nextTrack"
-              >
-                <img
-                  class="audioControl"
-                  src="statics/icons/skip.svg"
-                >
+              <q-btn class="trackControlButton" v-on:click="nextTrack">
+                <img class="audioControl" src="statics/icons/skip.svg">
               </q-btn>
             </q-item>
           </div>
         </div>
         <div class="allTracksContainer">
           <q-list>
-            <q-item
-              class=""
-              v-for="(track, index) in tracks"
-              :key="index"
-            >
+            <q-item class="" v-for="(track, index) in tracksList" :key="index">
               <div class="allTracksArtistAndTitle">
-                <div
-                  class=""
-                  v-on:click="changeTrack(track.filename)"
-                >
+                <div class="" v-on:click="changeTrack(track.filename)">
                   <div class="trackArtist">{{track.metaData.artist}}</div>
                   <div class="trackTitle">{{track.metaData.title}}</div>
                 </div>
                 <a v-on:click.prevent="openTrackActionsModal">
-                  <img
-                    class="trackInfoIcon"
-                    src="statics/icons/menu-white.svg"
-                  >
+                  <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
                 </a>
               </div>
             </q-item>
@@ -79,21 +42,21 @@ import AudioPlayer from "./AudioPlayer"
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 import { mapMutations, mapState } from "vuex"
+import GetTracks from "../components/GetTracks"
 
 
 export default {
   name: "music",
-  data: function () {
+  data() {
     return {
-      tracks: [],
       dataLoaded: false,
       search: "",
-      currentTrackIndexNumber: 0,
-      uploadedByName: null
+      currentTrackIndexNumber: 0
     }
   },
   components: {
-    AudioPlayer
+    AudioPlayer,
+    GetTracks
   },
   methods: {
     ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_LIST', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY']),
@@ -101,90 +64,39 @@ export default {
       console.log('openTrackActionsModal CLICKED')
       this.$store.commit("UPDATE_TRACK_ACTIONS_MODAL", true)
     },
-    loadTracks: function (user) {
-      if (user) {
-        let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
-        usersRef.get().then(function (doc) {
-          this.getTracks(doc.data().tracks)
-        }).catch(function (error) {
-          console.log("Error getting cached document:", error);
-        });
-      } else {
-        let trackNames = []
-        db.collection("users").get().then(users => {
-          users.docs.map(user => {
-            let tracks = user.data().tracks
-            if (tracks.length > 0) {
-              trackNames = [...tracks, ...trackNames]
-            }
-          })
-          this.getTracks(trackNames)
-        })
-      }
-    },
-    getTracks: function (trackNames) {
-      let store = this.$store
-      let self = this
-      let trackData = []
-      store.commit("CLEAR_TRACKS_ARRAY", trackData)
-      trackNames.forEach(trackFilename => {
-        let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
-        trackRef.getMetadata().then(function (metadata) {
-          let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
-
-          artworkRef.getDownloadURL().then(artworkUrl => {
-            trackRef.getDownloadURL().then(trackURL => {
-              trackData.push({
-                metaData: {
-                  artist: metadata.customMetadata.artist,
-                  title: metadata.customMetadata.title,
-                  artworkUrl: artworkUrl
-                },
-                downloadURL: trackURL,
-                filename: trackFilename
-              })
-              store.commit("UPDATE_TRACKS_ARRAY", trackData)
-            }).catch(function (error) {
-              console.log(error)
-            })
-          })
-          self.tracks = trackData
-          self.dataLoaded = true;
-        }).catch(function (error) {
-
-        });
-      })
-    },
-    previousTrack: function () {
+    previousTrack() {
       if (this.currentTrackIndexNumber > 0) {
         this.currentTrackIndexNumber--
       }
     },
-    nextTrack: function () {
-      if (this.currentTrackIndexNumber < (this.tracks.length - 1)) {
+    nextTrack() {
+      if (this.currentTrackIndexNumber < (this.tracksArray.length - 1)) {
         this.currentTrackIndexNumber++
       }
     },
-    changeTrack: function (filename) {
-      this.tracks.forEach((track, index) => {
+    changeTrack(filename) {
+      this.tracksArray.forEach((track, index) => {
         if (track.filename === filename) {
           this.currentTrackIndexNumber = index
         }
       })
-      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracks[this.currentTrackIndexNumber])
+      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracksArray[this.currentTrackIndexNumber])
     }
   },
   created() {
-    this.loadTracks()
+    this.dataLoaded = this.tracksArray ? true : false
   },
   computed: {
+    tracksList() {
+      return this.tracksArray
+    },
     filteredList() {
-      return this.tracks.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
+      return this.tracksArray.filter(track => track.title.toLowerCase().includes(this.search.toLowerCase()) || track.artist.toLowerCase().includes(this.search.toLowerCase()))
     },
     currentTrack() {
-      return this.tracks[this.currentTrackIndexNumber]
+      return this.tracksArray[this.currentTrackIndexNumber]
     },
-    ...mapState(['trackList'])
+    ...mapState(['trackList', 'tracksArray'])
   }
 };
 </script>
