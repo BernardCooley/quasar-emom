@@ -2,6 +2,17 @@
   <div id='q-app'>
     <div class='appContainer'>
       <tabs></tabs>
+      <div
+        class="heroImageContainer"
+        v-if="!isLoggedIn"
+      >
+        <img
+          class="heroImage"
+          src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png"
+          alt=""
+          vertical-middle
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -10,16 +21,14 @@
 import db from './firestore/firebaseInit'
 import Tabs from './components/Tabs'
 import firebase from 'firebase/app'
-import { mapMutations } from 'vuex'
-import Services from './components/Services'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
-    Tabs,
-    Services
+    Tabs
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_CURR_TRACK', 'UPDATE_TRACKS_ARRAY', 'GET_ALL_TRACKS']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -31,29 +40,24 @@ export default {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
           this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.email)
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID', firebase.auth().currentUser.uid)
-          try {
-            Services.methods.loadTracks()
-          } catch (error) {
-            console.error(error)
-          }
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }
       })
-    }
+    },
   },
   created() {
     this.login()
+    this.$store.commit('GET_ALL_TRACKS')
   },
-  mounted() {
-    // Services.methods.loadTracks()
-    // this.loadTracks()
+  computed: {
+    ...mapState(['isLoggedIn'])
   }
 }
 </script>
 
 <style>
-.pageContainer {
+.appContainer {
   height: 100%;
   overflow: hidden;
   display: flex;
@@ -61,17 +65,9 @@ export default {
   justify-content: normal;
 }
 
-.backgroundImage {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  z-index: -1;
-}
-
 body {
-  color: #333333 !important;
-  /*background-image: linear-gradient(to bottom right, #267E84, #14938E);*/
+  color: #ffffff !important;
+  background-image: linear-gradient(rgb(37, 111, 119), rgb(0, 158, 152));
 }
 
 .q-tab-pane {
@@ -89,5 +85,18 @@ body {
 
 .q-field {
   width: 100%;
+}
+
+.heroImageContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.heroImage {
+  width: 370px;
+  padding-top: 40px;
 }
 </style>

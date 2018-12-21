@@ -5,24 +5,39 @@
       inline
       class="audioCard no-shadow"
     >
-      <q-card-title
-        class="titleAndArtist"
+      <div
+        class="titleAndArtist q-card-title"
         v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
       >
-        <div class=" trackInfo">
-          <div class="">{{currenttracknumber}}/{{totaltracks}}</div>
-          <div class="">
+        <div class="trackInfo">
+          <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
+          <div class="trackArtistAndTitle">
             <div class="artist">{{artist}}</div>
             <div class="title">{{title}}</div>
           </div>
-          <a v-on:click.prevent="openTrackActionsModal">
+          <a
+            class="trackOptions"
+            v-on:click.prevent="openTrackActionsModal"
+          >
             <img
               class="trackInfoIcon"
               src="statics/icons/menu-white.svg"
             >
           </a>
         </div>
-      </q-card-title>
+        <q-item class="nextPrevBtns">
+          <img
+            class="audioControl prevBtn"
+            src="statics/icons/previous.svg"
+            v-on:click="prevTrack"
+          >
+          <img
+            class="audioControl nextBtn"
+            src="statics/icons/previous.svg"
+            v-on:click="nextTrack"
+          >
+        </q-item>
+      </div>
       <q-card-main v-if="true">
         <div class="trackProgress">
           <div
@@ -124,6 +139,7 @@ import { mapMutations, mapState } from "vuex";
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import TrackActionsModal from "./TrackActionsModal"
+import Music from "./Music"
 
 const convertTimeHHMMSS = val => {
   let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
@@ -133,7 +149,8 @@ const convertTimeHHMMSS = val => {
 
 export default {
   components: {
-    TrackActionsModal
+    TrackActionsModal,
+    Music
   },
   name: "audio-player",
   props: {
@@ -187,7 +204,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['loggedInUser', 'currentTrack', 'loggedInUserId', 'artworkUrl']),
+    ...mapState(['loggedInUser', 'currentTrack', 'loggedInUserId', 'artworkUrl', 'tracksArray']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },
@@ -221,6 +238,20 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL']),
+    prevTrack() {
+      let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
+
+      if (currentTrackIndex > 0) {
+        this.$store.commit('UPDATE_CURR_TRACK', currentTrackIndex - 1)
+      }
+    },
+    nextTrack() {
+      let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
+
+      if (currentTrackIndex < this.tracksArray.length) {
+        this.$store.commit('UPDATE_CURR_TRACK', currentTrackIndex + 1)
+      }
+    },
     showTrackDetails() {
       this.$store.commit('UPDATE_TRACK_DETAILS_POPOVER', true)
     },
@@ -304,12 +335,6 @@ export default {
     this.innerLoop = this.loop;
   },
   mounted() {
-    // db.collection('users').where('userID', '==', this.uploadedby).get().then(snapshot => {
-    //   snapshot.forEach(doc => {
-    //     this.uploadedByName = doc.data().artistName
-    //   })
-    // })
-
     this.audio = this.$el.querySelectorAll('audio')[0];
     this.audio.addEventListener('timeupdate', this.update);
     this.audio.addEventListener('loadeddata', this.load);
@@ -480,9 +505,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .player-progress {
-  background-color: $player-progress-color;
+  background-color: rgb(255, 255, 255);
   cursor: pointer;
-  height: 20px;
+  height: 5px;
   min-width: 200px;
   position: relative;
 
@@ -491,7 +516,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
     left: 0;
     position: absolute;
     top: 0;
-    background-color: #333333;
+    background-color: dimgray;
   }
 }
 
@@ -522,6 +547,22 @@ input[type="range"].slider:focus::-ms-fill-upper {
   height: 30px;
 }
 
+.nextBtn {
+  transform: rotate(180deg);
+}
+
+.nextPrevBtns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .prevBtn,
+  .nextBtn {
+    height: 40px;
+    background-color: rgba(105, 105, 105, 0.5);
+  }
+}
+
 .trackProgress {
   margin-top: 20px;
 }
@@ -548,6 +589,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
   text-align: center;
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 }
 
 .titleAndArtist {
@@ -592,8 +634,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .trackInfo {
-  background-color: rgba(140, 140, 140, 0.856);
-  border-radius: 10px;
+  background-color: rgba(140, 140, 140, 0);
   padding: 5px;
   color: white;
   width: 100%;
@@ -601,6 +642,16 @@ input[type="range"].slider:focus::-ms-fill-upper {
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  box-shadow: 5px 5px 24px #888888;
+  box-shadow: 0px 0px 25px #888888;
+}
+
+.trackArtistAndTitle,
+.trackNumber,
+.trackOptions {
+  background-color: rgba(105, 105, 105, 0.5);
+  padding: 9px;
+  border-radius: 5px;
+  flex-direction: column;
+  display: flex;
 }
 </style>

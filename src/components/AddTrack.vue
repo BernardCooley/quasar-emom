@@ -53,6 +53,7 @@
           v-if="!uploadingFile"
           v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)"
         >Upload</q-btn>
+
         <q-btn
           v-if="uploadingFile && !completedUpload"
           v-on:click="cancelUpload"
@@ -105,7 +106,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE']),
+    ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_ALL_TRACKS']),
     validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
@@ -161,7 +162,7 @@ export default {
       let store = this.$store
 
       if (!this.validation()) {
-        firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(function () {
+        firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(() => {
           console.log('Already exists')
         }).catch(() => {
           self.completedUpload = false
@@ -182,7 +183,7 @@ export default {
             focusedArtwork.put(artworkFileToUpload, artworkMetadata)
             artworkName = artworkFileToUpload.name
           } else {
-            artworkName = 'default.gif'
+            artworkName = 'default.png'
           }
 
           var audioMetadata = {
@@ -207,6 +208,8 @@ export default {
               console.log('Upload Complete')
               self.completedUpload = true
               self.updateUserAccount(self.audioFileToUpload.name)
+              console.log(this.$store)
+              self.$store.commit('GET_ALL_TRACKS')
             }
           )
         })

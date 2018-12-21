@@ -12,7 +12,7 @@
               class="player-wrapper"
             >
               <audio-player
-                :currenttracknumber="currentTrackIndexNumber+1"
+                :currenttracknumber="currentTrackIndex+1"
                 :totaltracks="tracksList.length"
                 :trackurl="currentTrack.downloadURL"
                 :artist="currentTrack.metaData.artist"
@@ -21,7 +21,7 @@
                 :artworkurl="currentTrack.metaData.artworkUrl"
               ></audio-player>
             </div>
-            <q-item class="trackControls">
+            <!-- <q-item class="trackControls">
               <q-btn
                 class="trackControlButton"
                 v-on:click="previousTrack"
@@ -40,7 +40,7 @@
                   src="statics/icons/skip.svg"
                 >
               </q-btn>
-            </q-item>
+            </q-item> -->
           </div>
         </div>
         <div class="allTracksContainer">
@@ -85,35 +85,32 @@ export default {
     return {
       dataLoaded: false,
       search: "",
-      currentTrackIndexNumber: 0
+      currentTrackIndex
     };
   },
   components: {
     AudioPlayer
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
     previousTrack() {
-      if (this.currentTrackIndexNumber > 0) {
-        this.currentTrackIndexNumber--;
+      if (this.currentTrackIndex > 0) {
+        this.currentTrackIndex--;
       }
     },
     nextTrack() {
-      if (this.currentTrackIndexNumber < this.tracksArray.length - 1) {
-        this.currentTrackIndexNumber++;
+      if (this.currentTrackIndex < this.tracksArray.length - 1) {
+        this.currentTrackIndex++;
       }
     },
     changeTrack(filename) {
-      this.tracksArray.forEach((track, index) => {
-        if (track.filename === filename) {
-          this.currentTrackIndexNumber = index;
-        }
-      });
-      this.$store.commit('UPDATE_CURRENT_TRACK', this.tracksArray[this.currentTrackIndexNumber]);
-    }
+      let currentTrack = this.tracksArray.filter(track => track.filename === filename)[0]
+      this.currentTrackIndex = this.tracksArray.findIndex(track => track === currentTrack)
+      this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
+    },
   },
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
@@ -129,7 +126,10 @@ export default {
       );
     },
     currentTrack() {
-      return this.tracksArray[this.currentTrackIndexNumber];
+      this.currentTrackIndex = this.tracksArray.findIndex(track => track.currentTrack == true)
+
+      this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
+      return this.tracksArray.filter(track => track.currentTrack == true)[0]
     },
     ...mapState(['trackList', 'tracksArray'])
   }
@@ -165,6 +165,7 @@ export default {
 .trackControlButton {
   width: 50%;
   font-size: 20px;
+  fill: white !important;
 }
 
 .playerAndAllTracksContainer {
@@ -200,7 +201,6 @@ export default {
   justify-content: space-between;
   flex-direction: row;
   border-bottom: 1px solid lightgray;
-  background-color: rgba(140, 140, 140, 0.856);
   color: white;
 }
 

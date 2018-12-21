@@ -143,7 +143,7 @@ export default {
       trackRef.getMetadata().then(metadata => {
         let artworkRef = firebase.storage().ref().child(`artwork/${metadata.customMetadata.artworkName}`);
         trackRef.delete().then(() => {
-          metadata.customMetadata.artworkName != 'default.gif' ? artworkRef.delete() : false
+          metadata.customMetadata.artworkName != 'default.png' ? artworkRef.delete() : false
           this.deleteTrackFromUserAccount(trackName)
           this.getLoggedInUserTracks()
           this.deleteMessage = 'Completed'
