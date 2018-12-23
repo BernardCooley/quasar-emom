@@ -1,132 +1,58 @@
 <template>
   <div class="audioPlayerContainer">
     <track-actions-modal></track-actions-modal>
-    <q-card
-      inline
-      class="audioCard no-shadow"
-    >
-      <div
-        class="titleAndArtist q-card-title"
-        v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}"
-      >
-        <div class="trackInfo">
-          <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
-          <div class="trackArtistAndTitle">
-            <div class="artist">{{artist}}</div>
-            <div class="title">{{title}}</div>
-          </div>
-          <a
-            class="trackOptions"
-            v-on:click.prevent="openTrackActionsModal"
-          >
-            <img
-              class="trackInfoIcon"
-              src="statics/icons/menu-white.svg"
-            >
-          </a>
-        </div>
+    <q-card inline class="audioCard no-shadow">
+      <div class="titleAndArtist q-card-title" v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}">
         <q-item class="nextPrevBtns">
-          <img
-            class="audioControl prevBtn"
-            src="statics/icons/previous.svg"
-            v-on:click="prevTrack"
-          >
-          <img
-            class="audioControl nextBtn"
-            src="statics/icons/previous.svg"
-            v-on:click="nextTrack"
-          >
+          <img class="audioControl prevBtn" src="statics/icons/previous.svg" v-on:click="prevTrack">
+          <img class="audioControl nextBtn" src="statics/icons/previous.svg" v-on:click="nextTrack">
         </q-item>
+      </div>
+      <div class="trackInfo">
+        <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
+        <div class="trackArtistAndTitle">
+          <div class="artist">{{artist}}</div>
+          <div class="title">{{title}}</div>
+        </div>
+        <a class="trackOptions" v-on:click.prevent="openTrackActionsModal">
+          <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
+        </a>
       </div>
       <q-card-main v-if="true">
         <div class="trackProgress">
-          <div
-            v-on:click="seek"
-            class="player-progress"
-            title="Time played : Total time"
-          >
-            <div
-              :style="{ width: this.percentComplete + '%' }"
-              class="player-seeker"
-            ></div>
+          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
+            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
           </div>
           <div class="player-time">
             <div class="player-time-current">{{ currentTime }}</div>
             <div class="player-time-total">{{ durationTime }}</div>
           </div>
         </div>
-        <audio
-          :loop="innerLoop"
-          ref="player"
-          preload="auto"
-          style="display: none;"
-        >
+        <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
           <source :src="trackurl">
         </audio>
       </q-card-main>
-      <q-chip
-        class="unsupportedFormatMessage"
-        v-else
-      >Unsupported format</q-chip>
+      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
       <q-card-actions>
         <div class="audioActions">
-          <a
-            v-on:click.prevent="stop"
-            title="Stop"
-          >
-            <img
-              class="audioControl"
-              v-if="!playing"
-              src="statics/icons/stop-inactive.svg"
-            >
-            <img
-              class="audioControl"
-              v-else
-              src="statics/icons/stop-active.svg"
-            >
+          <a v-on:click.prevent="stop" title="Stop">
+            <img class="audioControl" v-if="!playing" src="statics/icons/stop-inactive.svg">
+            <img class="audioControl" v-else src="statics/icons/stop-active.svg">
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
-            <img
-              class="audioControl"
-              v-if="!innerLoop"
-              src="statics/icons/repeat-inactive.svg"
-            >
-            <img
-              class="audioControl"
-              v-else
-              src="statics/icons/repeat-active.svg"
-            >
+            <img class="audioControl" v-if="!innerLoop" src="statics/icons/repeat-inactive.svg">
+            <img class="audioControl" v-else src="statics/icons/repeat-active.svg">
           </a>
-          <a
-            v-on:click.prevent="playing = !playing"
-            title="Play/Pause"
-          >
-            <img
-              class="audioControl playPause"
-              v-if="!playing"
-              src="statics/icons/play.svg"
-            >
-            <img
-              class="audioControl playPause"
-              v-else
-              src="statics/icons/pause.svg"
-            >
+          <a v-on:click.prevent="playing = !playing" title="Play/Pause">
+            <img class="audioControl playPause" v-if="!playing" src="statics/icons/play.svg">
+            <img class="audioControl playPause" v-else src="statics/icons/pause.svg">
           </a>
           <a>
-            <img
-              class="audioControl"
-              src="statics/icons/favorite.svg"
-            >
-            <img
-              class="audioControl"
-              src="statics/icons/favorited.svg"
-            >
+            <img class="audioControl" src="statics/icons/favorite.svg">
+            <img class="audioControl" src="statics/icons/favorited.svg">
           </a>
           <a v-on:click.prevent="download">
-            <img
-              class="audioControl"
-              src="statics/icons/download.svg"
-            >
+            <img class="audioControl" src="statics/icons/download.svg">
           </a>
         </div>
       </q-card-actions>
@@ -593,7 +519,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .titleAndArtist {
-  background-size: 100% 100%;
+  background-size: 400px;
   height: 400px;
   background-repeat: no-repeat;
   background-position: center;
@@ -634,21 +560,16 @@ input[type="range"].slider:focus::-ms-fill-upper {
 }
 
 .trackInfo {
-  background-color: rgba(140, 140, 140, 0);
-  padding: 5px;
   color: white;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  box-shadow: 0px 0px 25px #888888;
 }
 
 .trackArtistAndTitle,
 .trackNumber,
 .trackOptions {
-  background-color: rgba(105, 105, 105, 0.5);
   padding: 9px;
   border-radius: 5px;
   flex-direction: column;

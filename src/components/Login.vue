@@ -4,24 +4,13 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field
-              class="inputField"
-              label="Email"
-              error-label=""
-            >
-              <q-input
-                id="email"
-                v-model="user.email.value"
-              />
+            <q-field class="inputField" label="Email" error-label>
+              <q-input id="email" v-model="user.email.value"/>
             </q-field>
           </q-item>
 
           <q-item>
-            <q-field
-              class="inputField"
-              label="Password"
-              error-label=""
-            >
+            <q-field class="inputField" label="Password" error-label>
               <q-input
                 type="password"
                 id="password"
@@ -35,7 +24,6 @@
         <div class="errorMessage">{{errorMsgComputed}}</div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -45,8 +33,8 @@ import firebase from "firebase/app"
 import { mapMutations } from "vuex"
 
 export default {
-  name: 'login',
-  data: function () {
+  name: "login",
+  data: function() {
     return {
       user: {
         email: {
@@ -71,8 +59,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_USER_TRACKS_ARRAY']),
-    validation: function (e) {
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_USER_TRACKS_ARRAY', 'GET_ALL_USERS']),
+    validation: function(e) {
       this.errorsBool = false
       this.user.email.errors = []
       this.user.password.errors = []
@@ -81,47 +69,44 @@ export default {
         this.user.email.errors.push('Email required.')
       }
 
-      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      var emailRegex = /^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push('Invalid email format.')
+        this.user.email.errors.push("Invalid email format.")
       }
 
       if (!this.user.password.value) {
-        this.user.password.errors.push('Password required.')
+        this.user.password.errors.push("Password required.")
       }
 
       for (var x in this.user) {
         if (this.user[x].errors.length > 0) {
-          this.errorsBool = true;
+          this.errorsBool = true
         }
       }
     },
-    login: function () {
-      this.validation();
+    login: function() {
+      this.validation()
       if (!this.errorsBool) {
-        console.log('Logging in.....')
+        console.log("Logging in.....")
 
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(
+        firebase.auth().signInWithEmailAndPassword(
             this.user.email.value,
             this.user.password.value
-          )
-          .then(() => {
-            this.$store.commit('UPDATE_ISLOGGED_IN', true)
-            this.$store.commit('UPDATE_PAGE_TITLE', 'music')
-            this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.uid)
-            this.$store.commit('UPDATE_USER_TRACKS_ARRAY', null)
-            console.log('User: ', firebase.auth().currentUser.uid, ' logged in')
+          ).then(() => {
+            this.$store.commit("UPDATE_ISLOGGED_IN", true)
+            this.$store.commit("UPDATE_PAGE_TITLE", "music")
+            this.$store.commit("UPDATE_LOGGED_IN_USER", firebase.auth().currentUser.uid)
+            this.$store.commit("UPDATE_USER_TRACKS_ARRAY", null)
+            this.$store.commit('GET_ALL_USERS')
             location.reload()
-            this.errorMessage = ''
+            this.errorMessage = ""
           }).catch(error => {
-            this.errorMessage = 'Email or password incorrect'
+            this.errorMessage = "Email or password incorrect"
           })
       }
     }
   }
-};
+}
 </script>
 
 <style>

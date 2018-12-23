@@ -1,69 +1,39 @@
 <template>
   <div class="accountContainer">
     <div class="accountDetails accountSection">
-      <div
-        class="accountSectionContainer"
-        v-on:click.prevent="toggleAccountDetails"
-      >
+      <div class="accountSectionContainer" v-on:click.prevent="toggleAccountDetails">
         <div class="accountSectionTitle">Account Details</div>
-        <img
-          class="chevron"
-          :class="[displayAccountDetails ? 'open' : 'closed']"
-          src="statics/icons/right-chevron.svg"
-        />
+        <img class="chevron" :class="[displayAccountDetails ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountDetails">
         <q-item>Artist Name: {{computedUserDetails.artistName}}</q-item>
         <q-item>Email address: {{computedUserDetails.email}}</q-item>
-        <q-btn
-          class="deleteAccountButton"
-          v-on:click="deleteAccount"
-        >Delete Account</q-btn>
+        <q-btn class="deleteAccountButton" v-on:click="deleteAccount">Delete Account</q-btn>
       </div>
     </div>
 
     <div class="userTracks accountSection">
-      <div
-        class="accountSectionContainer"
-        v-on:click.prevent="toggleAccountTracks"
-      >
+      <div class="accountSectionContainer" v-on:click.prevent="toggleAccountTracks">
         <div class="accountSectionTitle">User Tracks</div>
-        <img
-          class="chevron"
-          :class="[displayAccountTracks ? 'open' : 'closed']"
-          src="statics/icons/right-chevron.svg"
-        />
+        <img class="chevron" :class="[displayAccountTracks ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountTracks">
-        <q-item
-          class="accountTracks"
-          v-for="(track, index) in userTracksArray"
-          :key="index"
-        >
-          <div
-            v-if="computedDeleteMesage === null"
-            class="allTracksArtistAndTitle"
-          >
+        <q-item class="accountTracks" v-for="(track, index) in userTracksArray" :key="index">
+          <div v-if="computedDeleteMesage === null" class="allTracksArtistAndTitle">
             <div class="">
               <div class="trackArtist">{{track.metaData.artist}}</div>
               <div class="trackTitle">{{track.metaData.title}}</div>
             </div>
             <q-btn v-on:click.prevent="deleteTrack(track.metaData.name)">Delete</q-btn>
             <a>
-              <img
-                class="trackInfoIcon"
-                src="statics/icons/menu-white.svg"
-              >
+              <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
             </a>
           </div>
           <div v-else>{{computedDeleteMesage}}</div>
         </q-item>
       </div>
     </div>
-    <q-btn
-      class="logoutButton"
-      v-on:click="logout"
-    >Logout</q-btn>
+    <q-btn class="logoutButton" v-on:click="logout">Logout</q-btn>
   </div>
 </template>
 
@@ -82,6 +52,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['GET_TRACKS']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
@@ -147,10 +118,11 @@ export default {
           this.deleteTrackFromUserAccount(trackName)
           this.getLoggedInUserTracks()
           this.deleteMessage = 'Completed'
-          return true
           setTimeout(() => {
             this.deleteMessage = null
           }, 2000)
+          this.$store.commit('GET_TRACKS')
+          return true
         }).catch(error => {
           console.error(error)
         });
@@ -226,7 +198,7 @@ export default {
     this.getUserDetails()
   },
   computed: {
-    ...mapState(['userTracksArray']),
+    ...mapState(['userTracksArray', 'allUsers']),
     computedDeleteMesage() {
       return this.deleteMessage
     },
@@ -279,7 +251,7 @@ export default {
 
 .logoutButton {
   position: fixed;
-  bottom: 20px;
+  bottom: 70px;
   right: 20px;
 }
 

@@ -1,72 +1,20 @@
 <template>
-  <div>
-    <q-tabs>
-      <div
-        class="tabContainer row justify-between"
-        v-if="isLoggedIn"
-      >
-        <q-tab
-          class="col-3 tabItem"
-          :count="tracksArray.length"
-          slot="title"
-          name="music"
-          icon="fas fa-music"
-        />
-        <q-tab
-          class="col-3 tabItem"
-          slot="title"
-          name="addTrack"
-          icon="fas fa-plus-circle"
-        />
-        <q-tab
-          class="col-3 tabItem"
-          slot="title"
-          name="search"
-          icon="fas fa-search"
-        />
-        <q-tab
-          class="col-3 tabItem"
-          slot="title"
-          name="account"
-          icon="fas fa-user-alt"
-        />
-      </div>
-      <div
-        class="tabContainer row justify-between"
-        v-else
-      >
-        <q-tab
-          class="col-6 tabItem"
-          slot="title"
-          name="login"
-          icon="fas fa-sign-in-alt"
-        />
-        <q-tab
-          class="col-6 tabItem"
-          slot="title"
-          name="register"
-          icon="fas fa-user-plus"
-        />
-      </div>
+  <div class="tabContainer row justify-between tabsAndPaneContainer">
+    <q-tabs position="bottom" animated swipeable class="">
+      <q-tab v-if="isLoggedIn" class="col-3 tabItem" :count="tracksArray.length" slot="title" name="music" icon="fas fa-music"/>
+      <q-tab v-if="isLoggedIn" class="col-3 tabItem" slot="title" name="addTrack" icon="fas fa-plus-circle"/>
+      <q-tab v-if="isLoggedIn" class="col-3 tabItem" slot="title" name="search" icon="fas fa-search"/>
+      <q-tab v-if="isLoggedIn" class="col-3 tabItem accountIcon" slot="title" name="account" icon="fas fa-user-alt"/>
+      <q-tab v-if="!isLoggedIn" class="col-6 tabItem" slot="title" name="login" icon="fas fa-sign-in-alt"/>
+      <q-tab v-if="!isLoggedIn" class="col-6 tabItem" slot="title" name="register" icon="fas fa-user-plus"/>
 
-      <q-tab-pane name="login">
-        <login />
-      </q-tab-pane>
-      <q-tab-pane name="register">
-        <register />
-      </q-tab-pane>
-      <q-tab-pane name="music">
-        <music />
-      </q-tab-pane>
-      <q-tab-pane name="account">
-        <account />
-      </q-tab-pane>
-      <q-tab-pane name="addTrack">
-        <add-track />
-      </q-tab-pane>
-      <q-tab-pane name="search">
-        <search />
-      </q-tab-pane>
+
+      <q-tab-pane class="tabPane" name="login"><login /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="register"><register /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="music"><music /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="account"><account /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="addTrack"><add-track /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="search"><search /></q-tab-pane>
     </q-tabs>
   </div>
 </template>
@@ -100,13 +48,17 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .tabContainer {
-  position: fixed;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  height: 60px;
+  // position: fixed;
+  // top: 0;
+  // z-index: 1;
+  // width: 100%;
+  // height: 60px;
+
+  .accountIcon {
+    color: white;
+  }
 }
 
 .bg-primary {
@@ -115,5 +67,22 @@ export default {
 
 .q-tabs-head {
   box-shadow: none !important;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.q-tabs-scroller {
+  background-image: linear-gradient(rgb(0, 158, 152), rgb(37, 111, 119));
+}
+
+.tabsAndPaneContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabPane {
+  // margin-bottom: 50px;
 }
 </style>

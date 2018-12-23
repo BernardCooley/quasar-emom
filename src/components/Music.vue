@@ -85,7 +85,7 @@ export default {
     return {
       dataLoaded: false,
       search: "",
-      currentTrackIndex
+      currentTrackIndex: 0
     };
   },
   components: {

@@ -28,7 +28,7 @@ export default {
     Tabs
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_CURR_TRACK', 'UPDATE_TRACKS_ARRAY', 'GET_ALL_TRACKS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_CURR_TRACK', 'UPDATE_TRACKS_ARRAY', 'GET_TRACKS', 'GET_ALL_USERS']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -40,6 +40,7 @@ export default {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
           this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.email)
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID', firebase.auth().currentUser.uid)
+          this.$store.commit('GET_ALL_USERS')
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }
@@ -48,7 +49,7 @@ export default {
   },
   created() {
     this.login()
-    this.$store.commit('GET_ALL_TRACKS')
+    this.$store.commit('GET_TRACKS')
   },
   computed: {
     ...mapState(['isLoggedIn'])
@@ -72,7 +73,7 @@ body {
 
 .q-tab-pane {
   border: none;
-  padding: 15px 0;
+  padding: 0;
 }
 
 .q-card-container {
