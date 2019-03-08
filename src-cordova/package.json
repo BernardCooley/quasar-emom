@@ -1,7 +1,7 @@
 {
   "name": "org.cordova.quasar.app",
-  "version": "1.0.0",
-  "displayName": "Quasar App",
+  "version": "0.0.1",
+  "displayName": "EMOM",
   "cordova": {
     "platforms": [
       "android",

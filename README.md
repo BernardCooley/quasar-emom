@@ -1,4 +1,4 @@
-# Quasar App
+# EMOM
 
 > WIP
 # quasar-emom

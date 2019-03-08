@@ -1,8 +1,8 @@
 {
   "name": "default",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "EMOM",
   "cordovaId": "org.cordova.quasar.app",
   "author": "",
   "private": true,
