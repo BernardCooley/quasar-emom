@@ -46,8 +46,8 @@
         <div class="allTracksContainer">
           <q-list>
             <q-item class v-for="(track, index) in tracksList" :key="index">
-              <div :class="[currentTrackIndex == index ? 'highlight' : '']" class="allTracksArtistAndTitle">
-                <div class v-on:click="changeTrack(track.filename)">
+              <div :class="[currentTrackIndex == index ? 'highlight' : '']" class="allTracksArtistAndTitle" v-on:click="changeTrack(track.filename)">
+                <div>
                   <div class="trackArtist">{{track.metaData.artist}}</div>
                   <div class="trackTitle">{{track.metaData.title}}</div>
                 </div>

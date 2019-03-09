@@ -1,18 +1,10 @@
 <template>
   <div>
-    <q-modal
-      :content-css="{width: '50%', height: '50%', background: 'rgba(140, 140, 140, 0.856)'}"
-      class="trackActionsModal"
-      transition
-      v-model="trackActionsModalOpen"
-    >
-      <i
-        class="fas fa-times closeModal"
-        v-on:click="closeModal"
-      ></i>
+    <q-modal :content-css="{width: '50%', height: '50%', background: '#11363a'}" class="trackActionsModal" transition v-model="trackActionsModalOpen">
+      <i class="fas fa-times closeModal" v-on:click="closeModal"></i>
       <div class="modalContent">
         <q-list>
-          Likes: {{likes}}
+          <div class="menuTitle">Track Menu:</div>
           <a v-on:click="showUsersTracks('yours'); closeModal();">
             <q-item class="menuItem">View your tracks</q-item>
           </a>
@@ -127,7 +119,7 @@ export default {
 }
 
 .trackActionsModal {
-  background-color: rgba(140, 140, 140, 0.856);
+  background-color: rgba(37, 111, 119, 0.9);
 }
 
 .modalContent {
@@ -136,6 +128,11 @@ export default {
 }
 
 .menuItem {
-  font-size: 18px;
+  font-size: 22px;
+}
+
+.menuTitle {
+  font-size: 27px;
+  padding-bottom: 30px;
 }
 </style>
