@@ -68,7 +68,7 @@ export default {
 
 body {
   color: #ffffff !important;
-  background-image: linear-gradient(rgb(37, 111, 119), rgb(0, 158, 152));
+  background-color: #11363a;
 }
 
 .q-tab-pane {

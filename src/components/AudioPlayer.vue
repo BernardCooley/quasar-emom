@@ -4,8 +4,8 @@
     <q-card inline class="audioCard no-shadow">
       <div class="titleAndArtist q-card-title" v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}">
         <q-item class="nextPrevBtns">
-          <img class="audioControl prevBtn" src="statics/icons/previous.svg" v-on:click="prevTrack">
-          <img class="audioControl nextBtn" src="statics/icons/previous.svg" v-on:click="nextTrack">
+          <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon']" class="audioControl nextBtn" src="statics/icons/next.svg" v-on:click="prevTrack">
+          <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon']" class="audioControl prevBtn" src="statics/icons/next.svg" v-on:click="nextTrack">
         </q-item>
       </div>
       <div class="trackInfo">
@@ -484,8 +484,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
 
   .prevBtn,
   .nextBtn {
-    height: 40px;
-    background-color: rgba(105, 105, 105, 0.5);
+    height: 35px;
+    background-color: white;
+    border-radius: 30px;
   }
 }
 
@@ -523,6 +524,8 @@ input[type="range"].slider:focus::-ms-fill-upper {
   height: 400px;
   background-repeat: no-repeat;
   background-position: center;
+  display: flex;
+  justify-content: center;
 
   .artist {
     font-size: 22px;
@@ -574,5 +577,13 @@ input[type="range"].slider:focus::-ms-fill-upper {
   border-radius: 5px;
   flex-direction: column;
   display: flex;
+}
+
+.hideIcon {
+  opacity: 0;
+}
+
+.showIcon {
+  opacity: 1;
 }
 </style>
