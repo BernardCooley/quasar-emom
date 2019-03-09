@@ -82,7 +82,7 @@ export default {
   flex-direction: column;
 }
 
-.tabPane {
-  // margin-bottom: 50px;
+.q-tabs {
+  margin-bottom: 50px;
 }
 </style>

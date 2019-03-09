@@ -433,9 +433,10 @@ input[type="range"].slider:focus::-ms-fill-upper {
 .player-progress {
   background-color: rgb(255, 255, 255);
   cursor: pointer;
-  height: 5px;
+  height: 10px;
   min-width: 200px;
   position: relative;
+  opacity: 0.8;
 
   .player-seeker {
     bottom: 0;
@@ -471,6 +472,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
 
 .audioControl {
   height: 30px;
+  opacity: 0.8;
 }
 
 .nextBtn {

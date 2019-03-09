@@ -45,24 +45,14 @@
         </div>
         <div class="allTracksContainer">
           <q-list>
-            <q-item
-              class
-              v-for="(track, index) in tracksList"
-              :key="index"
-            >
-              <div class="allTracksArtistAndTitle">
-                <div
-                  class
-                  v-on:click="changeTrack(track.filename)"
-                >
+            <q-item class v-for="(track, index) in tracksList" :key="index">
+              <div :class="[currentTrackIndex == index ? 'highlight' : '']" class="allTracksArtistAndTitle">
+                <div class v-on:click="changeTrack(track.filename)">
                   <div class="trackArtist">{{track.metaData.artist}}</div>
                   <div class="trackTitle">{{track.metaData.title}}</div>
                 </div>
                 <a v-on:click.prevent="openTrackActionsModal">
-                  <img
-                    class="trackInfoIcon"
-                    src="statics/icons/menu-white.svg"
-                  >
+                  <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
                 </a>
               </div>
             </q-item>
@@ -238,5 +228,9 @@ export default {
 .trackInfoIcon {
   height: 15px;
   transform: (rotate(90deg));
+}
+
+.highlight {
+  background-color: #256f77;
 }
 </style>
