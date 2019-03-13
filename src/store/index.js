@@ -152,7 +152,7 @@ const store = new Vuex.Store({
         })
       })
     },
-    GET_CURRENT_USER_TRACKS(state, value) {
+    GET_CURRENT_USER_TRACKS(state) {
       state.tracksArray = []
       let trackNames = []
 
