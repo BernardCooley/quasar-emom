@@ -20,7 +20,7 @@ export default {
     Tabs
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_TRACKS', 'GET_ALL_USERS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS', 'GET_TRACKS']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -41,7 +41,7 @@ export default {
   },
   created() {
     this.login()
-    this.$store.commit('GET_ALL_TRACKS')
+    this.$store.commit('GET_TRACKS', 'all')
   },
   computed: {
     ...mapState(['isLoggedIn'])

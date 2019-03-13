@@ -5,16 +5,16 @@
       <div class="modalContent">
         <q-list>
           <div class="menuTitle">Track Menu:</div>
-          <a v-on:click="showUsersTracks(); closeModal();">
+          <a v-on:click="showUsersTracks('currentUser'); closeModal();">
             <q-item class="menuItem">Your tracks</q-item>
           </a>
-          <a v-on:click="showAllTracks(); closeModal();">
+          <a v-on:click="showAllTracks('all'); closeModal();">
             <q-item class="menuItem">All tracks</q-item>
           </a>
           <a v-on:click="showFavourites(); closeModal();">
             <q-item class="menuItem">Favourites</q-item>
           </a>
-          <a v-on:click="showArtistTracks(); closeModal();">
+          <a v-on:click="showArtistTracks('artist'); closeModal();">
             <q-item class="menuItem">This artist's tracks</q-item>
           </a>
         </q-list>
@@ -30,15 +30,15 @@ import firebase from "firebase/app"
 
 export default {
   methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST', 'GET_CURRENT_USER_TRACKS']),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST', 'GET_TRACKS']),
     closeModal: function () {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', false)
     },
     showUsersTracks: function () {
-      this.$store.commit('GET_CURRENT_USER_TRACKS')
+      this.$store.commit('GET_TRACKS', 'currentUser')
     },
     showAllTracks: function () {
-      this.$store.commit('GET_ALL_TRACKS')
+      this.$store.commit('GET_TRACKS', 'all')
     },
     showFavourites: function () {
       let tracks = []
@@ -61,7 +61,7 @@ export default {
         })
     },
     showArtistTracks: function() {
-      this.$store.commit('GET_ARTIST_TRACKS', this.currentTrack)
+      this.$store.commit('GET_TRACKS', 'artist')
     },
     downloadTrack: function () {
       this.stop()
