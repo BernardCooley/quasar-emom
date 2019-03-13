@@ -5,10 +5,10 @@
       <div class="modalContent">
         <q-list>
           <div class="menuTitle">Track Menu:</div>
-          <a v-on:click="showUsersTracks('yours'); closeModal();">
+          <a v-on:click="showUsersTracks(); closeModal();">
             <q-item class="menuItem">Your tracks</q-item>
           </a>
-          <a v-on:click="showAllTracks('yours'); closeModal();">
+          <a v-on:click="showAllTracks(); closeModal();">
             <q-item class="menuItem">All tracks</q-item>
           </a>
           <a v-on:click="showFavourites(); closeModal();">
@@ -30,45 +30,15 @@ import firebase from "firebase/app"
 
 export default {
   methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST']),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST', 'GET_CURRENT_USER_TRACKS']),
     closeModal: function () {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', false)
     },
-    showUsersTracks: function (viewUsersOrYourTracks) {
-      var userId = null
-      if (viewUsersOrYourTracks === 'otherUsers') {
-        userId = this.currentTrack.uploadedById
-      } else if (viewUsersOrYourTracks === 'yours') {
-        userId = this.loggedInUserId
-      }
-
-      db.collection('users').where('userID', '==', userId).get()
-        .then(querySnapshot => {
-          var trackList = []
-          querySnapshot.forEach(doc => {
-            doc.data().tracks.forEach(trackId => {
-              db.collection('tracks').where('trackID', '==', trackId).get()
-                .then(querySnapshot => {
-                  querySnapshot.forEach(track => {
-                    trackList.push(track.data())
-                  })
-                  this.$store.commit('UPDATE_TRACK_LIST', trackList)
-                })
-            })
-          })
-        })
+    showUsersTracks: function () {
+      this.$store.commit('GET_CURRENT_USER_TRACKS')
     },
     showAllTracks: function () {
-      var tracks = []
-      db.collection('tracks').get()
-        .then(querySnapshot => {
-          var index = 0
-          querySnapshot.forEach(doc => {
-            tracks.push(doc.data())
-            index++
-          });
-          this.$store.commit('UPDATE_TRACK_LIST', tracks)
-        });
+      this.$store.commit('GET_ALL_TRACKS')
     },
     showFavourites: function () {
       let tracks = []

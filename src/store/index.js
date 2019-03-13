@@ -152,6 +152,40 @@ const store = new Vuex.Store({
         })
       })
     },
+    GET_CURRENT_USER_TRACKS(state, value) {
+      state.tracksArray = []
+      let trackNames = []
+
+      db.collection('users').where('userID', '==', firebase.auth().currentUser.uid).get().then(user => {
+        user.docs.map(userData => {
+          trackNames = userData.data().tracks
+        })
+        trackNames.forEach((trackFilename, index) => {
+          let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
+          trackRef.getMetadata().then(metadata => {
+            let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
+
+            artworkRef.getDownloadURL().then(artworkUrl => {
+              trackRef.getDownloadURL().then(trackURL => {
+                this.state.tracksArray.push({
+                  metaData: {
+                    artist: metadata.customMetadata.artist,
+                    title: metadata.customMetadata.title,
+                    artworkUrl: artworkUrl,
+                    uploadedByArtist: metadata.customMetadata.uploadedByName
+                  },
+                  downloadURL: trackURL,
+                  filename: trackFilename,
+                  currentTrack: index == 0 ? true : false
+                })
+              }).catch(error => {
+                console.log(error)
+              })
+            })
+          }).catch(error => { })
+        })
+      })
+    },
     GET_CURRENT_USER_ARTIST_NAME() {
       db.collection('users').doc(firebase.auth().currentUser.uid).get().then(user => {
         this.state.currentUserArtistName = user.data().artistName
