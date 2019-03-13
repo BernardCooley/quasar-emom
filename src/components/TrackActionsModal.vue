@@ -6,21 +6,17 @@
         <q-list>
           <div class="menuTitle">Track Menu:</div>
           <a v-on:click="showUsersTracks('yours'); closeModal();">
-            <q-item class="menuItem">View your tracks</q-item>
+            <q-item class="menuItem">Your tracks</q-item>
           </a>
           <a v-on:click="showAllTracks('yours'); closeModal();">
-            <q-item class="menuItem">View all tracks</q-item>
+            <q-item class="menuItem">All tracks</q-item>
           </a>
           <a v-on:click="showFavourites(); closeModal();">
-            <q-item class="menuItem">View favourites</q-item>
+            <q-item class="menuItem">Favourites</q-item>
           </a>
-          <a v-on:click.prevent="downloadTrack; closeModal();">
-            <q-item class="menuItem">Download</q-item>
+          <a v-on:click="showArtistTracks(); closeModal();">
+            <q-item class="menuItem">This artist's tracks</q-item>
           </a>
-          <!-- <q-item
-            class="menuItem"
-            v-if="trackUploadedByUser"
-          >Delete track</q-item> -->
         </q-list>
       </div>
     </q-modal>
@@ -41,7 +37,7 @@ export default {
     showUsersTracks: function (viewUsersOrYourTracks) {
       var userId = null
       if (viewUsersOrYourTracks === 'otherUsers') {
-        userId = this.currentTrack.uploadedBy
+        userId = this.currentTrack.uploadedById
       } else if (viewUsersOrYourTracks === 'yours') {
         userId = this.loggedInUserId
       }
@@ -100,12 +96,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['trackActionsModalOpen', 'currentTrack', 'loggedInUserId', 'likes']),
-    trackUploadedByUser: function () {
-      if (this.loggedInUserId == this.currentTrack.uploadedBy) {
-        return true;
-      }
-    }
+    ...mapState(['trackActionsModalOpen', 'currentTrack', 'loggedInUserId'])
   }
 };
 </script>

@@ -26,7 +26,8 @@ const store = new Vuex.Store({
     fileUploadPercentage: null,
     tracksArray: [],
     userTracksArray: [],
-    allUsers: []
+    allUsers: [],
+    currentUserArtistName: null
   },
   mutations: {
     UPDATE_ISLOGGED_IN(state, value) {
@@ -92,7 +93,6 @@ const store = new Vuex.Store({
           trackNames = user.data().tracks ? [...user.data().tracks, ...trackNames] : trackNames
         })
         trackNames.forEach((trackFilename, index) => {
-          console.log(trackFilename)
           let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
           trackRef.getMetadata().then(metadata => {
             let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
@@ -117,8 +117,10 @@ const store = new Vuex.Store({
         })
       })
     },
-    GET_LOGGED_IN_USER(state) {
-      state.loggedInUserId = db.collection('users').doc(firebase.auth().currentUser.uid)
+    GET_CURRENT_USER_ARTIST_NAME(state, value) {
+      db.collection('users').doc(firebase.auth().currentUser.uid).get().then(user => {
+        this.state.currentUserArtistName = user.data().artistName
+      })
     },
     GET_ALL_USERS(state) {
       state.allUsers = []

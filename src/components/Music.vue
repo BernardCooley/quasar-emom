@@ -121,7 +121,7 @@ export default {
       this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
       return this.tracksArray.filter(track => track.currentTrack == true)[0]
     },
-    ...mapState(['trackList', 'tracksArray'])
+    ...mapState(['tracksArray'])
   }
 };
 </script>

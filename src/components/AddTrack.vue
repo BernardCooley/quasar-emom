@@ -5,43 +5,25 @@
         <q-list v-if="!uploadingFile">
           <q-item>
             <q-field label="Artist">
-              <q-input
-                id="artist"
-                v-model="track.artist.value"
-              />
+              <q-input id="artist" v-model="track.artist.value"/>
               <div class="validationMessage">{{track.artist.errorMessage}}</div>
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Title">
-              <q-input
-                id="trackTitle"
-                v-model="track.title.value"
-              />
+              <q-input id="trackTitle" v-model="track.title.value"/>
               <div class="validationMessage">{{track.title.errorMessage}}</div>
             </q-field>
           </q-item>
           <q-item>
-            <q-field label="Artwork Url (optional)">
-              <input
-                type="file"
-                ref="artworkUpload"
-                multiple
-                @change="getSelectedFile('artwork')"
-                class="input-file"
-              >
+            <q-field label="Upload Track">
+              <input type="file" ref="trackUpload" multiple @change="getSelectedFile('audio')" class="input-file">
+              <div class="validationMessage">{{track.uploadFile.errorMessage}}</div>
             </q-field>
           </q-item>
           <q-item>
-            <q-field label="Upload Track">
-              <input
-                type="file"
-                ref="trackUpload"
-                multiple
-                @change="getSelectedFile('audio')"
-                class="input-file"
-              >
-              <div class="validationMessage">{{track.uploadFile.errorMessage}}</div>
+            <q-field label="Artwork Url (optional)">
+              <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file">
             </q-field>
           </q-item>
         </q-list>
@@ -54,14 +36,8 @@
           v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)"
         >Upload</q-btn>
 
-        <q-btn
-          v-if="uploadingFile && !completedUpload"
-          v-on:click="cancelUpload"
-        >Cancel</q-btn>
-        <div
-          class="uploadCompleteContainer"
-          v-if="uploadComplete"
-        >
+        <q-btn v-if="uploadingFile && !completedUpload" v-on:click="cancelUpload">Cancel</q-btn>
+        <div class="uploadCompleteContainer" v-if="uploadComplete">
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click="resetForm">Upload Another Track</q-btn>
         </div>
@@ -84,7 +60,8 @@ export default {
         title: { value: null, errorMessage: '' },
         uploadFile: { value: null, errorMessage: '' },
         artworkUrl: { value: null },
-        uploadedBy: { value: null }
+        uploadedById: { value: null },
+        uploadedByArtist: { value: null }
       },
       userID: null,
       addTrackMessage: null,
@@ -97,13 +74,16 @@ export default {
     };
   },
   computed: {
-    ...mapState(["fileUploadPercentage"]),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName']),
     uploadingFile() {
       return this.fileUploading
     },
     uploadComplete() {
       return this.completedUpload
     }
+  },
+  created() {
+    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
   },
   methods: {
     ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS']),
@@ -176,7 +156,7 @@ export default {
 
             var artworkMetadata = {
               customMetadata: {
-                'uploadedBy': firebase.auth().currentUser.uid,
+                'uploadedById': firebase.auth().currentUser.uid
               }
             }
 
@@ -190,8 +170,9 @@ export default {
             customMetadata: {
               'artist': this.track.artist.value,
               'title': this.track.title.value,
-              'uploadedBy': firebase.auth().currentUser.uid,
-              'artworkName': artworkName
+              'uploadedById': firebase.auth().currentUser.uid,
+              'artworkName': artworkName,
+              'uploadedByName': this.currentUserArtistName
             }
           }
 
@@ -239,7 +220,8 @@ export default {
         title: { value: null, errorMessage: '' },
         uploadFile: { value: null, errorMessage: '' },
         artworkUrl: { value: null },
-        uploadedBy: { value: null }
+        uploadedById: { value: null },
+        uploadedByArtist: { value: null }
       }
     },
     updateUserAccount(fileName) {
@@ -291,5 +273,13 @@ export default {
     color: green;
     text-align: center;
   }
+}
+
+.input-file {
+  width: 110px;
+  height: 25px;
+  opacity: 1;
+  overflow: hidden;
+  background-color: gray;
 }
 </style>

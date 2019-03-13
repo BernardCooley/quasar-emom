@@ -110,7 +110,7 @@ export default {
     },
     currenttracknumber: null,
     totaltracks: null,
-    uploadedby: {
+    uploadedByArtist: {
       type: String,
       default: null
     }
@@ -125,8 +125,7 @@ export default {
       playing: false,
       previousVolume: 35,
       showVolume: false,
-      volume: 100,
-      uploadedByName: null
+      volume: 100
     };
   },
   computed: {
@@ -253,7 +252,6 @@ export default {
         })
     },
     openTrackActionsModal() {
-      console.log('openTrackActionsModal CLICKED')
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true)
     }
   },

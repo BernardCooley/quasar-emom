@@ -2,16 +2,8 @@
   <div id='q-app'>
     <div class='appContainer'>
       <tabs></tabs>
-      <div
-        class="heroImageContainer"
-        v-if="!isLoggedIn"
-      >
-        <img
-          class="heroImage"
-          src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png"
-          alt=""
-          vertical-middle
-        />
+      <div class="heroImageContainer" v-if="!isLoggedIn">
+        <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
       </div>
     </div>
   </div>
@@ -28,7 +20,7 @@ export default {
     Tabs
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_CURR_TRACK', 'UPDATE_TRACKS_ARRAY', 'GET_TRACKS', 'GET_ALL_USERS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_CURR_TRACK', 'GET_TRACKS', 'GET_ALL_USERS']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -50,6 +42,9 @@ export default {
   created() {
     this.login()
     this.$store.commit('GET_TRACKS')
+  },
+  mounted() {
+    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
   },
   computed: {
     ...mapState(['isLoggedIn'])
@@ -81,7 +76,7 @@ body {
 }
 
 .q-field-label {
-  color: #333333;
+  color: white;;
 }
 
 .q-field {
