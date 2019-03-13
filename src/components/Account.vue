@@ -52,7 +52,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['GET_TRACKS']),
+    ...mapMutations(['GET_ALL_TRACKS']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
@@ -121,7 +121,7 @@ export default {
           setTimeout(() => {
             this.deleteMessage = null
           }, 2000)
-          this.$store.commit('GET_TRACKS')
+          this.$store.commit('GET_ALL_TRACKS')
           return true
         }).catch(error => {
           console.error(error)

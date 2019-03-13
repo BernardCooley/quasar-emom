@@ -86,7 +86,7 @@ export default {
     this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
   },
   methods: {
-    ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS']),
+    ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_ALL_TRACKS']),
     validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
@@ -190,7 +190,7 @@ export default {
               self.completedUpload = true
               self.updateUserAccount(self.audioFileToUpload.name)
               console.log(this.$store)
-              self.$store.commit('GET_TRACKS')
+              self.$store.commit('GET_ALL_TRACKS')
             }
           )
         })

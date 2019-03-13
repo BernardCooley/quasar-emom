@@ -82,7 +82,7 @@ export default {
     AudioPlayer
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
@@ -104,6 +104,7 @@ export default {
   },
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
+    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
   },
   computed: {
     tracksList() {

@@ -90,6 +90,9 @@ export default {
           })
         })
     },
+    showArtistTracks: function() {
+      this.$store.commit('GET_ARTIST_TRACKS', this.currentTrack)
+    },
     downloadTrack: function () {
       this.stop()
       window.open(this.currentTrack.trackUrl, 'download')
