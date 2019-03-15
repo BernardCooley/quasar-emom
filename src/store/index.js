@@ -89,30 +89,28 @@ const store = new Vuex.Store({
       state.tracksArray = []
       let trackNames = []
 
-      let promise = new Promise(function(resolve, reject) {
-        if(value == 'artist') {
-          db.collection('users').where('artistName', '==', state.currentTrack.metaData.uploadedByArtist).get().then(user => {
-            user.docs.map(userData => {
-              resolve(userData.data().tracks)
-            })
-          })
-        }else if(value == 'currentUser') {
-          db.collection('users').where('uaerID', '==', firebase.auth().currentUser.uid).get().then(user => {
-            user.docs.map(userData => {
-              resolve(userData.data().tracks)
-            })
-          })
-        }else if(value == 'all') {
+      let getTracksPromise = new Promise(function(resolve, reject) {
+        if(value == 'all') {
           db.collection('users').get().then(users => {
             users.docs.map(user => {
               trackNames = user.data().tracks ? [...user.data().tracks, ...trackNames] : trackNames
             })
             resolve(trackNames)
+            reject('error getting tracks')
+          })
+        }else if(value == 'all' || value == 'currentUser') {
+          db.collection('users').where(
+            value == 'currentUser' ? 'userId' : 'artistName', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedByArtist
+          ).get().then(user => {
+            user.docs.map(userData => {
+              resolve(userData.data().tracks)
+              reject('error getting tracks')
+            })
           })
         }
       })
 
-      promise.then(result => {
+      getTracksPromise.then(result => {
         console.log(result)
         result.forEach((trackFilename, index) => {
           let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
@@ -132,11 +130,9 @@ const store = new Vuex.Store({
                   filename: trackFilename,
                   currentTrack: index == 0 ? true : false
                 })
-              }).catch(error => {
-                console.log(error)
-              })
+              }).catch(error => {console.log(error)})
             })
-          }).catch(error => { })
+          }).catch(error => {console.log(error)})
         })
       })
     },
