@@ -1,10 +1,11 @@
 <template>
   <div class="tabContainer row justify-between tabsAndPaneContainer">
     <q-tabs position="bottom" animated swipeable class="">
-      <q-tab v-if="isLoggedIn" class="col-3 tabItem" :count="tracksArray.length" slot="title" name="music" icon="fas fa-music"/>
-      <q-tab v-if="isLoggedIn" class="col-3 tabItem" slot="title" name="addTrack" icon="fas fa-plus-circle"/>
-      <q-tab v-if="isLoggedIn" class="col-3 tabItem" slot="title" name="search" icon="fas fa-search"/>
-      <q-tab v-if="isLoggedIn" class="col-3 tabItem accountIcon" slot="title" name="account" icon="fas fa-user-alt"/>
+      <q-tab v-if="isLoggedIn" class="tabItem" slot="title" name="music" icon="fas fa-music"/>
+      <q-tab v-if="isLoggedIn" class="tabItem" slot="title" name="explore" icon="fas fa-user-plus"/>
+      <q-tab v-if="isLoggedIn" class="tabItem" slot="title" name="addTrack" icon="fas fa-plus-circle"/>
+      <q-tab v-if="isLoggedIn" class="tabItem" slot="title" name="search" icon="fas fa-search"/>
+      <q-tab v-if="isLoggedIn" class="tabItem accountIcon" slot="title" name="account" icon="fas fa-user-alt"/>
       <q-tab v-if="!isLoggedIn" class="col-6 tabItem" slot="title" name="login" icon="fas fa-sign-in-alt"/>
       <q-tab v-if="!isLoggedIn" class="col-6 tabItem" slot="title" name="register" icon="fas fa-user-plus"/>
 
@@ -15,6 +16,7 @@
       <q-tab-pane class="tabPane" name="account"><account /></q-tab-pane>
       <q-tab-pane class="tabPane" name="addTrack"><add-track /></q-tab-pane>
       <q-tab-pane class="tabPane" name="search"><search /></q-tab-pane>
+      <q-tab-pane class="tabPane" name="explore"><explore /></q-tab-pane>
     </q-tabs>
   </div>
 </template>
@@ -25,6 +27,7 @@ import Register from "../components/Register"
 import Account from "../components/Account"
 import Music from "../components/Music"
 import AddTrack from "../components/AddTrack"
+import Explore from "../components/Explore"
 
 import { mapState } from "vuex"
 import firebase from "firebase/app"
@@ -40,7 +43,8 @@ export default {
     Register,
     Music,
     Account,
-    AddTrack
+    AddTrack,
+    Explore
   },
   computed: {
     ...mapState(['isLoggedIn', 'tracksArray'])
