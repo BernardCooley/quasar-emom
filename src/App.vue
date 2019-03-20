@@ -2,7 +2,7 @@
   <div id='q-app'>
     <div class='appContainer'>
       <tabs></tabs>
-      <div class="heroImageContainer" v-if="!isLoggedIn">
+      <div class="heroImageContainer">
         <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
       </div>
     </div>
@@ -20,7 +20,7 @@ export default {
     Tabs
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS', 'GET_TRACKS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -41,7 +41,6 @@ export default {
   },
   created() {
     this.login()
-    this.$store.commit('GET_TRACKS', 'all')
   },
   computed: {
     ...mapState(['isLoggedIn'])

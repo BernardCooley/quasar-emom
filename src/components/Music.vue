@@ -21,26 +21,6 @@
                 :artworkurl="currentTrack.metaData.artworkUrl"
               ></audio-player>
             </div>
-            <!-- <q-item class="trackControls">
-              <q-btn
-                class="trackControlButton"
-                v-on:click="previousTrack"
-              >
-                <img
-                  class="audioControl"
-                  src="statics/icons/previous.svg"
-                >
-              </q-btn>
-              <q-btn
-                class="trackControlButton"
-                v-on:click="nextTrack"
-              >
-                <img
-                  class="audioControl"
-                  src="statics/icons/skip.svg"
-                >
-              </q-btn>
-            </q-item> -->
           </div>
         </div>
         <div class="allTracksContainer">
@@ -82,7 +62,7 @@ export default {
     AudioPlayer
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME', 'GET_TRACKS']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
@@ -105,6 +85,9 @@ export default {
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
     this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
+    if(this.tracksArray.length == 0) {
+      this.$store.commit('GET_TRACKS', 'all')
+    }
   },
   computed: {
     tracksList() {

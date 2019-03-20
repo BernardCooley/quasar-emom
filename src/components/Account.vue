@@ -82,7 +82,6 @@ export default {
                   downloadURL: trackURL,
                   filename: trackFilename
                 })
-                store.commit("UPDATE_USER_TRACKS_ARRAY", null)
                 store.commit("UPDATE_USER_TRACKS_ARRAY", trackData)
               }).catch(function (error) {
                 console.log(error)
@@ -121,7 +120,7 @@ export default {
           setTimeout(() => {
             this.deleteMessage = null
           }, 2000)
-          this.$store.commit('GET_TRACKS', 'all')
+          this.$store.commit('GET_TRACKS', 'currentUser')
           return true
         }).catch(error => {
           console.error(error)

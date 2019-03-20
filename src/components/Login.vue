@@ -85,6 +85,9 @@ export default {
       }
     },
     login: function() {
+      this.$q.loading.show({
+        message: 'Logging in...'
+      })
       this.validation()
       if (!this.errorsBool) {
         console.log("Logging in.....")
@@ -96,10 +99,10 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", "music")
             this.$store.commit("UPDATE_LOGGED_IN_USER", firebase.auth().currentUser.uid)
-            this.$store.commit("UPDATE_USER_TRACKS_ARRAY", null)
             this.$store.commit('GET_ALL_USERS')
             location.reload()
             this.errorMessage = ""
+            this.$q.loading.hide()
           }).catch(error => {
             this.errorMessage = "Email or password incorrect"
           })

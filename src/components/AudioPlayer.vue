@@ -47,9 +47,9 @@
             <img class="audioControl playPause" v-if="!playing" src="statics/icons/play.svg">
             <img class="audioControl playPause" v-else src="statics/icons/pause.svg">
           </a>
-          <a>
-            <img class="audioControl" src="statics/icons/favorite.svg">
-            <img class="audioControl" src="statics/icons/favorited.svg">
+          <a v-on:click.prevent="favourite" title="Favourite">
+            <img class="audioControl" v-if="!favourited" src="statics/icons/favorite.svg">
+            <img class="audioControl" v-else src="statics/icons/favorited.svg">
           </a>
           <a v-on:click.prevent="download">
             <img class="audioControl" src="statics/icons/download.svg">
@@ -129,7 +129,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['loggedInUser', 'currentTrack', 'loggedInUserId', 'artworkUrl', 'tracksArray']),
+    ...mapState(['currentTrack', 'loggedInUserId', 'tracksArray', 'favourites']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },
@@ -147,6 +147,10 @@ export default {
     },
     artworkURL() {
       return this.artworkurl
+    },
+    favourited() {
+      console.log(this.currentTrack.favourite)
+      return this.currentTrack.favourite
     }
   },
   watch: {
@@ -162,7 +166,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL', 'FAVOURITE_TRACK']),
     prevTrack() {
       let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
@@ -219,37 +223,7 @@ export default {
       this.currentSeconds = parseInt(this.audio.currentTime);
     },
     favourite() {
-      let favourites = [];
-
-      db.collection('users').where('userID', '==', this.loggedInUserId).get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            if (doc.data().favourites) {
-              favourites = doc.data().favourites
-            }
-            if (!favourites.includes(this.currentTrack.trackID)) {
-              favourites.push(this.currentTrack.trackID)
-              db.collection('users').doc(this.loggedInUserId).update({
-                favourites
-              })
-
-              let likes = 0;
-              db.collection('tracks').where('trackID', '==', this.currentTrack.trackID).get()
-                .then(querySnapshot => {
-                  querySnapshot.forEach(doc => {
-
-                    if (doc.data().likes) {
-                      likes = doc.data().likes
-                    }
-                    likes++
-                    db.collection('tracks').doc(this.currentTrack.trackID).update({
-                      likes
-                    }).then(this.$store.commit('UPDATE_LIKES', likes))
-                  })
-                })
-            }
-          })
-        })
+      this.$store.commit('FAVOURITE_TRACK')
     },
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true)
