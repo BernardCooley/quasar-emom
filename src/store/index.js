@@ -102,9 +102,9 @@ const store = new Vuex.Store({
             resolve(trackNames)
             reject('error getting tracks')
           })
-        }else if(value == 'all' || value == 'currentUser') {
+        }else if(value == 'artist' || value == 'currentUser') {
           db.collection('users').where(
-            value == 'currentUser' ? 'userId' : 'artistName', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedByArtist
+            value == 'currentUser' ? 'userID' : 'artistName', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedByArtist
           ).get().then(user => {
             user.docs.map(userData => {
               resolve(userData.data().tracks)
@@ -136,7 +136,9 @@ const store = new Vuex.Store({
                 })
               }).catch(error => {console.log(error)})
             })
-            Loading.hide()
+            setTimeout(function() {
+              Loading.hide()
+            }, 1500)
           }).catch(error => {console.log(error)})
         })
       })

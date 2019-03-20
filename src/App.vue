@@ -2,9 +2,9 @@
   <div id='q-app'>
     <div class='appContainer'>
       <tabs></tabs>
-      <div class="heroImageContainer">
+      <!-- <div class="heroImageContainer">
         <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
