@@ -90,32 +90,28 @@ const store = new Vuex.Store({
       Loading.show({
         message: 'Loading tracks'
       })
+
       state.tracksArray = []
       let trackNames = []
-
-      let getTracksPromise = new Promise(function(resolve, reject) {
-        if(value == 'all') {
-          db.collection('users').get().then(users => {
-            users.docs.map(user => {
-              trackNames = user.data().tracks ? [...user.data().tracks, ...trackNames] : trackNames
-            })
-            resolve(trackNames)
-            reject('error getting tracks')
+      
+      if(value == 'all') {
+        db.collection('tracks').get().then(tracks => {
+          tracks.docs.map(track => {
+            trackNames.push(track.id)
           })
-        }else if(value == 'artist' || value == 'currentUser') {
-          db.collection('users').where(
-            value == 'currentUser' ? 'userID' : 'artistName', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedByArtist
-          ).get().then(user => {
-            user.docs.map(userData => {
-              resolve(userData.data().tracks)
-              reject('error getting tracks')
-            })
+          retrieveTracks(trackNames)
+        })
+      }else if(value == 'artist' || value == 'currentUser') {
+        db.collection('tracks').where('uploadedBy', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedById).get().then(tracks => {
+          tracks.docs.map(track => {
+            trackNames.push(track.id)
           })
-        }
-      })
+          retrieveTracks(trackNames)
+        })
+      }
 
-      getTracksPromise.then(result => {
-        result.forEach((trackFilename, index) => {
+      let retrieveTracks = trackNames => {
+        trackNames.forEach((trackFilename, index) => {
           let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
           trackRef.getMetadata().then(metadata => {
             let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
@@ -128,6 +124,7 @@ const store = new Vuex.Store({
                     title: metadata.customMetadata.title,
                     artworkUrl: artworkUrl,
                     uploadedByArtist: metadata.customMetadata.uploadedByName,
+                    uploadedById: metadata.customMetadata.uploadedById,
                     favourites: metadata.customMetadata.favourites
                   },
                   downloadURL: trackURL,
@@ -141,7 +138,7 @@ const store = new Vuex.Store({
             }, 1500)
           }).catch(error => {console.log(error)})
         })
-      })
+      }
     },
     FAVOURITE_TRACK() {
       let trackRef = firebase.storage().ref().child('tracks/' + this.state.currentTrack.filename)

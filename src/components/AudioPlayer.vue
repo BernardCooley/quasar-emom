@@ -149,7 +149,6 @@ export default {
       return this.artworkurl
     },
     favourited() {
-      console.log(this.currentTrack.favourite)
       return this.currentTrack.favourite
     }
   },

@@ -186,7 +186,6 @@ export default {
 
             },
             function complete() {
-              console.log('Upload Complete')
               self.completedUpload = true
               self.updateUserAccount(self.audioFileToUpload.name)
               console.log(this.$store)
