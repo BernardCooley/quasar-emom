@@ -1,16 +1,10 @@
 <template>
   <div class="musicContainer">
-    <div
-      class="content"
-      v-if="dataLoaded"
-    >
+    <div class="content" v-if="dataLoaded">
       <div class="pageContainer">
         <div class="playerAndAllTracksContainer">
           <div class="playerContainer">
-            <div
-              id="audio"
-              class="player-wrapper"
-            >
+            <div id="audio" class="player-wrapper">
               <audio-player
                 :currenttracknumber="currentTrackIndex+1"
                 :totaltracks="tracksList.length"
@@ -18,25 +12,10 @@
                 :artist="currentTrack.metaData.artist"
                 :title="currentTrack.metaData.title"
                 :trackid="currentTrack.filename"
-                :artworkurl="currentTrack.metaData.artworkUrl"
-              ></audio-player>
+                :artworkurl="currentTrack.metaData.artworkUrl">
+              </audio-player>
             </div>
           </div>
-        </div>
-        <div class="allTracksContainer">
-          <q-list>
-            <q-item class v-for="(track, index) in tracksList" :key="index">
-              <div :class="[currentTrackIndex == index ? 'highlight' : '']" class="allTracksArtistAndTitle" v-on:click="changeTrack(track.filename)">
-                <div>
-                  <div class="trackArtist">{{track.metaData.artist}}</div>
-                  <div class="trackTitle">{{track.metaData.title}}</div>
-                </div>
-                <a v-on:click.prevent="openTrackActionsModal">
-                  <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
-                </a>
-              </div>
-            </q-item>
-          </q-list>
         </div>
       </div>
     </div>

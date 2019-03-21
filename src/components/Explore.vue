@@ -1,14 +1,15 @@
 <template>
   <div class="exploreContainer">
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
-      <div class="cardContentContainer tabItem" v-on:click="playTrack(track.filename)" slot="title" name="music">
-        <div class="artist"></div>
-        <div class="title">{{track.metaData.title}}</div>
-        <img class="cardImage" :src="track.metaData.artworkUrl">
-        <div class="trackActions"></div>
+        <router-link tag="div" to="/play">
+            <div class="cardContentContainer tabItem" v-on:click="playTrack(track.filename)" slot="title" name="music"></div>
+            <div class="artist">{{track.metaData.artist}}</div>
+            <div class="title">{{track.metaData.title}}</div>
+            <img class="cardImage" :src="track.metaData.artworkUrl">
+            <div class="trackActions"></div>
+        </router-link>
       </div>
     </div>
-  </div>
 </template>
 
 <script>

@@ -11,14 +11,8 @@ const routes = [
     ]
   },
   {
-    path: '/login',
-    component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { 
-        path: '',
-        component: () => import('components/Login.vue')
-      }
-    ]
+    path: '/playTrack',
+    component: () => import('components/Music.vue')
   },
   {
     path: '/register',

@@ -1,6 +1,7 @@
 <template>
   <div id='q-app'>
     <div class='appContainer'>
+      <router-view/>
       <tabs></tabs>
       <!-- <div class="heroImageContainer">
         <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
