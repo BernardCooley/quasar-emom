@@ -1,37 +1,39 @@
 <template>
-  <div class="musicContainer expandedMusic" v-if="!exploreIsOpen">
-    <div>
-      <div class="content" v-if="dataLoaded">
-        <div class="pageContainer">
-          <div class="playerAndAllTracksContainer">
-            <div class="playerContainer">
-              <div id="audio" class="player-wrapper">
-                <audio-player
-                  :currenttracknumber="currentTrackIndex+1"
-                  :totaltracks="tracksList.length"
-                  :trackurl="currentTrack.downloadURL"
-                  :artist="currentTrack.metaData.artist"
-                  :title="currentTrack.metaData.title"
-                  :trackid="currentTrack.filename"
-                  :artworkurl="currentTrack.metaData.artworkUrl">
-                </audio-player>
+  <div>
+    <div :class="[!exploreIsExpanded ? 'playExpanded' : 'playCollapsed']">
+      <div>
+        <div class="content" v-if="dataLoaded">
+          <div class="pageContainer">
+            <div class="playerAndAllTracksContainer">
+              <div class="playerContainer">
+                <div id="audio" class="player-wrapper">
+                  <audio-player
+                    :currenttracknumber="currentTrackIndex+1"
+                    :totaltracks="tracksList.length"
+                    :trackurl="currentTrack.downloadURL"
+                    :artist="currentTrack.metaData.artist"
+                    :title="currentTrack.metaData.title"
+                    :trackid="currentTrack.filename"
+                    :artworkurl="currentTrack.metaData.artworkUrl">
+                  </audio-player>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="musicContainer collapsedPlay" v-else>
-    <div class="collapsedPlayItem trackDetails" v-on:click="toggleMusic" >
-      <img class="chevron" src="statics/icons/right-chevron.svg"/>
-      <div class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</div>
-      <div class="collapdesPlayTitle">{{currentTrack.metaData.artist}}</div>
-      <img class="chevron" src="statics/icons/right-chevron.svg"/>
-    </div>
-    <div class="collapsedPlayItem collapsedPlayPause">
-      <img class="collapseAudioControl playPause" v-if="!playing" src="statics/icons/play.svg">
-      <img class="collapseAudioControl playPause" v-else src="statics/icons/pause.svg">
+    <div class="collapsedPlay" v-if="exploreIsExpanded">
+      <div class="collapsedPlayItem trackDetails" v-on:click="toggleMusic()" >
+        <img class="chevron" src="statics/icons/right-chevron.svg"/>
+        <div class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</div>
+        <div class="collapdesPlayTitle">{{currentTrack.metaData.artist}}</div>
+        <img class="chevron" src="statics/icons/right-chevron.svg"/>
+      </div>
+      <div class="collapsedPlayItem collapsedPlayPause">
+        <img class="collapseAudioControl playPause" v-if="!playing" src="statics/icons/play.svg">
+        <img class="collapseAudioControl playPause" v-else src="statics/icons/pause.svg">
+      </div>
     </div>
   </div>
 </template>
@@ -88,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen']),
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded']),
     exploreIsOpen() {
       return this.exploreOpen
     },
@@ -106,6 +108,9 @@ export default {
 
       this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
       return this.tracksArray.filter(track => track.currentTrack == true)[0]
+    },
+    exploreIsExpanded() {
+      return this.exploreExpanded
     }
   }
 };
@@ -254,5 +259,20 @@ export default {
 }
 .collapseAudioControl {
   height: 35px;
+}
+.playCollapsed {
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 1s ease;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  bottom: 72px;
+}
+.playExpanded {
+  transform: scaleY(1);
+  transform-origin: bottom;
+  transition: transform 1s ease;
+  height: 100%;
 }
 </style>

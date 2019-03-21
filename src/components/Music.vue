@@ -1,7 +1,7 @@
 <template>
     <div class="musicContainer">
         <explore></explore>
-        <play :class="exploreOpen ? 'fixedBottom' : ''"></play>
+        <play :class="exploreExpanded ? 'fixedBottom' : ''"></play>
     </div>
 </template>
 
@@ -17,7 +17,7 @@ export default {
         Explore
     },
     computed: {
-    ...mapState(['exploreOpen'])
+    ...mapState(['exploreOpen', 'exploreExpanded'])
     }
 }
 </script>

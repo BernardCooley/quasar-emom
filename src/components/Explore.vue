@@ -1,30 +1,32 @@
 <template>
-  <div class="expandedExplore" v-if="exploreIsOpen">
-      <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
-        <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
-        <div class="title">{{track.metaData.title}}</div>
-        <img class="cardImage" v-on:click="toggleExplore" :src="track.metaData.artworkUrl">
-        <div class="trackInfoContainer">
-          <div class="trackInfoItem">
-            <img src="statics/icons/listens.svg" alt="listens image"/>
-            <div class="counter">4</div>
-          </div>
-          <div class="trackInfoItem">
-            <img class="favouritesIcon" src="statics/icons/favorite.1.svg" alt="favourited image"/>
-            <div class="counter">10</div>
-          </div>
-          <div class="trackInfoItem">
-            <img src="statics/icons/comment.svg" alt="comments image"/>
-            <div class="counter">3</div>
-          </div>
+<div>
+  <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed']">
+    <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
+      <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
+      <div class="title">{{track.metaData.title}}</div>
+      <img class="cardImage" v-on:click="toggleExplore" :src="track.metaData.artworkUrl">
+      <div class="trackInfoContainer">
+        <div class="trackInfoItem">
+          <img src="statics/icons/listens.svg" alt="listens image"/>
+          <div class="counter">4</div>
+        </div>
+        <div class="trackInfoItem">
+          <img class="favouritesIcon" src="statics/icons/favorite.1.svg" alt="favourited image"/>
+          <div class="counter">10</div>
+        </div>
+        <div class="trackInfoItem">
+          <img src="statics/icons/comment.svg" alt="comments image"/>
+          <div class="counter">3</div>
         </div>
       </div>
     </div>
-    <div class="collapsedExplore" v-else v-on:click="toggleExplore">
-      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
-      <div class="">Traklist</div>
-      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
-    </div>
+  </div>
+  <div class="collapsedExplore" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
+    <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+    <div class="">Traklist</div>
+    <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+  </div>
+</div>
 </template>
 
 <script>
@@ -48,9 +50,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen']),
-    exploreIsOpen() {
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded']),
+    exploreslideClosed() {
       return this.exploreOpen
+    },
+    exploreIsExpanded() {
+      return this.exploreExpanded
     }
   },
   methods: {
@@ -123,10 +128,23 @@ export default {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
 
     img {
       transform: rotate(90deg);
       height: 20px;
     }
+}
+.exploreCollapsed {
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1s ease;
+}
+.exploreExpanded {
+  transform: scaleY(1);
+  transform-origin: top;
+  transition: transform 1s ease;
 }
 </style>
