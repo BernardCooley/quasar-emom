@@ -65,7 +65,7 @@ export default {
     this.dataLoaded = this.tracksArray ? true : false;
     this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
     if(this.tracksArray.length == 0) {
-      this.$store.commit('GET_TRACKS', 'all')
+      this.$store.commit('GET_TRACKS')
     }
   },
   computed: {

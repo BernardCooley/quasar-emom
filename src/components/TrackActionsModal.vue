@@ -35,10 +35,10 @@ export default {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', false)
     },
     showUsersTracks: function () {
-      this.$store.commit('GET_TRACKS', 'currentUser')
+      this.$store.commit('GET_TRACKS', firebase.auth().currentUser.uid)
     },
     showAllTracks: function () {
-      this.$store.commit('GET_TRACKS', 'all')
+      this.$store.commit('GET_TRACKS')
     },
     showFavourites: function () {
       let tracks = []
@@ -61,7 +61,7 @@ export default {
         })
     },
     showArtistTracks: function() {
-      this.$store.commit('GET_TRACKS', 'artist')
+      this.$store.commit('GET_TRACKS', state.currentTrack.metaData.uploadedById)
     },
     downloadTrack: function () {
       this.stop()

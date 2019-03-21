@@ -94,15 +94,15 @@ const store = new Vuex.Store({
       state.tracksArray = []
       let trackNames = []
       
-      if(value == 'all') {
-        db.collection('tracks').get().then(tracks => {
+      if(value != undefined) {
+        db.collection('tracks').where('uploadedBy', '==', value).get().then(tracks => {
           tracks.docs.map(track => {
             trackNames.push(track.id)
           })
           retrieveTracks(trackNames)
         })
-      }else if(value == 'artist' || value == 'currentUser') {
-        db.collection('tracks').where('uploadedBy', '==', value == 'currentUser' ? firebase.auth().currentUser.uid : state.currentTrack.metaData.uploadedById).get().then(tracks => {
+      }else {
+        db.collection('tracks').get().then(tracks => {
           tracks.docs.map(track => {
             trackNames.push(track.id)
           })

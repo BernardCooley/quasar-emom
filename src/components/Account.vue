@@ -120,7 +120,7 @@ export default {
           setTimeout(() => {
             this.deleteMessage = null
           }, 2000)
-          this.$store.commit('GET_TRACKS', 'currentUser')
+          this.$store.commit('GET_TRACKS', firebase.auth().currentUser.uid)
           return true
         }).catch(error => {
           console.error(error)

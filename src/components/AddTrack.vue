@@ -192,7 +192,7 @@ export default {
               function complete() {
                 self.completedUpload = true
                 db.collection('tracks').doc(self.audioFileToUpload.name).set({uploadedBy: firebase.auth().currentUser.uid})
-                self.$store.commit('GET_TRACKS', 'all')
+                self.$store.commit('GET_TRACKS')
               }
             )
           })
