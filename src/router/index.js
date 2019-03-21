@@ -6,10 +6,16 @@ import Account from "../components/Account"
 import Music from "../components/Music"
 import AddTrack from "../components/AddTrack"
 import Explore from "../components/Explore"
+import Home from "../components/Home"
 
 Vue.use(Router)
 export default new Router({
   routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: Home
+    },
     {
       path: '/play',
       name: 'play',

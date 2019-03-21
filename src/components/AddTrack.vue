@@ -142,56 +142,60 @@ export default {
       let store = this.$store
 
       if (!this.validation()) {
-        firebase.storage().ref().child('tracks/' + this.audioFileToUpload.name).getDownloadURL().then(() => {
-          console.log('Already exists')
-        }).catch(() => {
-          self.completedUpload = false
-          self.fileUploading = true
-          let storageRef = firebase.storage().ref()
-          let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
-          let artworkName = ''
+        self.completedUpload = false
+        self.fileUploading = true
+        let storageRef = firebase.storage().ref()
+        let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
+        let artworkName = ''
 
-          if (artworkFileToUpload) {
-            let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
+        db.collection('tracks').get().then(tracks => {
+          tracks.docs.map(track => {
+            if(track.id == audioFileToUpload.name) {
+              return
+            }
+            
+            let storageRef = firebase.storage().ref()
+            let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
+            
+            if (artworkFileToUpload) {
+              let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
 
-            var artworkMetadata = {
+              var artworkMetadata = {
+                customMetadata: {
+                  'uploadedById': firebase.auth().currentUser.uid
+                }
+              }
+              focusedArtwork.put(artworkFileToUpload, artworkMetadata)
+              artworkName = artworkFileToUpload.name
+            } else {
+              artworkName = 'default.png'
+            }
+
+            var audioMetadata = {
               customMetadata: {
-                'uploadedById': firebase.auth().currentUser.uid
+                'artist': this.track.artist.value,
+                'title': this.track.title.value,
+                'uploadedById': firebase.auth().currentUser.uid,
+                'artworkName': artworkName,
+                'uploadedByName': this.currentUserArtistName
               }
             }
+            this.uploadAudioTask = focusedTrack.put(audioFileToUpload, audioMetadata)
 
-            focusedArtwork.put(artworkFileToUpload, artworkMetadata)
-            artworkName = artworkFileToUpload.name
-          } else {
-            artworkName = 'default.png'
-          }
+            this.uploadAudioTask.on('state_changed',
+              function progress(snapshot) {
+                store.commit("UPDATE_FILE_UPLOAD_PERCENTAGE", Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100))
+              },
+              function errors(err) {
 
-          var audioMetadata = {
-            customMetadata: {
-              'artist': this.track.artist.value,
-              'title': this.track.title.value,
-              'uploadedById': firebase.auth().currentUser.uid,
-              'artworkName': artworkName,
-              'uploadedByName': this.currentUserArtistName
-            }
-          }
-
-          this.uploadAudioTask = focusedTrack.put(audioFileToUpload, audioMetadata)
-
-          this.uploadAudioTask.on('state_changed',
-            function progress(snapshot) {
-              store.commit("UPDATE_FILE_UPLOAD_PERCENTAGE", Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100))
-            },
-            function errors(err) {
-
-            },
-            function complete() {
-              self.completedUpload = true
-              self.updateUserAccount(self.audioFileToUpload.name)
-              console.log(this.$store)
-              self.$store.commit('GET_TRACKS', 'all')
-            }
-          )
+              },
+              function complete() {
+                self.completedUpload = true
+                db.collection('tracks').doc(self.audioFileToUpload.name).set({uploadedBy: firebase.auth().currentUser.uid})
+                self.$store.commit('GET_TRACKS', 'all')
+              }
+            )
+          })
         })
       }
     },
@@ -223,28 +227,6 @@ export default {
         uploadedByArtist: { value: null }
       }
     },
-    updateUserAccount(fileName) {
-      console.log('User: ', firebase.auth().currentUser.uid)
-      let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
-
-      usersRef.get().then(function (doc) {
-        let tracks = doc.data().tracks
-
-        if (tracks) {
-          tracks.push(fileName)
-          usersRef.update({
-            tracks: tracks
-          })
-        } else {
-          usersRef.update({
-            tracks: [fileName]
-          })
-        }
-
-      }).catch(function (error) {
-        console.log("Error getting document:", error);
-      });
-    }
   }
 };
 </script>

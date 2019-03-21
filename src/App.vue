@@ -3,9 +3,6 @@
     <div class='appContainer'>
       <router-view/>
       <tabs></tabs>
-      <!-- <div class="heroImageContainer">
-        <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
-      </div> -->
     </div>
   </div>
 </template>
@@ -78,18 +75,5 @@ body {
 
 .q-field {
   width: 100%;
-}
-
-.heroImageContainer {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-}
-
-.heroImage {
-  width: 370px;
-  padding-top: 40px;
 }
 </style>

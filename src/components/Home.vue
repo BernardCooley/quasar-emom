@@ -5,6 +5,9 @@
                 <p>
                     Welcome to the Electronic Music Open Mic community.
                 </p>
+                <div class="heroImageContainer">
+                    <img class="heroImage" src="/statics/brand/PORTRAIT/EMOM Logo WHITE PORTRAIT  LARGE.png" alt="" vertical-middle/>
+                </div>
             </div>
         </div>
     </div>
@@ -19,11 +22,25 @@ export default {
 
 
 <style scoped>
+.homeContainer {
+    height: 100vh;
+}
 .content {
     text-align: center;
-    font-size: 2.5em;
+    font-size: 2em;
     width: 80%;
     margin: auto;
-    margin-top: 100px;
+    margin-top: 50px;
+}
+.heroImageContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+.heroImage {
+  width: 370px;
+  padding-top: 40px;
 }
 </style>
