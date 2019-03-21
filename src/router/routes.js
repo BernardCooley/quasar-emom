@@ -12,7 +12,7 @@ const routes = [
   },
   {
     path: '/playTrack',
-    component: () => import('components/Music.vue')
+    component: () => import('components/Play.vue')
   },
   {
     path: '/register',

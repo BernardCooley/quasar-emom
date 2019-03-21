@@ -1,12 +1,9 @@
 <template>
-  <div class="exploreContainer">
-    <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
-        <div class="cardContentContainer tabItem" v-on:click="playTrack(track.filename)" slot="title" name="music"></div>
+  <div class="expandedExplore" v-if="exploreIsOpen">
+      <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
         <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
         <div class="title">{{track.metaData.title}}</div>
-        <router-link tag="div" to="/play">
-          <img class="cardImage" :src="track.metaData.artworkUrl">
-        </router-link>
+        <img class="cardImage" v-on:click="toggleExplore" :src="track.metaData.artworkUrl">
         <div class="trackInfoContainer">
           <div class="trackInfoItem">
             <img src="statics/icons/listens.svg" alt="listens image"/>
@@ -23,20 +20,38 @@
         </div>
       </div>
     </div>
+    <div class="collapsedExplore" v-else v-on:click="toggleExplore">
+      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+      <div class="">Traklist</div>
+      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+    </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState } from "vuex"
+import Play from './Play'
 
 export default {
   name: "explore",
+  props: {
+    collapsed : {
+      type: Boolean,
+      default: null
+    }
+  },
+  components: {
+    Play
+  },
   created() {
     if (this.tracksArray.length == 0) {
       this.$store.commit("GET_TRACKS");
     }
   },
   computed: {
-    ...mapState(["tracksArray"])
+    ...mapState(['tracksArray', 'exploreOpen']),
+    exploreIsOpen() {
+      return this.exploreOpen
+    }
   },
   methods: {
       ...mapMutations(['UPDATE_CURRENT_TRACK']),
@@ -45,6 +60,9 @@ export default {
     },
     getUserTracks(userId) {
       this.$store.commit('GET_TRACKS', userId)
+    },
+    toggleExplore() {
+      this.$store.commit('TOGGLE_EXPLORE')
     }
   }
 };
@@ -83,9 +101,7 @@ export default {
   padding-top: 10px;
 }
 .trackInfoItem {
-  height: 35px
-}
-.trackInfoItem {
+  height: 35px;
   img {
     height: 100%;
     opacity: 0.8;
@@ -99,5 +115,18 @@ export default {
     height: 30px;
     left: 3px;
   }
+}
+.collapsedExplore {
+    height: 50px;
+    border-bottom: 1px solid gray;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+
+    img {
+      transform: rotate(90deg);
+      height: 20px;
+    }
 }
 </style>

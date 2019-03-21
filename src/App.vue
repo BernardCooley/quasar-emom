@@ -2,20 +2,20 @@
   <div id='q-app'>
     <div class='appContainer'>
       <router-view/>
-      <tabs></tabs>
+      <navigation></navigation>
     </div>
   </div>
 </template>
 
 <script>
 import db from './firestore/firebaseInit'
-import Tabs from './components/Tabs'
+import Navigation from './components/Navigation'
 import firebase from 'firebase/app'
 import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
-    Tabs
+    Navigation
   },
   methods: {
     ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS']),

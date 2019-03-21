@@ -28,9 +28,13 @@ const store = new Vuex.Store({
     tracksArray: [],
     userTracksArray: [],
     allUsers: [],
-    currentUserArtistName: null
+    currentUserArtistName: null,
+    exploreOpen: false
   },
   mutations: {
+    TOGGLE_EXPLORE(state) {
+      state.exploreOpen = !state.exploreOpen
+    },
     UPDATE_ISLOGGED_IN(state, value) {
       state.isLoggedIn = value
     },

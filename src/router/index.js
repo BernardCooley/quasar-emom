@@ -17,8 +17,8 @@ export default new Router({
       component: Home
     },
     {
-      path: '/play',
-      name: 'play',
+      path: '/music',
+      name: 'music',
       component: Music
     },
     {

@@ -65,7 +65,7 @@ import { mapMutations, mapState } from "vuex";
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import TrackActionsModal from "./TrackActionsModal"
-import Music from "./Music"
+import Play from "./Play"
 
 const convertTimeHHMMSS = val => {
   let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
@@ -76,7 +76,7 @@ const convertTimeHHMMSS = val => {
 export default {
   components: {
     TrackActionsModal,
-    Music
+    Play
   },
   name: "audio-player",
   props: {

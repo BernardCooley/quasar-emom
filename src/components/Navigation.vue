@@ -1,6 +1,6 @@
 <template>
   <div class="tabContainer">
-      <router-link v-if="isLoggedIn" tag="i" class="navItem fas fa-music" class-active="active" to="/play" exact></router-link>
+      <router-link v-if="isLoggedIn" tag="i" class="navItem fas fa-music" class-active="active" to="/music" exact></router-link>
       <router-link v-if="isLoggedIn" tag="i" class="navItem fas fa-search" class-active="active" to="/explore" exact></router-link>
       <router-link v-if="isLoggedIn" tag="i" class="navItem fas fa-user-plus" class-active="active" to="/upload" exact></router-link>
       <router-link v-if="isLoggedIn" tag="i" class="navItem fas fa-user-alt" class-active="active" to="/account" exact></router-link>
