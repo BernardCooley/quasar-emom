@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="[!exploreIsExpanded ? 'playExpanded' : 'playCollapsed']">
+    <div :class="[exploreIsExpanded ? 'playCollapsed' : 'playExpanded', 'playContainer']">
       <div>
         <div class="content" v-if="dataLoaded">
           <div class="pageContainer">
@@ -23,11 +23,11 @@
         </div>
       </div>
     </div>
-    <div class="collapsedPlay" v-if="exploreIsExpanded">
+    <div class="collapsedPlay playContainer" v-if="exploreIsExpanded">
       <div class="collapsedPlayItem trackDetails" v-on:click="toggleMusic()" >
         <img class="chevron" src="statics/icons/right-chevron.svg"/>
         <div class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</div>
-        <div class="collapdesPlayTitle">{{currentTrack.metaData.artist}}</div>
+        <div class="collapdesPlayTitle">{{currentTrack.metaData.title}}</div>
         <img class="chevron" src="statics/icons/right-chevron.svg"/>
       </div>
       <div class="collapsedPlayItem collapsedPlayPause">
@@ -260,19 +260,17 @@ export default {
 .collapseAudioControl {
   height: 35px;
 }
+.playContainer {
+  overflow-y: hidden;
+	max-height: 10000px;
+	transition-property: all;
+	transition-duration: .5s;
+	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
 .playCollapsed {
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 1s ease;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  bottom: 72px;
+  max-height: 0;
 }
 .playExpanded {
-  transform: scaleY(1);
-  transform-origin: bottom;
-  transition: transform 1s ease;
-  height: 100%;
+  margin-top: 50px;
 }
 </style>

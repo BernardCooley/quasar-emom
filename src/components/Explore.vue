@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed']">
+  <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
@@ -21,7 +21,7 @@
       </div>
     </div>
   </div>
-  <div class="collapsedExplore" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
+  <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
     <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
     <div class="">Traklist</div>
     <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
@@ -137,14 +137,18 @@ export default {
       height: 20px;
     }
 }
-.exploreCollapsed {
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 1s ease;
+.exploreContainer {
+  overflow-y: hidden;
+	max-height: 10000px;
+	transition-property: all;
+	transition-duration: .5s;
+	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
 }
-.exploreExpanded {
-  transform: scaleY(1);
-  transform-origin: top;
-  transition: transform 1s ease;
+.exploreCollapsed {
+  max-height: 0;
+}
+.showHideButton {
+  height: 30px;
+  width: 30%;
 }
 </style>
