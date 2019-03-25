@@ -1,6 +1,11 @@
 <template>
 <div>
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
+    <div class="searchBar">
+      <q-item class="searchBoxContainer">
+        <q-search id="searchInput" v-model="searchTerm.value" @change="search"/>
+      </q-item>
+    </div>
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
@@ -35,6 +40,14 @@ import Play from './Play'
 
 export default {
   name: "explore",
+    data: function() {
+    return {
+      searchTerm: {
+        value: null,
+        errors: []
+      }
+    }
+  },
   props: {
     collapsed : {
       type: Boolean,
@@ -68,6 +81,9 @@ export default {
     },
     toggleExplore() {
       this.$store.commit('TOGGLE_EXPLORE')
+    },
+    search() {
+      console.log(this.searchTerm.value)
     }
   }
 };
@@ -150,5 +166,20 @@ export default {
 .showHideButton {
   height: 30px;
   width: 30%;
+}
+.inputField {
+  width: 100%;
+}
+.searchBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.searchBoxContainer {
+  width: 100%;
+}
+#searchInput {
+  color: white;
+  width: 100%;
 }
 </style>

@@ -8,7 +8,6 @@
               <q-input id="email" v-model="user.email.value"/>
             </q-field>
           </q-item>
-
           <q-item>
             <q-field class="inputField" label="Password" error-label>
               <q-input

@@ -224,6 +224,7 @@ export default {
   justify-content: space-between;
   background-color: #11363a;
   align-items: center;
+  height: 50px;
 }
 .trackDetails {
   flex-grow: 1;
@@ -258,7 +259,7 @@ export default {
   transform: rotate(270deg);
 }
 .collapseAudioControl {
-  height: 35px;
+  height: 30px;
 }
 .playContainer {
   overflow-y: hidden;

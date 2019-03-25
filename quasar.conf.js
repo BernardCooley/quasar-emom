@@ -66,7 +66,8 @@ module.exports = function (ctx) {
         'QChip',
         'QPopover',
         'QModal',
-        'QProgress'
+        'QProgress',
+        'QSearch'
       ],
       directives: [
         'Ripple'
