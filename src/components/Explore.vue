@@ -2,8 +2,12 @@
 <div>
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
-      <q-item class="searchBoxContainer">
-        <q-search id="searchInput" v-model="searchTerm.value" @change="search"/>
+      <q-item :class="searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer'">
+        <q-search v-model="searchModel" no-icon="false" v-on:click="searchExpanded = true" :hide-underline="!searchExpanded"/>
+        <div class="searchActions" v-if="searchExpanded">
+          <i class="fas fa-arrow-right" v-on:click="submitSearch"></i>
+          <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
+        </div>
       </q-item>
     </div>
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
@@ -43,9 +47,10 @@ export default {
     data: function() {
     return {
       searchTerm: {
-        value: null,
-        errors: []
-      }
+        value: null
+      },
+      searchModel: null,
+      searchExpanded: false
     }
   },
   props: {
@@ -82,8 +87,10 @@ export default {
     toggleExplore() {
       this.$store.commit('TOGGLE_EXPLORE')
     },
-    search() {
-      console.log(this.searchTerm.value)
+    submitSearch() {
+      console.log(this.searchModel)
+      this.searchExpanded = false
+      this.searchModel = ''
     }
   }
 };
@@ -175,11 +182,32 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
-.searchBoxContainer {
+.searchBoxContainerCollapsed {
+  width: 110px;
+}
+.searchBoxContainerExpanded {
   width: 100%;
 }
-#searchInput {
-  color: white;
+.q-search {
   width: 100%;
+}
+.q-if-control.q-icon {
+  width: auto;
+}
+.searchBoxContainer input {
+  color: white;
+  margin-left: 10px;
+}
+input.q-input-target {
+  color: white;
+}
+.searchActions {
+  display: flex;
+  width: 50px;
+  justify-content: space-between;
+
+  i {
+    font-size: 20px;
+  }
 }
 </style>

@@ -10,12 +10,7 @@
           </q-item>
           <q-item>
             <q-field class="inputField" label="Password" error-label>
-              <q-input
-                type="password"
-                id="password"
-                v-model="user.password.value"
-                initial-show-password="false"
-              />
+              <q-input type="password" id="password" v-model="user.password.value" initial-show-password="false"/>
             </q-field>
           </q-item>
           <q-btn v-on:click="login">Log In</q-btn>

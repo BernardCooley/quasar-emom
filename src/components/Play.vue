@@ -28,7 +28,6 @@
         <img class="chevron" src="statics/icons/right-chevron.svg"/>
         <div class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</div>
         <div class="collapdesPlayTitle">{{currentTrack.metaData.title}}</div>
-        <img class="chevron" src="statics/icons/right-chevron.svg"/>
       </div>
       <div class="collapsedPlayItem collapsedPlayPause">
         <img class="collapseAudioControl playPause" v-if="!playing" src="statics/icons/play.svg">
