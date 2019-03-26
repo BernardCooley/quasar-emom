@@ -46,6 +46,10 @@ import Explore from './Explore'
 
 export default {
   name: "play",
+  components: {
+    AudioPlayer,
+    Explore
+  },
   data() {
     return {
       dataLoaded: false,
@@ -53,37 +57,9 @@ export default {
       currentTrackIndex: 0
     };
   },
-  components: {
-    AudioPlayer,
-    Explore
-  },
-  methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACKS_ARRAY', 'CLEAR_TRACKS_ARRAY', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME', 'GET_TRACKS','TOGGLE_EXPLORE']),
-    openTrackActionsModal() {
-      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
-    },
-    previousTrack() {
-      if (this.currentTrackIndex > 0) {
-        this.currentTrackIndex--;
-      }
-    },
-    nextTrack() {
-      if (this.currentTrackIndex < this.tracksArray.length - 1) {
-        this.currentTrackIndex++;
-      }
-    },
-    changeTrack(filename) {
-      let currentTrack = this.tracksArray.filter(track => track.filename === filename)[0]
-      this.currentTrackIndex = this.tracksArray.findIndex(track => track === currentTrack)
-      this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
-    },
-    toggleMusic() {
-      this.$store.commit('TOGGLE_EXPLORE')
-    }
-  },
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
-    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
+    this.$store.commi)
     if(this.tracksArray.length == 0) {
       this.$store.commit('GET_TRACKS')
     }
@@ -110,6 +86,30 @@ export default {
     },
     exploreIsExpanded() {
       return this.exploreExpanded
+    }
+  },
+  methods: {
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'TOGGLE_EXPLORE']),
+    openTrackActionsModal() {
+      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
+    },
+    previousTrack() {
+      if (this.currentTrackIndex > 0) {
+        this.currentTrackIndex--;
+      }
+    },
+    nextTrack() {
+      if (this.currentTrackIndex < this.tracksArray.length - 1) {
+        this.currentTrackIndex++;
+      }
+    },
+    changeTrack(filename) {
+      let currentTrack = this.tracksArray.filter(track => track.filename === filename)[0]
+      this.currentTrackIndex = this.tracksArray.findIndex(track => track === currentTrack)
+      this.$store.commit('UPDATE_CURR_TRACK', this.currentTrackIndex)
+    },
+    toggleMusic() {
+      this.$store.commit('TOGGLE_EXPLORE')
     }
   }
 };

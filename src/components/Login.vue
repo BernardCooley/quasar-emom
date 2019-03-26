@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_USER_TRACKS_ARRAY', 'GET_ALL_USERS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN']),
     validation: function(e) {
       this.errorsBool = false
       this.user.email.errors = []
@@ -93,7 +93,6 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", "music")
             this.$store.commit("UPDATE_LOGGED_IN_USER", firebase.auth().currentUser.uid)
-            this.$store.commit('GET_ALL_USERS')
             location.reload()
             this.errorMessage = ""
             this.$q.loading.hide()

@@ -70,11 +70,11 @@ const convertTimeHHMMSS = val => {
 };
 
 export default {
+  name: "audio-player",
   components: {
     TrackActionsModal,
     Play
   },
-  name: "audio-player",
   props: {
     trackUrl: {
       type: String,
@@ -124,8 +124,25 @@ export default {
       supportedFormat: true
     };
   },
+  created() {
+    this.innerLoop = this.loop;
+  },
+  mounted() {
+    this.audio = this.$el.querySelectorAll('audio')[0];
+    this.audio.addEventListener('timeupdate', this.update);
+    this.audio.addEventListener('loadeddata', this.load);
+    this.audio.addEventListener('pause', () => {
+      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
+    });
+    this.audio.addEventListener('play', () => {
+      this.$store.commit('TOGGLE_TRACK_PLAYING', true)
+    });
+    this.$watch('trackUrl', () => {
+      this.$refs.player.load()
+    });
+  },
   computed: {
-    ...mapState(['currentTrack', 'tracksArray', 'favourites', 'isTrackPlaying']),
+    ...mapState(['currentTrack', 'tracksArray', 'isTrackPlaying']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },
@@ -158,7 +175,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING']),
     prevTrack() {
       let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
@@ -229,23 +246,6 @@ export default {
         return this.audio.play()
       }
     }
-  },
-  created() {
-    this.innerLoop = this.loop;
-  },
-  mounted() {
-    this.audio = this.$el.querySelectorAll('audio')[0];
-    this.audio.addEventListener('timeupdate', this.update);
-    this.audio.addEventListener('loadeddata', this.load);
-    this.audio.addEventListener('pause', () => {
-      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
-    });
-    this.audio.addEventListener('play', () => {
-      this.$store.commit('TOGGLE_TRACK_PLAYING', true)
-    });
-    this.$watch('trackUrl', () => {
-      this.$refs.player.load()
-    });
   }
 };
 </script>

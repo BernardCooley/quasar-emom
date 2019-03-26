@@ -17,7 +17,7 @@ export default {
         Explore
     },
     computed: {
-    ...mapState(['exploreOpen', 'exploreExpanded'])
+    ...mapState(['exploreExpanded'])
     }
 }
 </script>

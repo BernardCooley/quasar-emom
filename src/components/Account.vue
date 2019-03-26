@@ -51,6 +51,19 @@ export default {
       user: []
     }
   },
+  created() {
+    this.getLoggedInUserTracks()
+    this.getUserDetails()
+  },
+  computed: {
+    ...mapState(['userTracksArray']),
+    computedDeleteMesage() {
+      return this.deleteMessage
+    },
+    computedUserDetails() {
+      return this.user
+    }
+  },
   methods: {
     ...mapMutations(['GET_TRACKS']),
     logout() {
@@ -190,19 +203,6 @@ export default {
           }
         })
       }
-    }
-  },
-  created() {
-    this.getLoggedInUserTracks()
-    this.getUserDetails()
-  },
-  computed: {
-    ...mapState(['userTracksArray']),
-    computedDeleteMesage() {
-      return this.deleteMessage
-    },
-    computedUserDetails() {
-      return this.user
     }
   }
 }

@@ -83,7 +83,7 @@ export default {
     
   },
   methods: {
-    ...mapMutations(['UPDATE_ADD_TRACK', 'UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS']),
+    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS']),
     validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'

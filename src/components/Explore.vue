@@ -44,14 +44,8 @@ import Play from './Play'
 
 export default {
   name: "explore",
-    data: function() {
-    return {
-      searchTerm: {
-        value: null
-      },
-      searchModel: null,
-      searchExpanded: false
-    }
+  components: {
+    Play
   },
   props: {
     collapsed : {
@@ -59,8 +53,14 @@ export default {
       default: null
     }
   },
-  components: {
-    Play
+  data: function() {
+    return {
+      searchTerm: {
+        value: null
+      },
+      searchModel: null,
+      searchExpanded: false
+    }
   },
   created() {
     if (this.tracksArray.length == 0) {
@@ -77,7 +77,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'GET_TRACKS']),
     playTrack(filename) {
       this.$store.commit('UPDATE_CURRENT_TRACK', this.$store.currentTrack = this.tracksArray.filter(track => track.filename == filename)[0])
     },

@@ -29,6 +29,9 @@ import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 
 export default {
+  computed: {
+    ...mapState(['trackActionsModalOpen', 'currentTrack', 'loggedInUserId'])
+  },
   methods: {
     ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_TRACK_LIST', 'GET_TRACKS']),
     closeModal: function () {
@@ -67,9 +70,6 @@ export default {
       this.stop()
       window.open(this.currentTrack.trackUrl, 'download')
     }
-  },
-  computed: {
-    ...mapState(['trackActionsModalOpen', 'currentTrack', 'loggedInUserId'])
   }
 };
 </script>
