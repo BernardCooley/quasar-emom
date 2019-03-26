@@ -57,7 +57,7 @@
             </q-field>
           </q-item>
 
-          <q-btn v-on:click="register">Register</q-btn>
+          <q-btn v-on:click.prevent="register()">Register</q-btn>
 
           <span>{{registerMessage}}</span>
         </q-list>

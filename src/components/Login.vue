@@ -13,7 +13,7 @@
               <q-input type="password" id="password" v-model="user.password.value" initial-show-password="false"/>
             </q-field>
           </q-item>
-          <q-btn v-on:click="login">Log In</q-btn>
+          <q-btn v-on:click.prevent="login()">Log In</q-btn>
         </q-list>
         <div class="errorMessage">{{errorMsgComputed}}</div>
       </div>

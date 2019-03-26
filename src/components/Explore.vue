@@ -3,17 +3,17 @@
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
       <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-        <q-search v-model="searchModel" no-icon="searchExpanded" v-on:click="searchExpanded = true" :hide-underline="!searchExpanded"/>
+        <q-search v-model="searchModel" no-icon="searchExpanded" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded"/>
         <div class="searchActions" v-if="searchExpanded">
           <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
-          <i class="fas fa-arrow-right" v-on:click="submitSearch"></i>
+          <i class="fas fa-arrow-right" v-on:click="submitSearch()"></i>
         </div>
       </q-item>
     </div>
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
-      <img class="cardImage" v-on:click="toggleExplore" :src="track.metaData.artworkUrl">
+      <img class="cardImage" v-on:click="toggleExplore()" :src="track.metaData.artworkUrl">
       <div class="trackInfoContainer">
         <div class="trackInfoItem">
           <img src="statics/icons/listens.svg" alt="listens image"/>

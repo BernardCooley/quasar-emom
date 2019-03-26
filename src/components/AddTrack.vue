@@ -31,15 +31,12 @@
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
 
-        <q-btn
-          v-if="!uploadingFile"
-          v-on:click="uploadFile(audioFileToUpload, artworkFileToUpload)"
-        >Upload</q-btn>
+        <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
 
-        <q-btn v-if="uploadingFile && !completedUpload" v-on:click="cancelUpload">Cancel</q-btn>
+        <q-btn v-if="uploadingFile && !completedUpload" v-on:click.prevent="cancelUpload()">Cancel</q-btn>
         <div class="uploadCompleteContainer" v-if="uploadComplete">
           <div class="uploadSuccessMessage">Upload Complete</div>
-          <q-btn v-on:click="resetForm">Upload Another Track</q-btn>
+          <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
         </div>
       </div>
     </div>

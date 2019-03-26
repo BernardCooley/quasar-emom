@@ -1,20 +1,20 @@
 <template>
   <div>
     <q-modal :content-css="{width: '50%', height: '50%', background: '#11363a'}" class="trackActionsModal" transition v-model="trackActionsModalOpen">
-      <i class="fas fa-times closeModal" v-on:click="closeModal"></i>
+      <i class="fas fa-times closeModal" v-on:click="closeModal()"></i>
       <div class="modalContent">
         <q-list>
           <div class="menuTitle">Track Menu:</div>
-          <a v-on:click="showUsersTracks('currentUser'); closeModal();">
+          <a v-on:click.prevent="showUsersTracks('currentUser'); closeModal();">
             <q-item class="menuItem">Your tracks</q-item>
           </a>
-          <a v-on:click="showAllTracks('all'); closeModal();">
+          <a v-on:click.prevent="showAllTracks('all'); closeModal();">
             <q-item class="menuItem">All tracks</q-item>
           </a>
-          <a v-on:click="showFavourites(); closeModal();">
+          <a v-on:click.prevent="showFavourites(); closeModal();">
             <q-item class="menuItem">Favourites</q-item>
           </a>
-          <a v-on:click="showArtistTracks('artist'); closeModal();">
+          <a v-on:click.prevent="showArtistTracks('artist'); closeModal();">
             <q-item class="menuItem">This artist's tracks</q-item>
           </a>
         </q-list>

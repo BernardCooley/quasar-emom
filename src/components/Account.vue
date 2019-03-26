@@ -1,19 +1,19 @@
 <template>
   <div class="accountContainer">
     <div class="accountDetails accountSection">
-      <div class="accountSectionContainer" v-on:click.prevent="toggleAccountDetails">
+      <div class="accountSectionContainer" v-on:click="toggleAccountDetails()">
         <div class="accountSectionTitle">Account Details</div>
         <img class="chevron" :class="[displayAccountDetails ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountDetails">
         <q-item>Artist Name: {{computedUserDetails.artistName}}</q-item>
         <q-item>Email address: {{computedUserDetails.email}}</q-item>
-        <q-btn class="deleteAccountButton" v-on:click="deleteAccount">Delete Account</q-btn>
+        <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
 
     <div class="userTracks accountSection">
-      <div class="accountSectionContainer" v-on:click.prevent="toggleAccountTracks">
+      <div class="accountSectionContainer" v-on:click="toggleAccountTracks()">
         <div class="accountSectionTitle">User Tracks</div>
         <img class="chevron" :class="[displayAccountTracks ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
@@ -33,7 +33,7 @@
         </q-item>
       </div>
     </div>
-    <q-btn class="logoutButton" v-on:click="logout">Logout</q-btn>
+    <q-btn class="logoutButton" v-on:click.prevent="logout()">Logout</q-btn>
   </div>
 </template>
 

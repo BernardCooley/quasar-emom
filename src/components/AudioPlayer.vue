@@ -4,8 +4,8 @@
     <q-card inline class="audioCard no-shadow">
       <div class="titleAndArtist q-card-title" :style="{ backgroundImage: 'url(' + artworkURL + ')'}">
         <q-item class="nextPrevBtns">
-          <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon']" class="audioControl nextBtn" src="statics/icons/next.svg" v-on:click="prevTrack">
-          <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon']" class="audioControl prevBtn" src="statics/icons/next.svg" v-on:click="nextTrack">
+          <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon', 'audioControl', 'nextBtn']" src="statics/icons/next.svg" v-on:click="prevTrack()">
+          <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon', 'audioControl', 'prevBtn']" src="statics/icons/next.svg" v-on:click="nextTrack()">
         </q-item>
       </div>
       <div class="trackInfo">
@@ -14,13 +14,13 @@
           <div class="artist">{{artist}}</div>
           <div class="title">{{title}}</div>
         </div>
-        <a class="trackOptions" v-on:click.prevent="openTrackActionsModal">
+        <a class="trackOptions" v-on:click.prevent="openTrackActionsModal()">
           <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
         </a>
       </div>
       <q-card-main v-if="supportedFormat">
         <div class="trackProgress">
-          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
+          <div v-on:click="seek()" class="player-progress" title="Time played : Total time">
             <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
           </div>
           <div class="player-time">
@@ -29,25 +29,25 @@
           </div>
         </div>
         <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
-          <source :src="trackurl">
+          <source :src="trackUrl">
         </audio>
       </q-card-main>
       <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
       <q-card-actions>
         <div class="audioActions">
-          <a v-on:click.prevent="stop" title="Stop">
+          <a v-on:click.prevent="stop()" title="Stop">
             <img class="audioControl" :src="isTrackPlaying ? 'statics/icons/stop-active.svg' : 'statics/icons/stop-inactive.svg'">
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
             <img class="audioControl" :src="innerLoop ? 'statics/icons/repeat-active.svg' : 'statics/icons/repeat-inactive.svg'">
           </a>
-          <a v-on:click.prevent="playPause" title="Play/Pause">
+          <a v-on:click.prevent="playPause()" title="Play/Pause">
           <img class="audioControl playPause" :src="isTrackPlaying ? 'statics/icons/pause.svg' : 'statics/icons/play.svg'">
           </a>
-          <a v-on:click.prevent="favourite" title="Favourite">
+          <a v-on:click.prevent="favourite()" title="Favourite">
             <img class="audioControl" :src="favourited ? 'statics/icons/favorited.svg' : 'statics/icons/favorite.svg'">
           </a>
-          <a v-on:click.prevent="download">
+          <a v-on:click.prevent="download()">
             <img class="audioControl" src="statics/icons/download.svg">
           </a>
         </div>
@@ -76,7 +76,7 @@ export default {
   },
   name: "audio-player",
   props: {
-    trackurl: {
+    trackUrl: {
       type: String,
       default: null
     },
@@ -139,7 +139,7 @@ export default {
       return this.volume / 100 === 0;
     },
     isFileATrack() {
-      return this.trackurl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
+      return this.trackUrl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
     },
     artworkURL() {
       return this.artworkurl
@@ -178,7 +178,7 @@ export default {
     },
     download() {
       this.stop();
-      window.open(this.trackurl, 'download');
+      window.open(this.trackUrl, 'download');
     },
     load() {
       if (this.audio.readyState >= 2) {
@@ -243,7 +243,7 @@ export default {
     this.audio.addEventListener('play', () => {
       this.$store.commit('TOGGLE_TRACK_PLAYING', true)
     });
-    this.$watch('trackurl', () => {
+    this.$watch('trackUrl', () => {
       this.$refs.player.load()
     });
   }
