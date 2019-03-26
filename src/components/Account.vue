@@ -19,7 +19,7 @@
       </div>
       <div v-if="displayAccountTracks">
         <q-item class="accountTracks" v-for="(track, index) in userTracksArray" :key="index">
-          <div v-if="computedDeleteMesage === null" class="allTracksArtistAndTitle">
+          <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
             <div class="">
               <div class="trackArtist">{{track.metaData.artist}}</div>
               <div class="trackTitle">{{track.metaData.title}}</div>

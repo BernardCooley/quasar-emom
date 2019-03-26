@@ -2,7 +2,7 @@
   <div class="audioPlayerContainer">
     <track-actions-modal></track-actions-modal>
     <q-card inline class="audioCard no-shadow">
-      <div class="titleAndArtist q-card-title" v-bind:style="{ backgroundImage: 'url(' + artworkURL + ')'}">
+      <div class="titleAndArtist q-card-title" :style="{ backgroundImage: 'url(' + artworkURL + ')'}">
         <q-item class="nextPrevBtns">
           <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon']" class="audioControl nextBtn" src="statics/icons/next.svg" v-on:click="prevTrack">
           <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon']" class="audioControl prevBtn" src="statics/icons/next.svg" v-on:click="nextTrack">
@@ -18,7 +18,7 @@
           <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
         </a>
       </div>
-      <q-card-main v-if="true">
+      <q-card-main v-if="supportedFormat">
         <div class="trackProgress">
           <div v-on:click="seek" class="player-progress" title="Time played : Total time">
             <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
@@ -36,20 +36,16 @@
       <q-card-actions>
         <div class="audioActions">
           <a v-on:click.prevent="stop" title="Stop">
-            <img class="audioControl" v-if="!isTrackPlaying" src="statics/icons/stop-inactive.svg">
-            <img class="audioControl" v-else src="statics/icons/stop-active.svg">
+            <img class="audioControl" :src="isTrackPlaying ? 'statics/icons/stop-active.svg' : 'statics/icons/stop-inactive.svg'">
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
-            <img class="audioControl" v-if="!innerLoop" src="statics/icons/repeat-inactive.svg">
-            <img class="audioControl" v-else src="statics/icons/repeat-active.svg">
+            <img class="audioControl" :src="innerLoop ? 'statics/icons/repeat-active.svg' : 'statics/icons/repeat-inactive.svg'">
           </a>
           <a v-on:click.prevent="playPause" title="Play/Pause">
-            <img class="audioControl playPause" v-if="!isTrackPlaying" src="statics/icons/play.svg">
-            <img class="audioControl playPause" v-else src="statics/icons/pause.svg">
+          <img class="audioControl playPause" :src="isTrackPlaying ? 'statics/icons/pause.svg' : 'statics/icons/play.svg'">
           </a>
           <a v-on:click.prevent="favourite" title="Favourite">
-            <img class="audioControl" v-if="!favourited" src="statics/icons/favorite.svg">
-            <img class="audioControl" v-else src="statics/icons/favorited.svg">
+            <img class="audioControl" :src="favourited ? 'statics/icons/favorited.svg' : 'statics/icons/favorite.svg'">
           </a>
           <a v-on:click.prevent="download">
             <img class="audioControl" src="statics/icons/download.svg">
@@ -124,7 +120,8 @@ export default {
       loaded: false,
       previousVolume: 35,
       showVolume: false,
-      volume: 100
+      volume: 100,
+      supportedFormat: true
     };
   },
   computed: {
