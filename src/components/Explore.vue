@@ -96,7 +96,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .trackCard {
@@ -105,10 +105,6 @@ export default {
   padding: 20px;
   margin-bottom: 20px;
   background-color: #256f77;
-}
-.cardContentContainer {
-    width: 100%;
-    height: 100%;
 }
 .cardImage {
   width: 100%;
@@ -171,13 +167,6 @@ export default {
 }
 .exploreCollapsed {
   max-height: 0;
-}
-.showHideButton {
-  height: 30px;
-  width: 30%;
-}
-.inputField {
-  width: 100%;
 }
 .searchBar {
   display: flex;

@@ -115,33 +115,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
-.searchContainer {
-  padding-bottom: 30px;
-}
 .track {
   margin: auto;
-}
-.trackContainer {
-  margin: 5px;
-  padding: 5px;
-}
-.loggedInUser {
-  float: right;
-  font-size: 15px;
-  color: white;
-}
-.trackControls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.trackControlButton {
-  width: 50%;
-  font-size: 20px;
-  fill: white !important;
 }
 .playerAndAllTracksContainer {
   height: 100%;
@@ -154,49 +132,6 @@ export default {
 .playerContainer {
   width: 100%;
   height: 70%;
-}
-.allTracksContainer {
-  margin: 10px;
-  .q-list {
-    border: none;
-  }
-  .q-item {
-    padding: 0;
-  }
-}
-.allTracksArtistAndTitle {
-  width: 100%;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
-  border-bottom: 1px solid lightgray;
-  color: white;
-}
-.trackArtist {
-  font-size: 18px;
-}
-.trackTitle {
-  font-size: 15px;
-}
-.trackListTitle {
-  padding-left: 15px;
-  margin: 0;
-}
-.thumbNail {
-  height: 100% !important;
-}
-.trackInfoPopover {
-  position: fixed;
-  top: 100px;
-}
-.musicContainer .content {
-  height: 100%;
-}
-.trackInfoIcon {
-  height: 15px;
-  transform: (rotate(90deg));
 }
 .highlight {
   background-color: #256f77;

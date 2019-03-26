@@ -22,7 +22,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .fixedBottom {
@@ -30,5 +30,8 @@ export default {
     position: fixed;
     bottom: 49px;
     width: 100%;
+}
+.musicContainer .content {
+  height: 100%;
 }
 </style>

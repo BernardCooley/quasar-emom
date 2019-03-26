@@ -11,7 +11,7 @@
       <div class="trackInfo">
         <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
         <div class="trackArtistAndTitle">
-          <div class="artist">{{artist}}</div>
+          <div class="">{{}}</div>
           <div class="title">{{title}}</div>
         </div>
         <a class="trackOptions" v-on:click.prevent="openTrackActionsModal()">
@@ -88,7 +88,7 @@ export default {
       type: Boolean,
       default: false
     },
-    artist: {
+    : {
       type: String,
       default: null
     },
@@ -506,11 +506,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   .artist {
     font-size: 22px;
     font-weight: bold;
-  }
-
-  .trackInfoIcon {
-    height: 25px;
-    transform: (rotate(90deg));
   }
 }
 

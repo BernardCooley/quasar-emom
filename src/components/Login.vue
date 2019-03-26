@@ -105,21 +105,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .transparent {
   background-color: transparent;
 }
-
-.inputField {
-  width: 100%;
-}
-
 .q-if-control {
   width: 50%;
 }
-
 .errorMessage {
   color: red;
   width: 100%;

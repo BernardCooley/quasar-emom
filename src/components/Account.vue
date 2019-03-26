@@ -208,7 +208,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .accountTracks {
@@ -250,5 +250,21 @@ export default {
 }
 .deleteAccountButton {
   color: red;
+}
+.allTracksArtistAndTitle {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  border-bottom: 1px solid lightgray;
+  color: white;
+}
+.trackArtist {
+  font-size: 18px;
+}
+.trackTitle {
+  font-size: 15px;
 }
 </style>

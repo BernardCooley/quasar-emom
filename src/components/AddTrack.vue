@@ -228,7 +228,7 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .validationMessage {
@@ -236,8 +236,7 @@ export default {
   text-align: left;
 }
 
-.native-input:active,
-.native-input:focus {
+.native-input:active, .native-input:focus {
   outline: none;
 }
 

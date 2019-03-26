@@ -19,7 +19,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .tabContainer {
@@ -30,6 +30,10 @@ export default {
   bottom: 0;
   width: 100%;
   height: 50px;
+
+  i {
+    font-size: 30px;
+  }
 }
 .navItem {
   background-image: linear-gradient(rgb(0, 158, 152), rgb(37, 111, 119));
@@ -38,8 +42,5 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-.tabContainer i {
-  font-size: 30px;
 }
 </style>

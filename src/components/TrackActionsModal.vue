@@ -74,7 +74,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .closeModal {
@@ -83,20 +83,16 @@ export default {
   padding: 5px;
   float: right;
 }
-
 .trackActionsModal {
   background-color: rgba(37, 111, 119, 0.9);
 }
-
 .modalContent {
   padding: 40px 30px;
   color: white;
 }
-
 .menuItem {
   font-size: 22px;
 }
-
 .menuTitle {
   font-size: 27px;
   padding-bottom: 30px;

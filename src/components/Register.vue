@@ -140,15 +140,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
 .validationMessage {
   color: red;
   text-align: center;
-}
-
-.inputField {
-  width: 100%;
 }
 </style>
