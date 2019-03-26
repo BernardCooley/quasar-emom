@@ -59,7 +59,7 @@ export default {
   },
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
-    this.$store.commi)
+    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
     if(this.tracksArray.length == 0) {
       this.$store.commit('GET_TRACKS')
     }
@@ -89,7 +89,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'TOGGLE_EXPLORE']),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME', 'GET_TRACKS','TOGGLE_EXPLORE']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
@@ -116,37 +116,33 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/commonStyles.scss";
+
 .searchContainer {
   padding-bottom: 30px;
 }
-
 .track {
   margin: auto;
 }
-
 .trackContainer {
   margin: 5px;
   padding: 5px;
 }
-
 .loggedInUser {
   float: right;
   font-size: 15px;
   color: white;
 }
-
 .trackControls {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .trackControlButton {
   width: 50%;
   font-size: 20px;
   fill: white !important;
 }
-
 .playerAndAllTracksContainer {
   height: 100%;
   display: flex;
@@ -155,23 +151,19 @@ export default {
   border-bottom: 1px solid white;
   padding-bottom: 10px;
 }
-
 .playerContainer {
   width: 100%;
   height: 70%;
 }
-
 .allTracksContainer {
   margin: 10px;
   .q-list {
     border: none;
   }
-
   .q-item {
     padding: 0;
   }
 }
-
 .allTracksArtistAndTitle {
   width: 100%;
   padding: 10px;
@@ -182,42 +174,33 @@ export default {
   border-bottom: 1px solid lightgray;
   color: white;
 }
-
 .trackArtist {
   font-size: 18px;
 }
-
 .trackTitle {
   font-size: 15px;
 }
-
 .trackListTitle {
   padding-left: 15px;
   margin: 0;
 }
-
 .thumbNail {
   height: 100% !important;
 }
-
 .trackInfoPopover {
   position: fixed;
   top: 100px;
 }
-
 .musicContainer .content {
   height: 100%;
 }
-
 .trackInfoIcon {
   height: 15px;
   transform: (rotate(90deg));
 }
-
 .highlight {
   background-color: #256f77;
 }
-
 .collapsedPlay {
   display: flex;
   justify-content: space-between;
@@ -256,6 +239,7 @@ export default {
 .chevron {
   height: 20px;
   transform: rotate(270deg);
+  margin-left: 5px;
 }
 .collapseAudioControl {
   height: 30px;

@@ -105,7 +105,9 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "../css/commonStyles.scss";
+
 .transparent {
   background-color: transparent;
 }

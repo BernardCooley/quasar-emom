@@ -23,6 +23,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/commonStyles.scss";
+
 .fixedBottom {
     height: 50px;
     position: fixed;

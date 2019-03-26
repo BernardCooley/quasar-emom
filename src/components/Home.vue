@@ -21,7 +21,9 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
+@import "../css/commonStyles.scss";
+
 .homeContainer {
     height: 100vh;
 }

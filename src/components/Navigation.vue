@@ -20,6 +20,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/commonStyles.scss";
+
 .tabContainer {
   display: flex;
   justify-content: space-around;

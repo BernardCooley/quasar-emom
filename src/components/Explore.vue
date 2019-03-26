@@ -97,6 +97,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/commonStyles.scss";
+
 .trackCard {
   width: 100%;
   height: auto;

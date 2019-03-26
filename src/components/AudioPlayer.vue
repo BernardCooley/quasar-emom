@@ -251,6 +251,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../css/commonStyles.scss";
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
 
 body {

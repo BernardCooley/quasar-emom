@@ -208,30 +208,27 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import "../css/commonStyles.scss";
+
 .accountTracks {
   padding: 0;
 }
-
-.userTracks,
-.accountDetails {
+.userTracks, .accountDetails {
   margin: 10px;
   padding-bottom: 10px;
 }
-
 .accountSection {
   border-bottom: 1px solid gray;
 }
-
 .accountSectionTitle {
   font-size: 25px;
 }
-
 .chevron {
   height: 20px;
   margin-left: 5px;
+  transform: rotate(270deg);
 }
-
 .open {
   transform: rotate(-90deg);
 }
@@ -239,7 +236,6 @@ export default {
 .closed {
   transform: rotate(90deg);
 }
-
 .accountSectionContainer {
   display: flex;
   justify-content: center;
@@ -247,13 +243,11 @@ export default {
   align-items: center;
   margin-bottom: 10px;
 }
-
 .logoutButton {
   position: fixed;
   bottom: 70px;
   right: 20px;
 }
-
 .deleteAccountButton {
   color: red;
 }
