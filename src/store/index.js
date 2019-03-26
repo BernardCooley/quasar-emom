@@ -30,9 +30,13 @@ const store = new Vuex.Store({
     allUsers: [],
     currentUserArtistName: null,
     exploreOpen: false,
-    exploreExpanded: true
+    exploreExpanded: true,
+    isTrackPlaying: false
   },
   mutations: {
+    TOGGLE_TRACK_PLAYING(state, value) {
+      state.isTrackPlaying = value
+    },
     TOGGLE_EXPLORE(state) {
       state.exploreExpanded = !state.exploreExpanded
     },

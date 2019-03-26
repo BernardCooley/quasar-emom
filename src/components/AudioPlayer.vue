@@ -36,15 +36,15 @@
       <q-card-actions>
         <div class="audioActions">
           <a v-on:click.prevent="stop" title="Stop">
-            <img class="audioControl" v-if="!playing" src="statics/icons/stop-inactive.svg">
+            <img class="audioControl" v-if="!isTrackPlaying" src="statics/icons/stop-inactive.svg">
             <img class="audioControl" v-else src="statics/icons/stop-active.svg">
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
             <img class="audioControl" v-if="!innerLoop" src="statics/icons/repeat-inactive.svg">
             <img class="audioControl" v-else src="statics/icons/repeat-active.svg">
           </a>
-          <a v-on:click.prevent="playing = !playing" title="Play/Pause">
-            <img class="audioControl playPause" v-if="!playing" src="statics/icons/play.svg">
+          <a v-on:click.prevent="playPause" title="Play/Pause">
+            <img class="audioControl playPause" v-if="!isTrackPlaying" src="statics/icons/play.svg">
             <img class="audioControl playPause" v-else src="statics/icons/pause.svg">
           </a>
           <a v-on:click.prevent="favourite" title="Favourite">
@@ -122,14 +122,13 @@ export default {
       durationSeconds: 0,
       innerLoop: false,
       loaded: false,
-      playing: false,
       previousVolume: 35,
       showVolume: false,
       volume: 100
     };
   },
   computed: {
-    ...mapState(['currentTrack', 'loggedInUserId', 'tracksArray', 'favourites']),
+    ...mapState(['currentTrack', 'loggedInUserId', 'tracksArray', 'favourites', 'isTrackPlaying']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },
@@ -150,22 +149,19 @@ export default {
     },
     favourited() {
       return this.currentTrack.favourite
+    },
+    trackPlaying() {
+      return this.isTrackPlaying
     }
   },
   watch: {
-    playing(value) {
-      if (value) {
-        return this.audio.play();
-      }
-      this.audio.pause();
-    },
     volume(value) {
       this.showVolume = false;
       this.audio.volume = this.volume / 100;
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL', 'FAVOURITE_TRACK']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_LIKES', 'UPDATE_ARTWORK_URL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING']),
     prevTrack() {
       let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
@@ -191,7 +187,7 @@ export default {
       if (this.audio.readyState >= 2) {
         this.loaded = true;
         this.durationSeconds = parseInt(this.audio.duration);
-        return (this.playing = this.autoPlay);
+        return (this.$store.commit('TOGGLE_TRACK_PLAYING', this.autoPlay));
       }
 
       throw new Error('Failed to load sound file.');
@@ -205,7 +201,7 @@ export default {
       this.volume = 0;
     },
     seek(e) {
-      if (!this.playing || e.target.tagName === 'SPAN') {
+      if (!this.isTrackPlaying || e.target.tagName === 'SPAN') {
         return;
       }
 
@@ -215,7 +211,7 @@ export default {
       this.audio.currentTime = parseInt(this.audio.duration * seekPos);
     },
     stop() {
-      this.playing = false;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
       this.audio.currentTime = 0;
     },
     update(e) {
@@ -226,6 +222,15 @@ export default {
     },
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true)
+    },
+    playPause() {
+      if(this.isTrackPlaying) {
+        this.$store.commit('TOGGLE_TRACK_PLAYING', false)
+        return this.audio.pause()
+      }else {
+        this.$store.commit('TOGGLE_TRACK_PLAYING', true)
+        return this.audio.play()
+      }
     }
   },
   created() {
@@ -236,10 +241,10 @@ export default {
     this.audio.addEventListener('timeupdate', this.update);
     this.audio.addEventListener('loadeddata', this.load);
     this.audio.addEventListener('pause', () => {
-      this.playing = false;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
     });
     this.audio.addEventListener('play', () => {
-      this.playing = true;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', true)
     });
     this.$watch('trackurl', () => {
       this.$refs.player.load()

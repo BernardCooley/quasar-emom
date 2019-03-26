@@ -2,11 +2,11 @@
 <div>
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
-      <q-item :class="searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer'">
-        <q-search v-model="searchModel" no-icon="false" v-on:click="searchExpanded = true" :hide-underline="!searchExpanded"/>
+      <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
+        <q-search v-model="searchModel" no-icon="searchExpanded" v-on:click="searchExpanded = true" :hide-underline="!searchExpanded"/>
         <div class="searchActions" v-if="searchExpanded">
-          <i class="fas fa-arrow-right" v-on:click="submitSearch"></i>
           <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
+          <i class="fas fa-arrow-right" v-on:click="submitSearch"></i>
         </div>
       </q-item>
     </div>
