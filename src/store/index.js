@@ -14,20 +14,12 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     isLoggedIn: false,
-    loggedInUser: null,
     loggedInUserId: null,
-    menuDisplayed: false,
-    pageTitle: null,
-    currentTab: null,
-    addTrack: false,
     trackActionsModalOpen: false,
     currentTrack: null,
-    trackList: null,
-    likes: null,
     fileUploadPercentage: null,
     tracksArray: [],
     userTracksArray: [],
-    allUsers: [],
     currentUserArtistName: null,
     exploreOpen: false,
     exploreExpanded: true,
@@ -43,23 +35,8 @@ const store = new Vuex.Store({
     UPDATE_ISLOGGED_IN(state, value) {
       state.isLoggedIn = value
     },
-    UPDATE_LOGGED_IN_USER(state, value) {
-      state.loggedInUser = value
-    },
     UPDATE_LOGGED_IN_USER_ID(state, value) {
       state.loggedInUserId = value
-    },
-    TOGGLE_MENU(state, value) {
-      state.menuDisplayed = value
-    },
-    UPDATE_PAGE_TITLE(state, value) {
-      state.pageTitle = value
-    },
-    UPDATE_CURRENT_TAB(state, value) {
-      state.currentTab = value
-    },
-    UPDATE_ADD_TRACK(state, value) {
-      state.addTrack = value
     },
     UPDATE_TRACK_ACTIONS_MODAL(state, value) {
       state.trackActionsModalOpen = value
@@ -76,12 +53,6 @@ const store = new Vuex.Store({
           track.currentTrack = false
         }
       })
-    },
-    UPDATE_TRACK_LIST(state, value) {
-      state.trackList = value
-    },
-    UPDATE_LIKES(state, value) {
-      state.likes = value
     },
     UPDATE_FILE_UPLOAD_PERCENTAGE(state, value) {
       state.fileUploadPercentage = value
@@ -178,14 +149,6 @@ const store = new Vuex.Store({
     GET_CURRENT_USER_ARTIST_NAME() {
       db.collection('users').doc(firebase.auth().currentUser.uid).get().then(user => {
         this.state.currentUserArtistName = user.data().artistName
-      })
-    },
-    GET_ALL_USERS(state) {
-      state.allUsers = []
-      db.collection('users').get().then(users => {
-        users.docs.map(user => {
-          this.state.allUsers.push(user.id)
-        })
       })
     }
   }

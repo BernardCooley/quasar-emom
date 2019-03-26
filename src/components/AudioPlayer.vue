@@ -125,7 +125,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['currentTrack', 'loggedInUserId', 'tracksArray', 'favourites', 'isTrackPlaying']),
+    ...mapState(['currentTrack', 'tracksArray', 'favourites', 'isTrackPlaying']),
     currentTime() {
       return convertTimeHHMMSS(this.currentSeconds);
     },

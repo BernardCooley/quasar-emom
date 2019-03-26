@@ -39,9 +39,6 @@ export default {
   },
   created() {
     this.login()
-  },
-  computed: {
-    ...mapState(['isLoggedIn'])
   }
 }
 </script>

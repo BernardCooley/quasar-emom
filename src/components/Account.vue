@@ -197,7 +197,7 @@ export default {
     this.getUserDetails()
   },
   computed: {
-    ...mapState(['userTracksArray', 'allUsers']),
+    ...mapState(['userTracksArray']),
     computedDeleteMesage() {
       return this.deleteMessage
     },
