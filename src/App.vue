@@ -28,9 +28,7 @@ export default {
       initializeAuth.then(user => {
         if (user) {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
-          this.$store.commit('UPDATE_LOGGED_IN_USER', firebase.auth().currentUser.email)
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID', firebase.auth().currentUser.uid)
-          this.$store.commit('GET_ALL_USERS')
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }

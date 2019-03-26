@@ -30,7 +30,7 @@
         <div class="collapdesPlayTitle">{{currentTrack.metaData.title}}</div>
       </div>
       <div class="collapsedPlayItem collapsedPlayPause">
-        <img class="collapseAudioControl playPause" v-if="!playing" src="statics/icons/play.svg">
+        <img class="collapseAudioControl playPause" v-if="!isTrackPlaying" src="statics/icons/play.svg">
         <img class="collapseAudioControl playPause" v-else src="statics/icons/pause.svg">
       </div>
     </div>
@@ -59,13 +59,12 @@ export default {
   },
   created() {
     this.dataLoaded = this.tracksArray ? true : false;
-    this.$store.commit('GET_CURRENT_USER_ARTIST_NAME')
     if(this.tracksArray.length == 0) {
       this.$store.commit('GET_TRACKS')
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded']),
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'isTrackPlaying']),
     exploreIsOpen() {
       return this.exploreOpen
     },

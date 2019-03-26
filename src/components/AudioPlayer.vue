@@ -2,7 +2,7 @@
   <div class="audioPlayerContainer">
     <track-actions-modal></track-actions-modal>
     <q-card inline class="audioCard no-shadow">
-      <div class="titleAndArtist q-card-title" :style="{ backgroundImage: 'url(' + artworkURL + ')'}">
+      <div class="artworkContainer q-card-title" :style="{ backgroundImage: 'url(' + artworkURL + ')'}">
         <q-item class="nextPrevBtns">
           <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon', 'audioControl', 'nextBtn']" src="statics/icons/next.svg" v-on:click="prevTrack()">
           <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon', 'audioControl', 'prevBtn']" src="statics/icons/next.svg" v-on:click="nextTrack()">
@@ -11,7 +11,7 @@
       <div class="trackInfo">
         <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
         <div class="trackArtistAndTitle">
-          <div class="">{{}}</div>
+          <div class="artist">{{artist}}</div>
           <div class="title">{{title}}</div>
         </div>
         <a class="trackOptions" v-on:click.prevent="openTrackActionsModal()">
@@ -29,7 +29,7 @@
           </div>
         </div>
         <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
-          <source :src="trackUrl">
+          <source :src="trackurl">
         </audio>
       </q-card-main>
       <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
@@ -76,7 +76,7 @@ export default {
     Play
   },
   props: {
-    trackUrl: {
+    trackurl: {
       type: String,
       default: null
     },
@@ -88,7 +88,7 @@ export default {
       type: Boolean,
       default: false
     },
-    : {
+    artist: {
       type: String,
       default: null
     },
@@ -137,7 +137,7 @@ export default {
     this.audio.addEventListener('play', () => {
       this.$store.commit('TOGGLE_TRACK_PLAYING', true)
     });
-    this.$watch('trackUrl', () => {
+    this.$watch('trackurl', () => {
       this.$refs.player.load()
     });
   },
@@ -156,7 +156,7 @@ export default {
       return this.volume / 100 === 0;
     },
     isFileATrack() {
-      return this.trackUrl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
+      return this.trackurl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
     },
     artworkURL() {
       return this.artworkurl
@@ -195,7 +195,7 @@ export default {
     },
     download() {
       this.stop();
-      window.open(this.trackUrl, 'download');
+      window.open(this.trackurl, 'download');
     },
     load() {
       if (this.audio.readyState >= 2) {
@@ -272,17 +272,14 @@ $player-text-color: $player-link-color;
   display: flex;
   justify-content: center;
 }
-
 input[type="range"].slider {
   -webkit-appearance: none;
   width: 100%;
   margin: 0.9px 0;
 }
-
 input[type="range"].slider:focus {
   outline: none;
 }
-
 input[type="range"].slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 9.2px;
@@ -293,7 +290,6 @@ input[type="range"].slider::-webkit-slider-runnable-track {
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
-
 input[type="range"].slider::-webkit-slider-thumb {
   border: 0px solid #ffffff;
   height: 11px;
@@ -304,11 +300,9 @@ input[type="range"].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -0.9px;
 }
-
 input[type="range"].slider:focus::-webkit-slider-runnable-track {
   background: rgba(13, 13, 13, 0);
 }
-
 input[type="range"].slider::-moz-range-track {
   width: 100%;
   height: 9.2px;
@@ -319,7 +313,6 @@ input[type="range"].slider::-moz-range-track {
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
-
 input[type="range"].slider::-moz-range-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
@@ -329,7 +322,6 @@ input[type="range"].slider::-moz-range-thumb {
   background: rgba(0, 0, 0, 0.97);
   cursor: pointer;
 }
-
 input[type="range"].slider::-ms-track {
   width: 100%;
   height: 9.2px;
@@ -338,7 +330,6 @@ input[type="range"].slider::-ms-track {
   border-color: transparent;
   color: transparent;
 }
-
 input[type="range"].slider::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
@@ -346,7 +337,6 @@ input[type="range"].slider::-ms-fill-lower {
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
     0px 0px 0px rgba(13, 13, 13, 0.41);
 }
-
 input[type="range"].slider::-ms-fill-upper {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
@@ -354,7 +344,6 @@ input[type="range"].slider::-ms-fill-upper {
   box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
     0px 0px 0px rgba(13, 13, 13, 0.41);
 }
-
 input[type="range"].slider::-ms-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
@@ -365,15 +354,12 @@ input[type="range"].slider::-ms-thumb {
   cursor: pointer;
   height: 9.2px;
 }
-
 input[type="range"].slider:focus::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
 }
-
 input[type="range"].slider:focus::-ms-fill-upper {
   background: rgba(13, 13, 13, 0);
 }
-
 .player {
   border: 1px solid $player-border-color;
   border-radius: 5px;
@@ -383,7 +369,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   line-height: 1.5625;
   padding: 20px;
 }
-
 .player-controls {
   display: flex;
 
@@ -403,14 +388,13 @@ input[type="range"].slider:focus::-ms-fill-upper {
     }
   }
 }
-
 .player-progress {
-  background-color: rgb(255, 255, 255);
+  background-color: white;
   cursor: pointer;
-  height: 10px;
+  height: 13px;
   min-width: 200px;
   position: relative;
-  opacity: 0.8;
+  opacity: 0.3;
 
   .player-seeker {
     bottom: 0;
@@ -420,7 +404,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
     background-color: dimgray;
   }
 }
-
+.q-card-container {
+  padding: 0 10px;
+}
 .player-time {
   display: flex; // font-size: 18px;
   justify-content: space-between;
@@ -435,7 +421,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
     padding-right: 5px;
   }
 }
-
 .audioActions {
   width: 100%;
   margin: 0 8px;
@@ -443,16 +428,13 @@ input[type="range"].slider:focus::-ms-fill-upper {
   justify-content: space-between;
   align-items: center;
 }
-
 .audioControl {
   height: 30px;
   opacity: 0.8;
 }
-
 .nextBtn {
   transform: rotate(180deg);
 }
-
 .nextPrevBtns {
   display: flex;
   align-items: center;
@@ -465,74 +447,66 @@ input[type="range"].slider:focus::-ms-fill-upper {
     border-radius: 30px;
   }
 }
-
 .trackProgress {
   margin-top: 20px;
 }
-
 .playPause {
   height: 60px;
 }
-
 .audioPlayerContainer {
   width: 100%;
 }
-
 .audioCard {
   width: 100%;
 }
-
 .saveButton {
   background-color: rgb(2, 123, 227);
   color: white;
   font-weight: bold;
 }
-
 .q-card-title {
   text-align: center;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
 }
-
-.titleAndArtist {
+.artworkContainer {
   background-size: 400px;
   height: 400px;
   background-repeat: no-repeat;
   background-position: center;
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
 
   .artist {
     font-size: 22px;
     font-weight: bold;
   }
 }
-
+.q-card-actions {
+  padding: 0 8px;
+}
 .q-card-main {
   font-size: 18px;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   height: 50px;
 }
-
 .unsupportedFormatMessage {
   display: flex !important;
   text-align: center;
   font-size: 20px;
   margin: 10px;
 }
-
 .trackDetailsPopoverContainer {
   width: 80%;
 }
-
 .artworkImage {
   display: block;
   width: 100%;
   height: auto;
 }
-
 .trackInfo {
   color: white;
   width: 100%;
@@ -540,7 +514,6 @@ input[type="range"].slider:focus::-ms-fill-upper {
   justify-content: space-between;
   align-items: center;
 }
-
 .trackArtistAndTitle,
 .trackNumber,
 .trackOptions {
@@ -548,12 +521,23 @@ input[type="range"].slider:focus::-ms-fill-upper {
   border-radius: 5px;
   flex-direction: column;
   display: flex;
+  text-align: center;
 }
+.trackArtistAndTitle {
+  flex-grow: 10;
 
+  .artist {
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+.trackNumber,
+.trackOptions {
+  flex-grow: 1;
+}
 .hideIcon {
   opacity: 0;
 }
-
 .showIcon {
   opacity: 1;
 }

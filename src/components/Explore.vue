@@ -3,7 +3,7 @@
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
       <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-        <q-search v-model="searchModel" no-icon="searchExpanded" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded"/>
+        <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded"/>
         <div class="searchActions" v-if="searchExpanded">
           <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
           <i class="fas fa-arrow-right" v-on:click="submitSearch()"></i>
@@ -62,7 +62,7 @@ export default {
       searchExpanded: false
     }
   },
-  created() {
+  mounted() {
     if (this.tracksArray.length == 0) {
       this.$store.commit("GET_TRACKS");
     }

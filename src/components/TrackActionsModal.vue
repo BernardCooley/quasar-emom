@@ -68,7 +68,7 @@ export default {
     },
     downloadTrack: function () {
       this.stop()
-      window.open(this.currentTrack.trackUrl, 'download')
+      window.open(this.currentTrack.trackurl, 'download')
     }
   }
 };
