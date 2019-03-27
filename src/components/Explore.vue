@@ -13,7 +13,7 @@
     <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
-      <img class="cardImage" v-on:click="toggleExplore()" :src="track.metaData.artworkUrl">
+      <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl">
       <div class="trackInfoContainer">
         <div class="trackInfoItem">
           <img src="statics/icons/listens.svg" alt="listens image"/>
@@ -91,6 +91,9 @@ export default {
       console.log(this.searchModel)
       this.searchExpanded = false
       this.searchModel = ''
+    },
+    changeTrack(selectedTrack) {
+      this.$store.commit('UPDATE_CURRENT_TRACK', selectedTrack)
     }
   }
 };
