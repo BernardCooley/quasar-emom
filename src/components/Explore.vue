@@ -93,7 +93,7 @@ export default {
       this.searchModel = ''
     },
     changeTrack(selectedTrack) {
-      this.$store.commit('UPDATE_CURRENT_TRACK', selectedTrack)
+      this.$store.commit('UPDATE_CURR_TRACK', this.tracksArray.indexOf(selectedTrack))
     }
   }
 };
