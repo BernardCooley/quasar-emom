@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     isLoggedIn: false,
     loggedInUserId: null,
     trackActionsModalOpen: false,
+    filterModalOpen: false,
     currentTrack: null,
     fileUploadPercentage: null,
     tracksArray: [],
@@ -47,6 +48,9 @@ const store = new Vuex.Store({
     },
     UPDATE_TRACK_ACTIONS_MODAL(state, value) {
       state.trackActionsModalOpen = value
+    },
+    TOGGLE_FILTER_MODAL(state) {
+      state.filterModalOpen = !state.filterModalOpen
     },
     UPDATE_CURRENT_TRACK(state, value) {
       state.currentTrack = value

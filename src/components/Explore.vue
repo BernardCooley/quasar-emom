@@ -2,16 +2,41 @@
 <div>
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
-      <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-        <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch()"/>
-        <div class="searchActions" v-if="searchExpanded">
-          <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
-          <i class="fas fa-arrow-right" v-on:click="submitSearch()"></i>
-        </div>
-      </q-item>
-      <div v-if="resultsFiltered">
+      <div class="searchAndFilterContainer">
+        <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
+          <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
+          <div class="searchActions" v-if="searchExpanded">
+            <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
+            <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>
+          </div>
+        </q-item>
+        <div class="filterButton" v-on:click="openFilterModal = true">Filter</div>
+      </div>
+      <div class="filterContainer" v-if="openFilterModal">
+        <q-list>
+          <div>Filter by:</div>
+          <div class="filterOptionsContainer">
+            <q-item v-on:click="submitSearch()">YOURS</q-item>
+            <q-item>FAVOURITES</q-item>
+            <q-item>
+              <q-btn-dropdown split label="Artists">
+                <q-list link>
+                  <div v-for="(artist, index) in allArtists" :key="index" >
+                    <q-item @click.native="filterByArtist(artist)" v-close-overlay>
+                      <q-item-main>
+                        <q-item-tile class="dropdownLabel" label>{{artist}}</q-item-tile>
+                      </q-item-main>
+                    </q-item>
+                  </div>
+                </q-list>
+              </q-btn-dropdown>
+            </q-item>
+          </div>
+        </q-list>
+      </div>
+      <div class="resultsMessageContainer" v-if="resultsFiltered">
         <div class="resultsMessage">Results for: "{{resultsMessage}}"</div>
-        <div class="closeSearchIcon" v-on:click="resultsFiltered = !resultsFiltered">x</div>
+        <i class="closeSearchIcon fas fa-arrow-left" v-on:click="resultsFiltered = !resultsFiltered"></i>
       </div>
     </div>
     <div class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
@@ -65,7 +90,9 @@ export default {
       searchModel: null,
       searchExpanded: false,
       resultsFiltered: false,
-      resultsMessage: ''
+      resultsMessage: '',
+      openFilterModal: false,
+      currentUserArtistName: ''
     }
   },
   mounted() {
@@ -74,7 +101,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray']),
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen']),
     exploreslideClosed() {
       return this.exploreOpen
     },
@@ -83,6 +110,13 @@ export default {
     },
     allOrFilteredTracksArray() {
       return this.resultsFiltered ? this.filteredTracksArray : this.tracksArray
+    },
+    allArtists() {
+      let artists = []
+      this.tracksArray.map(track => {
+        artists.push(track.metaData.artist)
+      })
+      return [...new Set(artists)]
     }
   },
   methods: {
@@ -96,19 +130,31 @@ export default {
     toggleExplore() {
       this.$store.commit('TOGGLE_EXPLORE')
     },
-    submitSearch() {
-      let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(this.searchModel.toLowerCase()) || track.metaData.title.toLowerCase().includes(this.searchModel.toLowerCase()))
+    submitSearch(searchTerm) {
+      let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(searchTerm.toLowerCase()) || track.metaData.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
       this.$store.commit('UPDATE_FILTERED_TRACKS_ARRAY', newTracksArray)
 
       this.searchExpanded = false
-      this.resultsMessage = this.searchModel;
+      this.resultsMessage = searchTerm;
       this.searchModel = ''
 
       this.resultsFiltered = true;
     },
     changeTrack(selectedTrack) {
       this.$store.commit('UPDATE_CURR_TRACK', this.tracksArray.indexOf(selectedTrack))
+    },
+    filterByArtist(artist) {
+      this.openFilterModal = false
+      this.submitSearch(artist)
+      console.log(artist)
+    },
+    getAllArtists() {
+      let artists = []
+      this.tracksArray.map(track => {
+        artists.push(track.metaData.artist)
+      })
+      return [...new Set(artists)]
     }
   }
 };
@@ -191,10 +237,38 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   align-items: flex-start;
+  
+  .searchAndFilterContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  .resultsMessage {
-    font-size: 20px;
-    padding: 10px;
+    .filterButton {
+      margin-right: 10px;
+    }
+  }
+
+  .filterContainer {
+    height: auto;
+    width: 100%;
+  }
+
+  .resultsMessageContainer {
+    border-top: 1px solid lightgray;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .resultsMessage {
+      font-size: 20px;
+      padding: 10px;
+    }
+
+    .closeSearchIcon {
+      margin-right: 10px;
+    }
   }
 }
 .searchBoxContainerCollapsed {
@@ -224,5 +298,15 @@ input.q-input-target {
   i {
     font-size: 20px;
   }
+}
+
+.dropdownLabel {
+  color: red;
+}
+
+.filterOptionsContainer {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 </style>
