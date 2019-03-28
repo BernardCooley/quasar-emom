@@ -19,6 +19,7 @@ const store = new Vuex.Store({
     currentTrack: null,
     fileUploadPercentage: null,
     tracksArray: [],
+    filteredTracksArray: [],
     userTracksArray: [],
     currentUserArtistName: null,
     exploreOpen: false,
@@ -26,6 +27,12 @@ const store = new Vuex.Store({
     isTrackPlaying: false
   },
   mutations: {
+    UPDATE_TRACKS_ARRAY(state, value) {
+      state.tracksArray = value
+    },
+    UPDATE_FILTERED_TRACKS_ARRAY(state, value) {
+      state.filteredTracksArray = value
+    },
     TOGGLE_TRACK_PLAYING(state, value) {
       state.isTrackPlaying = value
     },

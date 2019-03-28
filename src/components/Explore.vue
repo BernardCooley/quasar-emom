@@ -3,14 +3,18 @@
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
       <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-        <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded"/>
+        <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch()"/>
         <div class="searchActions" v-if="searchExpanded">
           <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
           <i class="fas fa-arrow-right" v-on:click="submitSearch()"></i>
         </div>
       </q-item>
+      <div v-if="resultsFiltered">
+        <div class="resultsMessage">Results for: "{{resultsMessage}}"</div>
+        <div class="closeSearchIcon" v-on:click="resultsFiltered = !resultsFiltered">x</div>
+      </div>
     </div>
-    <div class="trackCard" v-for="(track, index) in tracksArray" :key="index">
+    <div class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
       <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl">
@@ -59,7 +63,9 @@ export default {
         value: null
       },
       searchModel: null,
-      searchExpanded: false
+      searchExpanded: false,
+      resultsFiltered: false,
+      resultsMessage: ''
     }
   },
   mounted() {
@@ -68,29 +74,38 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded']),
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray']),
     exploreslideClosed() {
       return this.exploreOpen
     },
     exploreIsExpanded() {
       return this.exploreExpanded
+    },
+    allOrFilteredTracksArray() {
+      return this.resultsFiltered ? this.filteredTracksArray : this.tracksArray
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'GET_TRACKS']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'GET_TRACKS', 'UPDATE_TRACKS_ARRAY', 'UPDATE_FILTERED_TRACKS_ARRAY']),
     playTrack(filename) {
       this.$store.commit('UPDATE_CURRENT_TRACK', this.$store.currentTrack = this.tracksArray.filter(track => track.filename == filename)[0])
     },
     getUserTracks(userId) {
-      this.$store.commit('GET_TRACKS', userId)
+      // this.$store.commit('GET_TRACKS', userId)
     },
     toggleExplore() {
       this.$store.commit('TOGGLE_EXPLORE')
     },
     submitSearch() {
-      console.log(this.searchModel)
+      let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(this.searchModel.toLowerCase()) || track.metaData.title.toLowerCase().includes(this.searchModel.toLowerCase()))
+
+      this.$store.commit('UPDATE_FILTERED_TRACKS_ARRAY', newTracksArray)
+
       this.searchExpanded = false
+      this.resultsMessage = this.searchModel;
       this.searchModel = ''
+
+      this.resultsFiltered = true;
     },
     changeTrack(selectedTrack) {
       this.$store.commit('UPDATE_CURR_TRACK', this.tracksArray.indexOf(selectedTrack))
@@ -174,7 +189,13 @@ export default {
 .searchBar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+
+  .resultsMessage {
+    font-size: 20px;
+    padding: 10px;
+  }
 }
 .searchBoxContainerCollapsed {
   width: 110px;
