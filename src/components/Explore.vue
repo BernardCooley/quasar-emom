@@ -17,8 +17,8 @@
           <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
           <div>Filter by:</div>
           <div class="filterOptionsContainer">
-            <q-item v-on:click="submitSearch(currentUserName)">YOURS</q-item>
-            <q-item>FAVOURITES</q-item>
+            <q-button v-on:click="filterByArtist(currentUserName)">YOURS</q-button>
+            <q-button>FAVOURITES</q-button>
             <q-item>
               <q-btn-dropdown split label="Artists">
                 <q-list class="artistDropdown" link>
@@ -138,7 +138,6 @@ export default {
     filterByArtist(artist) {
       this.openFilterModal = false
       this.submitSearch(artist)
-      console.log(artist)
     },
     getAllArtists() {
       let artists = []
