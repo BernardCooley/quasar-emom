@@ -17,7 +17,7 @@
           <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
           <div>Filter by:</div>
           <div class="filterOptionsContainer">
-            <q-item v-on:click="submitSearch()">YOURS</q-item>
+            <q-item v-on:click="submitSearch(currentUserName)">YOURS</q-item>
             <q-item>FAVOURITES</q-item>
             <q-item>
               <q-btn-dropdown split label="Artists">
@@ -89,7 +89,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen']),
+    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen', 'loggedInUserName']),
     exploreslideClosed() {
       return this.exploreOpen
     },
@@ -105,6 +105,9 @@ export default {
         artists.push(track.metaData.artist)
       })
       return [...new Set(artists)]
+    },
+    currentUserName() {
+      return this.loggedInUserName
     }
   },
   methods: {

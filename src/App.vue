@@ -18,7 +18,7 @@ export default {
     Navigation
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS', 'UPDATE_LOGGED_IN_USER_NAME']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -29,6 +29,7 @@ export default {
         if (user) {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID', firebase.auth().currentUser.uid)
+          this.$store.commit('UPDATE_LOGGED_IN_USER_NAME')
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }

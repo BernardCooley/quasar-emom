@@ -15,6 +15,7 @@ const store = new Vuex.Store({
   state: {
     isLoggedIn: false,
     loggedInUserId: null,
+    loggedInUserName: null,
     trackActionsModalOpen: false,
     filterModalOpen: false,
     currentTrack: null,
@@ -45,6 +46,13 @@ const store = new Vuex.Store({
     },
     UPDATE_LOGGED_IN_USER_ID(state, value) {
       state.loggedInUserId = value
+    },
+    UPDATE_LOGGED_IN_USER_NAME(state) {
+      db.collection('users').where('userID', '==', firebase.auth().currentUser.uid).get().then(users => {
+        users.docs.map(user => {
+          state.loggedInUserName = user.data().artistName
+        })
+      })
     },
     UPDATE_TRACK_ACTIONS_MODAL(state, value) {
       state.trackActionsModalOpen = value
