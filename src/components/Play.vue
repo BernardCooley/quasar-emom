@@ -27,8 +27,6 @@
       <img class="chevron" src="statics/icons/right-chevron.svg"/>
       <div class="collapsedPlayItem trackDetails" v-on:click="toggleMusic()" >
         <div class="collapdesPlayTitle"><span class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</span> - {{currentTrack.metaData.title}}</div>
-        <!-- <div class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</div>
-        <div class="collapdesPlayTitle">{{currentTrack.metaData.title}}</div> -->
       </div>
       <div class="collapsedPlayItem collapsedPlayPause">
         <img class="collapseAudioControl playPause" v-if="!isTrackPlaying" src="statics/icons/play.svg">

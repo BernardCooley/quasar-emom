@@ -2,25 +2,26 @@
 <div>
   <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
     <div class="searchBar">
-      <div class="searchAndFilterContainer">
+      <div class="searchAndFilterContainer" v-if="!openFilterModal && !resultsFiltered">
         <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-          <q-search v-model="searchModel" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
+          <q-search v-model="searchModel" no-icon="none" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
           <div class="searchActions" v-if="searchExpanded">
             <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
             <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>
           </div>
         </q-item>
-        <div class="filterButton" v-on:click="openFilterModal = true">Filter</div>
+        <div class="filterButton" v-on:click="openFilterModal = true" v-if="!searchExpanded">Filter</div>
       </div>
       <div class="filterContainer" v-if="openFilterModal">
         <q-list>
+          <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
           <div>Filter by:</div>
           <div class="filterOptionsContainer">
             <q-item v-on:click="submitSearch()">YOURS</q-item>
             <q-item>FAVOURITES</q-item>
             <q-item>
               <q-btn-dropdown split label="Artists">
-                <q-list link>
+                <q-list class="artistDropdown" link>
                   <div v-for="(artist, index) in allArtists" :key="index" >
                     <q-item @click.native="filterByArtist(artist)" v-close-overlay>
                       <q-item-main>
@@ -43,20 +44,7 @@
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
       <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl">
-      <div class="trackInfoContainer">
-        <div class="trackInfoItem">
-          <img src="statics/icons/listens.svg" alt="listens image"/>
-          <div class="counter">4</div>
-        </div>
-        <div class="trackInfoItem">
-          <img class="favouritesIcon" src="statics/icons/favorite.1.svg" alt="favourited image"/>
-          <div class="counter">10</div>
-        </div>
-        <div class="trackInfoItem">
-          <img src="statics/icons/comment.svg" alt="comments image"/>
-          <div class="counter">3</div>
-        </div>
-      </div>
+      <div class="trackInfoContainer"></div>
     </div>
   </div>
   <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
@@ -174,8 +162,6 @@ export default {
   width: 100%;
   padding: 0 20px;
   height: 100%;
-  border-top: 1px solid gray;
-  border-bottom: 1px solid gray;
 }
 .artist {
   font-size: 30px;
@@ -265,14 +251,15 @@ export default {
       font-size: 20px;
       padding: 10px;
     }
-
-    .closeSearchIcon {
-      margin-right: 10px;
-    }
   }
 }
+.closeSearchIcon {
+  margin-right: 10px;
+  position: absolute;
+  right: 0;
+}
 .searchBoxContainerCollapsed {
-  width: 110px;
+  width: 150px;
 }
 .searchBoxContainerExpanded {
   width: 100%;
@@ -300,8 +287,13 @@ input.q-input-target {
   }
 }
 
+.artistDropdown {
+  color: white;
+  background-color: #256f77;
+}
+
 .dropdownLabel {
-  color: red;
+  
 }
 
 .filterOptionsContainer {
