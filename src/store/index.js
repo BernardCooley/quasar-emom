@@ -26,9 +26,20 @@ const store = new Vuex.Store({
     currentUserArtistName: null,
     exploreOpen: false,
     exploreExpanded: true,
-    isTrackPlaying: false
+    isTrackPlaying: false,
+    bandImageUrl: null
   },
   mutations: {
+    UPDATE_BAND_IMAGE(state) {
+      db.collection('users').where('UserID', '==', firebase.auth().currentUser.uid).get().then(users => {
+        users.docs.map(user => {
+          let bandImageRef = firebase.storage().ref().child('bandImages/' + user.bandImage)
+          bandImageRef.getDownloadURL().then(bandImageDownloadUrl => {
+            state.bandImage = bandImageDownloadUrl
+          })
+        })
+      })
+    },
     UPDATE_TRACKS_ARRAY(state, value) {
       state.tracksArray = value
     },

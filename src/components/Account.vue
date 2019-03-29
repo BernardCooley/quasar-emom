@@ -6,6 +6,9 @@
         <img class="chevron" :class="[displayAccountDetails ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountDetails">
+        <q-item>
+          <img :src="bandImage" alt="band image"/>
+        </q-item>
         <q-item>Artist Name: {{computedUserDetails.artistName}}</q-item>
         <q-item>Email address: {{computedUserDetails.email}}</q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
@@ -54,18 +57,22 @@ export default {
   created() {
     this.getLoggedInUserTracks()
     this.getUserDetails()
+    this.$store.commit('UPDATE_BAND_IMAGE')
   },
   computed: {
-    ...mapState(['userTracksArray']),
+    ...mapState(['userTracksArray', 'bandImageUrl']),
     computedDeleteMesage() {
       return this.deleteMessage
     },
     computedUserDetails() {
       return this.user
+    },
+    bandImage() {
+      return this.bandImageUrl
     }
   },
   methods: {
-    ...mapMutations(['GET_TRACKS']),
+    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
