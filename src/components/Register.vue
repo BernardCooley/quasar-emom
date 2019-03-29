@@ -23,6 +23,11 @@
               <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value"/>
             </q-field>
           </q-item>
+          <q-item>
+            <q-field label="Band image (optional)">
+              <input type="file" ref="bandImageFileToUpload" multiple @change="getSelectedFile()" class="input-file">
+            </q-field>
+          </q-item>
           <q-btn v-on:click.prevent="register()">Register</q-btn>
           <span>{{registerMessage}}</span>
         </q-list>
@@ -34,10 +39,11 @@
 <script>
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
+import { Loading } from 'quasar'
 
 export default {
   name: 'register',
-  data: function () {
+  data() {
     return {
       user: {
         artistName: {
@@ -57,13 +63,14 @@ export default {
           errors: []
         }
       },
+      bandImageFileToUpload: null,
       errorsBool: null,
       userID: null,
       registerMessage: null
     };
   },
   methods: {
-    validation: function (e) {
+    validation(e) {
       this.errorsBool = false;
       this.user.artistName.errors = [];
       this.user.email.errors = [];
@@ -79,19 +86,19 @@ export default {
 
       var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.");
+        this.user.email.errors.push("Invalid email format.")
       }
 
       if (this.user.password.value.length < 6) {
-        this.user.password.errors.push("Minimum 6 characters.");
+        this.user.password.errors.push("Minimum 6 characters.")
       }
 
       if (!this.user.password.value) {
-        this.user.password.errors.push("Password required.");
+        this.user.password.errors.push("Password required.")
       }
 
       if (this.user.password.value != this.user.passwordConfirm.value) {
-        this.user.passwordConfirm.errors.push("Password does not match.");
+        this.user.passwordConfirm.errors.push("Password does not match.")
       }
 
       if (!this.user.passwordConfirm.value) {
@@ -106,18 +113,21 @@ export default {
         }
       }
     },
-    register: function (e) {
+    getSelectedFile() {
+      this.bandImageFileToUpload = this.$refs.bandImageFileToUpload.files[0]
+    },
+    register(e) {
+      Loading.show({
+        message: 'Registering'
+      })
       this.validation();
       if (!this.errorsBool) {
-        console.log("registering.....");
         this.registerUser();
         e.preventDefault()
       }
     },
-    registerUser: function () {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(
+    registerUser() {
+      firebase.auth().createUserWithEmailAndPassword(
           this.user.email.value,
           this.user.password.value
         )
@@ -125,16 +135,33 @@ export default {
           this.createUserAccount(data.user.uid);
         })
     },
-    createUserAccount: function (userID) {
+    createUserAccount(userID) {
       db.collection('users').doc(userID).set({
         userID: userID,
         artistName: this.user.artistName.value,
-        tracks: []
+        bandImage: this.bandImageFileToUpload.name
       }).then(() => {
-        this.registerMessage = 'Registration successful';
-        this.registerMessage = null
+        this.uploadImage(this.bandImageFileToUpload)
+      }).catch(error => console.log(error))
+    },
+    uploadImage(image) {
+      let storageRef = firebase.storage().ref()
+
+      let focusedArtwork = storageRef.child('bandImages').child(image.name)
+
+      var artworkMetadata = {
+        customMetadata: {
+          'uploadedById': firebase.auth().currentUser.uid
+        }
+      }
+      focusedArtwork.put(image, artworkMetadata).then(data => {
+        Loading.hide()
+        this.registerMessage = 'Registration successful'
+        setTimeout(() => {
+          this.registerMessage = null
+        }, 1000)
         location.reload()
-      }).catch(error => console.log(error));
+      }).catch(error => console.log(error))
     }
   }
 };
