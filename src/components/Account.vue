@@ -6,7 +6,7 @@
         <img class="chevron" :class="[displayAccountDetails ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountDetails">
-        <q-item>
+        <q-item class="bandImageContainer">
           <img :src="bandImage" alt="band image"/>
         </q-item>
         <q-item>Artist Name: {{computedUserDetails.artistName}}</q-item>
@@ -55,9 +55,9 @@ export default {
     }
   },
   created() {
-    this.getLoggedInUserTracks()
     this.getUserDetails()
     this.$store.commit('UPDATE_BAND_IMAGE')
+    this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   computed: {
     ...mapState(['userTracksArray', 'bandImageUrl']),
@@ -72,47 +72,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE']),
+    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
         this.$store.commit('TOGGLE_MENU', false);
         location.reload()
-      });
-    },
-    getLoggedInUserTracks() {
-      let store = this.$store
-      let usersRef = db.collection("users").doc(firebase.auth().currentUser.uid)
-      usersRef.get().then(doc => {
-        let trackData = []
-        doc.data().tracks.forEach(trackFilename => {
-          let trackRef = firebase.storage().ref().child('tracks/' + trackFilename)
-          trackRef.getMetadata().then(function (metadata) {
-            let artworkRef = firebase.storage().ref().child('artwork/' + metadata.customMetadata.artworkName)
-
-            artworkRef.getDownloadURL().then(artworkUrl => {
-              trackRef.getDownloadURL().then(trackURL => {
-                trackData.push({
-                  metaData: {
-                    artist: metadata.customMetadata.artist,
-                    title: metadata.customMetadata.title,
-                    artworkUrl: artworkUrl,
-                    name: metadata.name
-                  },
-                  downloadURL: trackURL,
-                  filename: trackFilename
-                })
-                store.commit("UPDATE_USER_TRACKS_ARRAY", trackData)
-              }).catch(function (error) {
-                console.log(error)
-              })
-            })
-          }).catch(function (error) {
-
-          });
-        })
-      }).catch(function (error) {
-        console.log("Error getting cached document:", error);
       });
     },
     deleteTrackFromUserAccount(trackName) {
@@ -135,26 +100,15 @@ export default {
         trackRef.delete().then(() => {
           metadata.customMetadata.artworkName != 'default.png' ? artworkRef.delete() : false
           this.deleteTrackFromUserAccount(trackName)
-          this.getLoggedInUserTracks()
           this.deleteMessage = 'Completed'
           setTimeout(() => {
             this.deleteMessage = null
           }, 2000)
-          // this.$store.commit('GET_TRACKS', firebase.auth().currentUser.uid)
           return true
         }).catch(error => {
           console.error(error)
         });
       })
-    },
-    getUserDetails() {
-      this.user = []
-      this.user['email'] = firebase.auth().currentUser.email
-      let userRef = db.collection('users').doc(firebase.auth().currentUser.uid)
-      userRef.get().then(userSnapshot => {
-        this.user['artistName'] = userSnapshot.data().artistName
-      })
-
     },
     toggleAccountTracks() {
       this.displayAccountTracks = !this.displayAccountTracks
@@ -218,6 +172,9 @@ export default {
 <style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
+.accountContainer {
+  margin-bottom: 70px;
+}
 .accountTracks {
   padding: 0;
 }
@@ -273,5 +230,12 @@ export default {
 }
 .trackTitle {
   font-size: 15px;
+}
+.bandImageContainer {
+  width: 100%;
+
+  img {
+    width: 100%;
+  }
 }
 </style>

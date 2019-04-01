@@ -27,15 +27,16 @@ const store = new Vuex.Store({
     exploreOpen: false,
     exploreExpanded: true,
     isTrackPlaying: false,
-    bandImageUrl: null
+    bandImageUrl: null,
+    userTracksArray: null
   },
   mutations: {
     UPDATE_BAND_IMAGE(state) {
-      db.collection('users').where('UserID', '==', firebase.auth().currentUser.uid).get().then(users => {
+      db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
         users.docs.map(user => {
-          let bandImageRef = firebase.storage().ref().child('bandImages/' + user.bandImage)
+          let bandImageRef = firebase.storage().ref().child('bandImages/' + user.data().bandImage)
           bandImageRef.getDownloadURL().then(bandImageDownloadUrl => {
-            state.bandImage = bandImageDownloadUrl
+            state.bandImageUrl = bandImageDownloadUrl
           })
         })
       })
@@ -55,8 +56,8 @@ const store = new Vuex.Store({
     UPDATE_ISLOGGED_IN(state, value) {
       state.isLoggedIn = value
     },
-    UPDATE_LOGGED_IN_USER_ID(state, value) {
-      state.loggedInUserId = value
+    UPDATE_LOGGED_IN_USER_ID(state) {
+      state.loggedInUserId = firebase.auth().currentUser.uid
     },
     UPDATE_LOGGED_IN_USER_NAME(state) {
       db.collection('users').where('userID', '==', firebase.auth().currentUser.uid).get().then(users => {
@@ -90,8 +91,8 @@ const store = new Vuex.Store({
     CLEAR_TRACKS_ARRAY(state) {
       state.tracksArray = []
     },
-    UPDATE_USER_TRACKS_ARRAY(state, value) {
-      state.userTracksArray = value
+    GET_ACCOUNT_TRACKS(state) {
+      state.userTracksArray = state.tracksArray.filter(track => track.metaData.uploadedById == state.loggedInUserId)
     },
     GET_TRACKS(state, value) {
       Loading.show({
