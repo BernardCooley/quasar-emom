@@ -7,10 +7,10 @@
       </div>
       <div v-if="displayAccountDetails">
         <q-item class="bandImageContainer">
-          <img :src="bandImage" alt="band image"/>
+          <img :src="bandImageUrl" alt="band image"/>
         </q-item>
-        <q-item>Artist Name: {{computedUserDetails.artistName}}</q-item>
-        <q-item>Email address: {{computedUserDetails.email}}</q-item>
+        <q-item>Artist Name: {{accountDetails.artistName}}</q-item>
+        <q-item>Email address: {{accountEmail}}</q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
@@ -27,7 +27,7 @@
               <div class="trackArtist">{{track.metaData.artist}}</div>
               <div class="trackTitle">{{track.metaData.title}}</div>
             </div>
-            <q-btn v-on:click.prevent="deleteTrack(track.metaData.name)">Delete</q-btn>
+            <q-btn v-on:click.prevent="deleteTrack(track)">Delete</q-btn>
             <a>
               <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
             </a>
@@ -41,9 +41,10 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
-import firebase from "firebase/app";
+import { mapMutations, mapState } from "vuex"
+import firebase from "firebase/app"
 import db from "../firestore/firebaseInit"
+import { Loading } from 'quasar'
 
 export default {
   data() {
@@ -55,30 +56,28 @@ export default {
     }
   },
   created() {
-    this.getUserDetails()
+    this.$store.commit('GET_ACCOUNT_EMAIL')
+    this.$store.commit('GET_ACCOUNT_DETAILS')
     this.$store.commit('UPDATE_BAND_IMAGE')
     this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   computed: {
-    ...mapState(['userTracksArray', 'bandImageUrl']),
+    ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'accountEmail']),
     computedDeleteMesage() {
       return this.deleteMessage
-    },
-    computedUserDetails() {
-      return this.user
-    },
-    bandImage() {
-      return this.bandImageUrl
     }
   },
   methods: {
-    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS']),
+    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'GET_ACCOUNT_EMAIL']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
         this.$store.commit('TOGGLE_MENU', false);
         location.reload()
       });
+    },
+    deleteTrack(track) {
+      this.$store.commit('DELETE_TRACK', track.filename)
     },
     deleteTrackFromUserAccount(trackName) {
       let usersRef = db.collection('users').doc(`${firebase.auth().currentUser.uid}`)
@@ -88,26 +87,6 @@ export default {
         }).catch(error => {
           console.error(error)
         })
-      })
-    },
-    deleteTrack(trackName) {
-      this.deleteMessage = 'Deleting. Please wait...'
-      let trackRef = firebase.storage().ref().child(`tracks/${trackName}`);
-      let artworkUrl;
-
-      trackRef.getMetadata().then(metadata => {
-        let artworkRef = firebase.storage().ref().child(`artwork/${metadata.customMetadata.artworkName}`);
-        trackRef.delete().then(() => {
-          metadata.customMetadata.artworkName != 'default.png' ? artworkRef.delete() : false
-          this.deleteTrackFromUserAccount(trackName)
-          this.deleteMessage = 'Completed'
-          setTimeout(() => {
-            this.deleteMessage = null
-          }, 2000)
-          return true
-        }).catch(error => {
-          console.error(error)
-        });
       })
     },
     toggleAccountTracks() {

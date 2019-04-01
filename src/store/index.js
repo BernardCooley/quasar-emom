@@ -28,9 +28,48 @@ const store = new Vuex.Store({
     exploreExpanded: true,
     isTrackPlaying: false,
     bandImageUrl: null,
-    userTracksArray: null
+    userTracksArray: null,
+    accountDetails: null,
+    accountEmail: null
   },
   mutations: {
+    GET_ACCOUNT_EMAIL(state) {
+      state.accountEmail = firebase.auth().currentUser.email
+    },
+    GET_ACCOUNT_DETAILS(state) {
+      db.collection('users').doc(state.loggedInUserId).get().then(user => {
+        state.accountDetails = user.data()
+      })
+    },
+    DELETE_TRACK(state, value) {
+      let trackToDelete = state.tracksArray.filter(track => track.filename == value)
+      Loading.show({
+        message: 'Deleting...'
+      })
+      db.collection('tracks').doc(value).delete().then(() => {
+        let storageRef = firebase.storage().ref()
+        let tracksRef = storageRef.child(`tracks/${value}`)
+        tracksRef.delete().then(function() {
+          state.tracksArray = state.tracksArray.reduce((acc, curr) => {   
+            console.log(curr.filename, value)          
+            if (curr.filename !== value) acc.push(curr);
+            return acc;
+          }, []);
+          Loading.hide()
+        }).catch(function(error) {
+          console.error(error)
+          db.collection("tracks").doc(value).set({
+              trackToDelete
+          }).then(() => {})
+          .catch(error => {
+              console.error(error)
+          })
+        })
+      }).catch(function(error) {
+        console.error(error)
+      })
+      mutations.commit('GET_ACCOUNT_TRACKS')
+    },
     UPDATE_BAND_IMAGE(state) {
       db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
         users.docs.map(user => {
