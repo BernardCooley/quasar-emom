@@ -10,7 +10,7 @@
           <img :src="bandImageUrl" alt="band image"/>
         </q-item>
         <q-item>Artist Name: {{accountDetails.artistName}}</q-item>
-        <q-item>Email address: {{accountEmail}}</q-item>
+        <q-item>Email address: {{accountDetails.email}}</q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
@@ -56,19 +56,18 @@ export default {
     }
   },
   created() {
-    this.$store.commit('GET_ACCOUNT_EMAIL')
     this.$store.commit('GET_ACCOUNT_DETAILS')
     this.$store.commit('UPDATE_BAND_IMAGE')
     this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   computed: {
-    ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'accountEmail']),
+    ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails']),
     computedDeleteMesage() {
       return this.deleteMessage
     }
   },
   methods: {
-    ...mapMutations(['GET_TRACKS', 'UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'GET_ACCOUNT_EMAIL']),
+    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS']),
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false);
@@ -78,6 +77,7 @@ export default {
     },
     deleteTrack(track) {
       this.$store.commit('DELETE_TRACK', track.filename)
+      this.$store.commit('GET_ACCOUNT_TRACKS')
     },
     deleteTrackFromUserAccount(trackName) {
       let usersRef = db.collection('users').doc(`${firebase.auth().currentUser.uid}`)
@@ -90,9 +90,11 @@ export default {
       })
     },
     toggleAccountTracks() {
+      this.$store.commit('GET_ACCOUNT_TRACKS')
       this.displayAccountTracks = !this.displayAccountTracks
     },
     toggleAccountDetails() {
+      this.$store.commit('GET_ACCOUNT_DETAILS')
       this.displayAccountDetails = !this.displayAccountDetails
     },
     deleteAccount() {

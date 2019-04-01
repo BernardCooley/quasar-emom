@@ -30,15 +30,66 @@ const store = new Vuex.Store({
     bandImageUrl: null,
     userTracksArray: null,
     accountDetails: null,
-    accountEmail: null
+    uploadComplete: false,
+    fileUploading: false
   },
   mutations: {
-    GET_ACCOUNT_EMAIL(state) {
-      state.accountEmail = firebase.auth().currentUser.email
+    UPLOAD_TRACK(state, value1, value2) {
+      let thisState = state
+      if(!value2) {
+        db.collection('tracks').doc(value1[0].name).get().then(track => {
+          if(!track.exists) {
+            state.uploadComplete = false
+            state.fileUploading = true
+            let artworkName = ''
+            let storageRef = firebase.storage().ref()
+            let focusedTrack = storageRef.child('tracks').child(value1[0].name)
+
+            if (value1[1]) {
+              let focusedArtwork = storageRef.child('artwork').child(value1[1].name)
+
+              let artworkMetadata = {
+                customMetadata: {
+                  'uploadedById': state.loggedInUserId
+                }
+              }
+              focusedArtwork.put(value1[1], artworkMetadata)
+              artworkName = value1[1].name
+            } else {
+              artworkName = 'default.png'
+            }
+            
+            let audioMetadata = {
+              customMetadata: {
+                'artist': value1[2].artist.value,
+                'title': value1[2].title.value,
+                'uploadedById': state.loggedInUserId,
+                'artworkName': artworkName,
+                'uploadedByName': state.accountDetails.artistName
+              }
+            }
+            this.uploadAudioTask = focusedTrack.put(value1[0], audioMetadata)
+
+            this.uploadAudioTask.on('state_changed',
+              function progress(snapshot) {
+                thisState.fileUploadPercentage = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+              },
+              function errors(error) {
+                console.error(error)
+              },
+              function complete() {
+                thisState.uploadComplete = true
+                db.collection('tracks').doc(value1[0].name).set({uploadedBy: state.loggedInUserId})
+              }
+            )
+          }
+        })
+      }
     },
     GET_ACCOUNT_DETAILS(state) {
       db.collection('users').doc(state.loggedInUserId).get().then(user => {
         state.accountDetails = user.data()
+        state.accountDetails['email'] = firebase.auth().currentUser.email
       })
     },
     DELETE_TRACK(state, value) {
@@ -50,8 +101,7 @@ const store = new Vuex.Store({
         let storageRef = firebase.storage().ref()
         let tracksRef = storageRef.child(`tracks/${value}`)
         tracksRef.delete().then(function() {
-          state.tracksArray = state.tracksArray.reduce((acc, curr) => {   
-            console.log(curr.filename, value)          
+          state.tracksArray = state.tracksArray.reduce((acc, curr) => {            
             if (curr.filename !== value) acc.push(curr);
             return acc;
           }, []);
@@ -178,12 +228,12 @@ const store = new Vuex.Store({
                   filename: trackFilename,
                   currentTrack: index == 0 ? true : false
                 })
-              }).catch(error => {console.log(error)})
+              }).catch(error => {console.error(error)})
             })
             setTimeout(function() {
               Loading.hide()
             }, 1500)
-          }).catch(error => {console.log(error)})
+          }).catch(error => {console.error(error)})
         })
       }
     },
@@ -207,16 +257,11 @@ const store = new Vuex.Store({
         trackRef.updateMetadata(newMetadata).then(metadata => {
           this.state.currentTrack['favourite'] = metadata.customMetadata.favourites.includes(currentUserId) ? true : false
         }).catch(error => {
-          console.log(error)
+          console.error(error)
         });
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       });
-    },
-    GET_CURRENT_USER_ARTIST_NAME() {
-      db.collection('users').doc(firebase.auth().currentUser.uid).get().then(user => {
-        this.state.currentUserArtistName = user.data().artistName
-      })
     }
   }
 })

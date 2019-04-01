@@ -34,7 +34,7 @@
         <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
 
         <q-btn v-if="uploadingFile && !completedUpload" v-on:click.prevent="cancelUpload()">Cancel</q-btn>
-        <div class="uploadCompleteContainer" v-if="uploadComplete">
+        <div class="uploadCompleteContainer" v-if="completedUpload">
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
         </div>
@@ -65,38 +65,37 @@ export default {
       trackUpload: null,
       audioFileToUpload: null,
       artworkFileToUpload: null,
-      uploadAudioTask: null,
-      fileUploading: false,
-      completedUpload: false
+      uploadAudioTask: null
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading']),
     uploadingFile() {
       return this.fileUploading
     },
-    uploadComplete() {
-      return this.completedUpload
+    completedUpload() {
+      return this.uploadComplete
+    },
+    uploadPercentage() {
+      return this.fileUploadPercentage
     }
   },
   created() {
-    
+    this.$store.commit('GET_ACCOUNT_DETAILS')
   },
   methods: {
-    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS']),
+    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS']),
     validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
       } else {
         this.track.artist.errorMessage = ''
       }
-
       if (!this.track.title.value) {
         this.track.title.errorMessage = 'Title is required.'
       } else {
         this.track.title.errorMessage = ''
       }
-
       if (!this.track.uploadFile.value) {
         this.track.uploadFile.errorMessage = 'File is required.'
       } else {
@@ -113,6 +112,7 @@ export default {
     },
     getSelectedFile(fileType) {
       if (fileType === 'audio') {
+        this.track.uploadFile.value = true
         this.audioFileToUpload = this.$refs.trackUpload.files[0]
       } else if (fileType === 'artwork') {
         this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
@@ -133,67 +133,11 @@ export default {
       })
     },
     uploadFile(audioFileToUpload, artworkFileToUpload) {
-      let self = this
-      this.audioFileToUpload = audioFileToUpload
-      this.artworkFileToUpload = artworkFileToUpload
-      let store = this.$store
-
-      if (!this.validation()) {
-        self.completedUpload = false
-        self.fileUploading = true
-        let storageRef = firebase.storage().ref()
-        let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
-        let artworkName = ''
-
-        db.collection('tracks').get().then(tracks => {
-          tracks.docs.map(track => {
-            if(track.id == audioFileToUpload.name) {
-              return
-            }
-            
-            let storageRef = firebase.storage().ref()
-            let focusedTrack = storageRef.child('tracks').child(audioFileToUpload.name)
-            
-            if (artworkFileToUpload) {
-              let focusedArtwork = storageRef.child('artwork').child(artworkFileToUpload.name)
-
-              var artworkMetadata = {
-                customMetadata: {
-                  'uploadedById': firebase.auth().currentUser.uid
-                }
-              }
-              focusedArtwork.put(artworkFileToUpload, artworkMetadata)
-              artworkName = artworkFileToUpload.name
-            } else {
-              artworkName = 'default.png'
-            }
-
-            var audioMetadata = {
-              customMetadata: {
-                'artist': this.track.artist.value,
-                'title': this.track.title.value,
-                'uploadedById': firebase.auth().currentUser.uid,
-                'artworkName': artworkName,
-                'uploadedByName': this.currentUserArtistName
-              }
-            }
-            this.uploadAudioTask = focusedTrack.put(audioFileToUpload, audioMetadata)
-
-            this.uploadAudioTask.on('state_changed',
-              function progress(snapshot) {
-                store.commit("UPDATE_FILE_UPLOAD_PERCENTAGE", Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100))
-              },
-              function errors(err) {
-
-              },
-              function complete() {
-                self.completedUpload = true
-                db.collection('tracks').doc(self.audioFileToUpload.name).set({uploadedBy: firebase.auth().currentUser.uid})
-              }
-            )
-          })
-        })
-      }
+      let files = []
+      files.push(audioFileToUpload)
+      files.push(artworkFileToUpload)
+      files.push(this.track)
+      this.$store.commit('UPLOAD_TRACK', files, this.validation())
     },
     cancelUpload() {
       this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
@@ -208,12 +152,12 @@ export default {
           console.error('error while deleting file')
         })
       } else {
-        console.log('File does not exist')
+        console.error('File does not exist')
       }
     },
     resetForm() {
       this.fileUploading = false
-      this.completedUpload = false
+      this.$store.commit('UPDATE_COMPLETED_STATE', false)
       this.track = {
         artist: { value: null, errorMessage: '' },
         title: { value: null, errorMessage: '' },

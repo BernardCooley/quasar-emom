@@ -87,7 +87,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'GET_CURRENT_USER_ARTIST_NAME', 'GET_TRACKS','TOGGLE_EXPLORE']),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'GET_TRACKS','TOGGLE_EXPLORE']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
