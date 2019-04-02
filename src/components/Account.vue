@@ -61,33 +61,25 @@ export default {
     this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   computed: {
-    ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails']),
+    ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'loggedInUserId']),
     computedDeleteMesage() {
       return this.deleteMessage
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS']),
+    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT']),
     logout() {
       firebase.auth().signOut().then(() => {
-        this.$store.commit('UPDATE_ISLOGGED_IN', false);
-        this.$store.commit('TOGGLE_MENU', false);
-        location.reload()
-      });
+        this.$store.commit('UPDATE_ISLOGGED_IN', false)
+        this.$store.commit('TOGGLE_MENU', false)
+        router.push('/login')
+      })
     },
     deleteTrack(track) {
-      this.$store.commit('DELETE_TRACK', track.filename)
-      this.$store.commit('GET_ACCOUNT_TRACKS')
-    },
-    deleteTrackFromUserAccount(trackName) {
-      let usersRef = db.collection('users').doc(`${firebase.auth().currentUser.uid}`)
-      usersRef.get().then(snapshot => {
-        usersRef.update({ tracks: snapshot.data().tracks.filter(item => item !== trackName) }).then(res => {
-          console.log('Successfully deleted')
-        }).catch(error => {
-          console.error(error)
-        })
-      })
+      if (window.confirm("Are you sure?")) {
+        this.$store.commit('DELETE_TRACK', track.filename)
+        this.$store.commit('GET_ACCOUNT_TRACKS')
+      }
     },
     toggleAccountTracks() {
       this.$store.commit('GET_ACCOUNT_TRACKS')
@@ -98,53 +90,51 @@ export default {
       this.displayAccountDetails = !this.displayAccountDetails
     },
     deleteAccount() {
-      if (window.confirm("Delete user account and details permantently?")) {
-        let user = firebase.auth().currentUser
-        let userRef = db.collection('users').doc(user.uid)
-        userRef.get().then(snapshot => {
-          if (snapshot.data().tracks.length > 0) {
-            let tracks = snapshot.data().tracks
-            tracks.map((trackName, index) => {
-              let isDeleted = this.deleteTrack(trackName)
-              if (index === tracks.length - 1) {
-                var deleteInterval = setInterval(deleteFunc, 1000);
+      // if (window.confirm("Delete user account and details permantently?")) {
+      //   let userRef = db.collection('users').doc(this.loggedInUserId)
+      //   userRef.get().then(snapshot => {
+      //     if (snapshot.data().tracks.length > 0) {
+      //       let tracks = snapshot.data().tracks
+      //       tracks.map((trackName, index) => {
+      //         let isDeleted = this.deleteTrack(trackName)
+      //         if (index === tracks.length - 1) {
+      //           var deleteInterval = setInterval(deleteFunc, 1000)
 
-                function deleteFunc() {
-                  db.collection('users').doc(user.uid).get().then(snapshot => {
-                    if (snapshot.data().tracks.length === 0) {
-                      userRef.delete().then(() => {
-                        console.log('User details deleted')
-                        user.delete().then(() => {
-                          console.log('Account deleted')
-                          clearInterval(deleteInterval)
-                        }).catch((error) => {
-                          console.log('Error deleting account', error)
-                        })
-                        clearInterval(deleteInterval)
-                      }).catch((error) => {
-                        console.log('Error deleting user details', error)
-                      })
-                    }
-                  })
-                }
-              }
-            })
-          } else {
-            userRef.delete().then(() => {
-              console.log('User details deleted')
-              user.delete().then(() => {
-                console.log('Account deleted')
-                location.reload()
-              }).catch((error) => {
-                console.log('Error deleting account', error)
-              })
-            }).catch((error) => {
-              console.log('Error deleting user details', error)
-            })
+      //           function deleteFunc() {
+      //             db.collection('users').doc(user.uid).get().then(snapshot => {
+      //               if (snapshot.data().tracks.length === 0) {
+      //                 userRef.delete().then(() => {
+      //                   console.log('User details deleted')
+      //                   user.delete().then(() => {
+      //                     console.log('Account deleted')
+      //                     clearInterval(deleteInterval)
+      //                   }).catch((error) => {
+      //                     console.log('Error deleting account', error)
+      //                   })
+      //                   clearInterval(deleteInterval)
+      //                 }).catch((error) => {
+      //                   console.log('Error deleting user details', error)
+      //                 })
+      //               }
+      //             })
+      //           }
+      //         }
+      //       })
+      //     } else {
+      //       userRef.delete().then(() => {
+      //         console.log('User details deleted')
+      //         user.delete().then(() => {
+      //           console.log('Account deleted')
+      //         }).catch((error) => {
+      //           console.log('Error deleting account', error)
+      //         })
+      //       }).catch((error) => {
+      //         console.log('Error deleting user details', error)
+      //       })
 
-          }
-        })
-      }
+      //     }
+      //   })
+      // }
     }
   }
 }

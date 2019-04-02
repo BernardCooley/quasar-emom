@@ -18,7 +18,7 @@ export default {
     Navigation
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'GET_ALL_USERS', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {

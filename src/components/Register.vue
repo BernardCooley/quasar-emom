@@ -160,7 +160,6 @@ export default {
         setTimeout(() => {
           this.registerMessage = null
         }, 1000)
-        location.reload()
       }).catch(error => console.log(error))
     }
   }
