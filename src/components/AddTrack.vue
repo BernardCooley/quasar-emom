@@ -37,6 +37,7 @@
         <div class="uploadCompleteContainer" v-if="completedUpload">
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
+          <q-btn v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
         </div>
       </div>
     </div>
@@ -84,7 +85,7 @@ export default {
     this.$store.commit('GET_ACCOUNT_DETAILS')
   },
   methods: {
-    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS']),
+    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY']),
     validation() {
       if (!this.track.artist.value) {
         this.track.artist.errorMessage = 'Artist is required.'
@@ -137,7 +138,7 @@ export default {
       files.push(audioFileToUpload)
       files.push(artworkFileToUpload)
       files.push(this.track)
-      this.$store.commit('UPLOAD_TRACK', files, this.validation())
+      this.$store.commit('UPLOAD_TRACK', files, true)
     },
     cancelUpload() {
       this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
@@ -167,6 +168,9 @@ export default {
         uploadedByArtist: { value: null }
       }
     },
+    finishedUploading() {
+      this.$store.commit('GET_TRACKS')
+    }
   }
 };
 </script>

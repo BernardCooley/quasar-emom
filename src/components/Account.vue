@@ -70,9 +70,9 @@ export default {
     ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS']),
     logout() {
       firebase.auth().signOut().then(() => {
-        this.$store.commit('UPDATE_ISLOGGED_IN', false);
-        this.$store.commit('TOGGLE_MENU', false);
-        location.reload()
+        this.$store.commit('UPDATE_ISLOGGED_IN', false)
+        this.$store.commit('TOGGLE_MENU', false)
+        this.$router.push('/login')
       });
     },
     deleteTrack(track) {

@@ -85,11 +85,11 @@ export default {
   },
   mounted() {
     if (this.tracksArray.length == 0) {
-      this.$store.commit("GET_TRACKS");
+      this.$store.commit("GET_TRACKS")
     }
   },
   computed: {
-    ...mapState(['tracksArray', 'exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen', 'loggedInUserName']),
+    ...mapState(['exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen', 'loggedInUserName']),
     exploreslideClosed() {
       return this.exploreOpen
     },
@@ -111,7 +111,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_CURRENT_TRACK', 'GET_TRACKS', 'UPDATE_TRACKS_ARRAY', 'UPDATE_FILTERED_TRACKS_ARRAY']),
+    ...mapMutations(['UPDATE_CURRENT_TRACK', 'GET_TRACKS', 'UPDATE_FILTERED_TRACKS_ARRAY', 'GET_TRACK_COMMENTS', 'TOGGLE_COMMENTS']),
     playTrack(filename) {
       this.$store.commit('UPDATE_CURRENT_TRACK', this.$store.currentTrack = this.tracksArray.filter(track => track.filename == filename)[0])
     },
@@ -134,6 +134,8 @@ export default {
     },
     changeTrack(selectedTrack) {
       this.$store.commit('UPDATE_CURR_TRACK', this.tracksArray.indexOf(selectedTrack))
+      this.$store.commit('GET_TRACK_COMMENTS')
+      this.$store.commit('TOGGLE_COMMENTS', false)
     },
     filterByArtist(artist) {
       this.openFilterModal = false

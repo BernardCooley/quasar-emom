@@ -31,9 +31,41 @@ const store = new Vuex.Store({
     userTracksArray: null,
     accountDetails: null,
     uploadComplete: false,
-    fileUploading: false
+    fileUploading: false,
+    trackComments: [],
+    commentsOpen: false
   },
   mutations: {
+    TOGGLE_COMMENTS(state, value) {
+      state.commentsOpen = value ? value : !state.commentsOpen
+    },
+    ADD_COMMENT(state, value) {
+      let comments = []
+
+      let commentData = {
+        author: state.loggedInUserName,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        message: value
+      }
+
+      let currentTrack = state.tracksArray.filter(track => track.currentTrack == true)[0]
+
+      db.collection('tracks').doc(currentTrack.filename).get().then(track => {
+        comments = track.data().comments ? track.data().comments : []
+        comments.push(commentData)
+        state.trackComments = comments
+        db.collection('tracks').doc(currentTrack.filename).update({
+          comments: comments
+        })
+      })
+    },
+    GET_TRACK_COMMENTS(state) {
+      let currentTrack = state.tracksArray.filter(track => track.currentTrack == true)[0]
+      db.collection('tracks').doc(currentTrack.filename).get().then(track => {
+        state.trackComments = track.data().comments ? track.data().comments : []
+      })
+    },
     UPLOAD_TRACK(state, value1, value2) {
       let thisState = state
       if(!value2) {
@@ -130,8 +162,8 @@ const store = new Vuex.Store({
         })
       })
     },
-    UPDATE_TRACKS_ARRAY(state, value) {
-      state.tracksArray = value
+    CLEAR_TRACKS_ARRAY(state) {
+      state.tracksArray = []
     },
     UPDATE_FILTERED_TRACKS_ARRAY(state, value) {
       state.filteredTracksArray = value
@@ -230,8 +262,9 @@ const store = new Vuex.Store({
                 })
               }).catch(error => {console.error(error)})
             })
-            setTimeout(function() {
+            setTimeout(() => {
               Loading.hide()
+              this.$router.push('/music')
             }, 1500)
           }).catch(error => {console.error(error)})
         })

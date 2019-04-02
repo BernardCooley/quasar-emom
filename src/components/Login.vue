@@ -93,8 +93,8 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.$store.commit("UPDATE_PAGE_TITLE", "music")
             this.$store.commit("UPDATE_LOGGED_IN_USER", firebase.auth().currentUser.uid)
-            location.reload()
             this.errorMessage = ""
+            this.$router.push('/music')
             this.$q.loading.hide()
           }).catch(error => {
             this.errorMessage = "Email or password incorrect"

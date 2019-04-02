@@ -132,7 +132,8 @@ export default {
           this.user.password.value
         )
         .then(data => {
-          this.createUserAccount(data.user.uid);
+          this.createUserAccount(data.user.uid)
+          this.$router.push('/music')
         })
     },
     createUserAccount(userID) {

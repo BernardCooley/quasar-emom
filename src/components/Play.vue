@@ -33,6 +33,7 @@
         <img class="collapseAudioControl playPause" v-else src="statics/icons/pause.svg">
       </div>
     </div>
+    <comments></comments>
   </div>
 </template>
 
@@ -42,12 +43,14 @@ import db from '../firestore/firebaseInit'
 import firebase from 'firebase/app'
 import { mapMutations, mapState } from 'vuex'
 import Explore from './Explore'
+import Comments from './Comments'
 
 export default {
   name: "play",
   components: {
     AudioPlayer,
-    Explore
+    Explore,
+    Comments
   },
   data() {
     return {
