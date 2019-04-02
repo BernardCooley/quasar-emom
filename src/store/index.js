@@ -37,7 +37,13 @@ const store = new Vuex.Store({
   },
   mutations: {
     TOGGLE_COMMENTS(state, value) {
-      state.commentsOpen = value ? value : !state.commentsOpen
+      if(value == 'toggle') {
+        state.commentsOpen = !state.commentsOpen
+      }else if(value == 'true') {
+        state.commentsOpen = true
+      }else if(value == 'false') {
+        state.commentsOpen = false
+      }
     },
     ADD_COMMENT(state, value) {
       let comments = []

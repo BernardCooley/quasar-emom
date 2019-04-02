@@ -135,7 +135,7 @@ export default {
     changeTrack(selectedTrack) {
       this.$store.commit('UPDATE_CURR_TRACK', this.tracksArray.indexOf(selectedTrack))
       this.$store.commit('GET_TRACK_COMMENTS')
-      this.$store.commit('TOGGLE_COMMENTS', false)
+      this.$store.commit('TOGGLE_COMMENTS', 'false')
     },
     filterByArtist(artist) {
       this.openFilterModal = false
@@ -206,6 +206,7 @@ export default {
     position: fixed;
     top: 0;
     width: 100%;
+    background-image: linear-gradient(#009e98, #256f77);
 
     img {
       transform: rotate(90deg);

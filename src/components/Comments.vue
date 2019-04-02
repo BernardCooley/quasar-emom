@@ -50,7 +50,7 @@ export default {
             this.$store.commit('ADD_COMMENT', this.comment)
         },
         toggleCommentsSection() {
-            this.$store.commit('TOGGLE_COMMENTS')
+            this.$store.commit('TOGGLE_COMMENTS', 'toggle')
             this.$store.commit('GET_TRACK_COMMENTS')
         }
     }
@@ -92,7 +92,9 @@ export default {
 }
 
 .commentsExpanded {
-    height: 400px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 .commentConatainer {
     display: flex;
@@ -114,5 +116,8 @@ export default {
 }
 .commentListContainer {
     margin-top: 20px;
+}
+#comment {
+    color: white;
 }
 </style>
