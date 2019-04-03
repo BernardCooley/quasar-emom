@@ -164,12 +164,8 @@ export default {
         }
         focusedArtwork.put(image, artworkMetadata).then(data => {
           Loading.hide()
-          this.registerMessage = 'Registration successful'
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
           this.$router.push('/music')
-          setTimeout(() => {
-            this.registerMessage = null
-          }, 1000)
         }).catch(error => console.log(error))
       }else {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
