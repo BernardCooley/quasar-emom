@@ -47,7 +47,7 @@ const store = new Vuex.Store({
     },
     GET_TRACK_COMMENTS(state) {
       db.collection('tracks').doc(state.tracksArray.filter(track => track.currentTrack == true)[0].filename).get().then(track => {
-        state.trackComments = track.data().comments
+        state.trackComments = track.data().comments ? track.data().comments : []
       })
     },
     ADD_COMMENT(state, value) {

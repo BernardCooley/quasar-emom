@@ -204,6 +204,7 @@ export default {
     justify-content: space-evenly;
     align-items: center;
     position: fixed;
+    z-index: 1;
     top: 0;
     width: 100%;
     background-image: linear-gradient(#009e98, #256f77);

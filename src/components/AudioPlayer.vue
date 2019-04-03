@@ -184,8 +184,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING']),
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING', 'GET_TRACK_COMMENTS']),
     prevTrack() {
+      this.$store.commit('GET_TRACK_COMMENTS')
       let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
       if (currentTrackIndex > 0) {
@@ -193,6 +194,7 @@ export default {
       }
     },
     nextTrack() {
+      this.$store.commit('GET_TRACK_COMMENTS')
       let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
       if (currentTrackIndex < this.tracksArray.length) {
