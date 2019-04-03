@@ -91,8 +91,6 @@ export default {
             this.user.password.value
           ).then(() => {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
-            this.$store.commit("UPDATE_PAGE_TITLE", "music")
-            this.$store.commit("UPDATE_LOGGED_IN_USER", firebase.auth().currentUser.uid)
             this.errorMessage = ""
             this.$router.push('/music')
             this.$q.loading.hide()

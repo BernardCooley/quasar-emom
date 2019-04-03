@@ -8,7 +8,7 @@
 <script>
 import Play from './Play'
 import Explore from './Explore'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
     name: 'music',
@@ -16,8 +16,16 @@ export default {
         Play,
         Explore
     },
+    mounted() {
+        this.$store.commit('UPDATE_BAND_IMAGE')
+        this.$store.commit('GET_TRACKS')
+        this.$store.commit('GET_ACCOUNT_DETAILS')
+    },
     computed: {
-    ...mapState(['exploreExpanded'])
+    ...mapState(['exploreExpanded', 'tracksArray'])
+    },
+    methods: {
+        ...mapMutations(['GET_TRACKS', 'GET_ACCOUNT_DETAILS'])
     }
 }
 </script>

@@ -7,7 +7,7 @@
       </div>
       <div v-if="displayAccountDetails">
         <q-item class="bandImageContainer">
-          <img :src="bandImageUrl" alt="band image"/>
+          <img v-if="bandImageUrl.length > 0" :src="bandImageUrl" alt="band image"/>
         </q-item>
         <q-item>Artist Name: {{accountDetails.artistName}}</q-item>
         <q-item>Email address: {{accountDetails.email}}</q-item>
@@ -55,11 +55,6 @@ export default {
       user: []
     }
   },
-  created() {
-    this.$store.commit('GET_ACCOUNT_DETAILS')
-    this.$store.commit('UPDATE_BAND_IMAGE')
-    this.$store.commit('GET_ACCOUNT_TRACKS')
-  },
   computed: {
     ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'loggedInUserId']),
     computedDeleteMesage() {
@@ -71,7 +66,6 @@ export default {
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false)
-        this.$store.commit('TOGGLE_MENU', false)
         this.$router.push('/login')
       });
     },

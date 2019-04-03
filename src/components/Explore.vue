@@ -83,11 +83,6 @@ export default {
       currentUserArtistName: ''
     }
   },
-  mounted() {
-    if (this.tracksArray.length == 0) {
-      this.$store.commit("GET_TRACKS")
-    }
-  },
   computed: {
     ...mapState(['exploreOpen', 'exploreExpanded', 'tracksArray', 'filteredTracksArray', 'filterModalOpen', 'loggedInUserName']),
     exploreslideClosed() {

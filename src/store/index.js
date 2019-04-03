@@ -27,7 +27,7 @@ const store = new Vuex.Store({
     exploreOpen: false,
     exploreExpanded: true,
     isTrackPlaying: false,
-    bandImageUrl: null,
+    bandImageUrl: '',
     userTracksArray: null,
     accountDetails: null,
     uploadComplete: false,
@@ -190,10 +190,14 @@ const store = new Vuex.Store({
     UPDATE_BAND_IMAGE(state) {
       db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
         users.docs.map(user => {
-          let bandImageRef = firebase.storage().ref().child('bandImages/' + user.data().bandImage)
-          bandImageRef.getDownloadURL().then(bandImageDownloadUrl => {
-            state.bandImageUrl = bandImageDownloadUrl
-          })
+          if(user.data().bandImage.length > 0) {
+            let bandImageRef = firebase.storage().ref().child('bandImages/' + user.data().bandImage)
+            bandImageRef.getDownloadURL().then(bandImageDownloadUrl => {
+              state.bandImageUrl = bandImageDownloadUrl
+            })
+          }else {
+            state.bandImageUrl = ''
+          }
         })
       })
     },
