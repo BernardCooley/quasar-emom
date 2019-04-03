@@ -109,6 +109,7 @@ const store = new Vuex.Store({
                 db.collection('users').doc(state.loggedInUserId).delete().then(() => {
                   firebase.auth().currentUser.delete().then(() => {
                     Loading.hide()
+                    state.isLoggedIn = false
                   }).catch(error => {
                     console.error(error)
                   })
@@ -119,6 +120,7 @@ const store = new Vuex.Store({
             db.collection('users').doc(state.loggedInUserId).delete().then(() => {
               firebase.auth().currentUser.delete().then(() => {
                 Loading.hide()
+                state.isLoggedIn = false
               }).catch(error => {
                 console.error(error)
               })
