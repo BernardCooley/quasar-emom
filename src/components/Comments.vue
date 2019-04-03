@@ -14,10 +14,10 @@
                 <div v-for="(comment, index) in comments" :key="index">
                     <q-item class="commentConatainer">
                         <div class="commentHeader">
-                            <div class="commentAuthor">{{commentModel.author}}</div>
-                            <div class="commentDateTime">{{commentModel.date}}:{{commentModel.time}}</div>
+                            <div class="commentAuthor">{{comment.author}}</div>
+                            <div class="commentDateTime">{{comment.date}}:{{comment.time}}</div>
                         </div>
-                        <div class="commentMessage">{{commentModel.message}}</div>
+                        <div class="commentMessage">{{comment.message}}</div>
                     </q-item>
                 </div>
             </div>
