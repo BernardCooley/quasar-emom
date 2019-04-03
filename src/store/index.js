@@ -66,10 +66,35 @@ const store = new Vuex.Store({
         })
       })
     },
-    GET_TRACK_COMMENTS(state) {
-      let currentTrack = state.tracksArray.filter(track => track.currentTrack == true)[0]
-      db.collection('tracks').doc(currentTrack.filename).get().then(track => {
-        state.trackComments = track.data().comments ? track.data().comments : []
+    DELETE_ACCOUNT(state) {
+      Loading.show({
+        message: 'Deleting account...'
+      })
+      let storageRef = firebase.storage().ref()
+      db.collection('tracks').where('uploadedBy', '==', state.loggedInUserId).get().then(tracks => {
+        tracks.docs.map(track => {
+          db.collection('tracks').doc(track.id).delete().then(() => {
+            let tracksRef = storageRef.child(`tracks/${track.id}`)
+            tracksRef.delete().then(() => {
+              db.collection('users').doc(state.loggedInUserId).delete().then(() => {
+                let user = firebase.auth().currentUser;
+                
+                user.delete().then(function() {
+                  // User deleted.
+                }).catch(function(error) {
+                  // An error happened.
+                });
+              }).catch(error => {
+                console.error(error)
+              })
+            }).catch(error => {
+              console.error(error)
+            })
+          }).catch(error => {
+            console.error(error)
+          })
+        })
+        Loading.hide()
       })
     },
     UPLOAD_TRACK(state, value1, value2) {
@@ -87,9 +112,7 @@ const store = new Vuex.Store({
               let focusedArtwork = storageRef.child('artwork').child(value1[1].name)
 
               let artworkMetadata = {
-                customMetadata: {
-                  'uploadedById': state.loggedInUserId
-                }
+                customMetadata: {'uploadedById': state.loggedInUserId}
               }
               focusedArtwork.put(value1[1], artworkMetadata)
               artworkName = value1[1].name
@@ -117,6 +140,7 @@ const store = new Vuex.Store({
               },
               function complete() {
                 thisState.uploadComplete = true
+                state.fileUploading = false
                 db.collection('tracks').doc(value1[0].name).set({uploadedBy: state.loggedInUserId})
               }
             )
@@ -144,7 +168,7 @@ const store = new Vuex.Store({
             return acc;
           }, []);
           Loading.hide()
-        }).catch(function(error) {
+        }).catch(error => {
           console.error(error)
           db.collection("tracks").doc(value).set({
               trackToDelete
