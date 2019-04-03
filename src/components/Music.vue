@@ -17,6 +17,7 @@ export default {
         Explore
     },
     mounted() {
+        this.$store.commit('UPDATE_LOGGED_IN_USER_ID')
         this.$store.commit('UPDATE_BAND_IMAGE')
         this.$store.commit('GET_TRACKS')
         this.$store.commit('GET_ACCOUNT_DETAILS')
