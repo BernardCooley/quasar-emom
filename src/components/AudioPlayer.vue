@@ -36,13 +36,13 @@
       <q-card-actions>
         <div class="audioActions">
           <a v-on:click.prevent="stop()" title="Stop">
-            <img class="audioControl" :src="isTrackPlaying ? 'statics/icons/stop-active.svg' : 'statics/icons/stop-inactive.svg'">
+            <img class="audioControl" :src="playing ? 'statics/icons/stop-active.svg' : 'statics/icons/stop-inactive.svg'">
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
             <img class="audioControl" :src="innerLoop ? 'statics/icons/repeat-active.svg' : 'statics/icons/repeat-inactive.svg'">
           </a>
           <a v-on:click.prevent="playPause()" title="Play/Pause">
-          <img class="audioControl playPause" :src="isTrackPlaying ? 'statics/icons/pause.svg' : 'statics/icons/play.svg'">
+          <img class="audioControl playPause" :src="playing ? 'statics/icons/pause.svg' : 'statics/icons/play.svg'">
           </a>
           <a v-on:click.prevent="favourite()" title="Favourite">
             <img class="audioControl" :src="favourited ? 'statics/icons/favorited.svg' : 'statics/icons/favorite.svg'">
@@ -121,7 +121,8 @@ export default {
       previousVolume: 35,
       showVolume: false,
       volume: 100,
-      supportedFormat: true
+      supportedFormat: true,
+      playing: false
     };
   },
   created() {
@@ -132,9 +133,11 @@ export default {
     this.audio.addEventListener('timeupdate', this.update);
     this.audio.addEventListener('loadeddata', this.load);
     this.audio.addEventListener('pause', () => {
+      this.playing = false;
       this.$store.commit('TOGGLE_TRACK_PLAYING', false)
     });
     this.audio.addEventListener('play', () => {
+      this.playing = true;
       this.$store.commit('TOGGLE_TRACK_PLAYING', true)
     });
     this.$watch('trackurl', () => {
@@ -169,6 +172,12 @@ export default {
     }
   },
   watch: {
+    playing(value) {
+      if (value) {
+        return this.audio.play();
+      }
+      this.audio.pause();
+    },
     volume(value) {
       this.showVolume = false;
       this.audio.volume = this.volume / 100;
@@ -201,7 +210,7 @@ export default {
       if (this.audio.readyState >= 2) {
         this.loaded = true;
         this.durationSeconds = parseInt(this.audio.duration);
-        return (this.$store.commit('TOGGLE_TRACK_PLAYING', this.autoPlay));
+        return (this.playing = this.autoPlay);
       }
 
       throw new Error('Failed to load sound file.');
@@ -215,7 +224,7 @@ export default {
       this.volume = 0;
     },
     seek(e) {
-      if (!this.isTrackPlaying || e.target.tagName === 'SPAN') {
+      if (!this.playing || e.target.tagName === "SPAN") {
         return;
       }
 
@@ -225,6 +234,7 @@ export default {
       this.audio.currentTime = parseInt(this.audio.duration * seekPos);
     },
     stop() {
+      this.playing = false;
       this.$store.commit('TOGGLE_TRACK_PLAYING', false)
       this.audio.currentTime = 0;
     },
