@@ -7,17 +7,17 @@
         </div>
         <div v-if="commentsExpanded" class="commentsExpanded">
             <q-field label="Add comment">
-                <q-input type="textarea" id="comment" v-model="comment"/>
+                <q-input type="textarea" id="comment" v-model="commentModel"/>
             </q-field>
-            <q-btn v-on:click.prevent="addComment()">Submit</q-btn>
+            <q-btn :disable="commentModel.length <= 0" v-on:click.prevent="addComment()">Submit</q-btn>
             <div class="commentListContainer">
                 <div v-for="(comment, index) in comments" :key="index">
                     <q-item class="commentConatainer">
                         <div class="commentHeader">
-                            <div class="commentAuthor">{{comment.author}}</div>
-                            <div class="commentDateTime">{{comment.date}}:{{comment.time}}</div>
+                            <div class="commentAuthor">{{commentModel.author}}</div>
+                            <div class="commentDateTime">{{commentModel.date}}:{{commentModel.time}}</div>
                         </div>
-                        <div class="commentMessage">{{comment.message}}</div>
+                        <div class="commentMessage">{{commentModel.message}}</div>
                     </q-item>
                 </div>
             </div>
@@ -32,7 +32,7 @@ export default {
     name: 'comments',
     data() {
         return {
-            comment: ''
+            commentModel: ''
         }
     },
     computed: {
@@ -47,7 +47,8 @@ export default {
     methods: {
         ...mapMutations(['GET_TRACK_COMMENTS', 'TOGGLE_COMMENTS']),
         addComment() {
-            this.$store.commit('ADD_COMMENT', this.comment)
+            this.$store.commit('ADD_COMMENT', this.commentModel)
+            this.commentModel = ''
         },
         toggleCommentsSection() {
             this.$store.commit('TOGGLE_COMMENTS', 'toggle')
