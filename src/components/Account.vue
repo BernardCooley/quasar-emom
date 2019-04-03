@@ -84,51 +84,10 @@ export default {
       this.displayAccountDetails = !this.displayAccountDetails
     },
     deleteAccount() {
-      // if (window.confirm("Delete user account and details permantently?")) {
-      //   let userRef = db.collection('users').doc(this.loggedInUserId)
-      //   userRef.get().then(snapshot => {
-      //     if (snapshot.data().tracks.length > 0) {
-      //       let tracks = snapshot.data().tracks
-      //       tracks.map((trackName, index) => {
-      //         let isDeleted = this.deleteTrack(trackName)
-      //         if (index === tracks.length - 1) {
-      //           var deleteInterval = setInterval(deleteFunc, 1000)
-
-      //           function deleteFunc() {
-      //             db.collection('users').doc(user.uid).get().then(snapshot => {
-      //               if (snapshot.data().tracks.length === 0) {
-      //                 userRef.delete().then(() => {
-      //                   console.log('User details deleted')
-      //                   user.delete().then(() => {
-      //                     console.log('Account deleted')
-      //                     clearInterval(deleteInterval)
-      //                   }).catch((error) => {
-      //                     console.log('Error deleting account', error)
-      //                   })
-      //                   clearInterval(deleteInterval)
-      //                 }).catch((error) => {
-      //                   console.log('Error deleting user details', error)
-      //                 })
-      //               }
-      //             })
-      //           }
-      //         }
-      //       })
-      //     } else {
-      //       userRef.delete().then(() => {
-      //         console.log('User details deleted')
-      //         user.delete().then(() => {
-      //           console.log('Account deleted')
-      //         }).catch((error) => {
-      //           console.log('Error deleting account', error)
-      //         })
-      //       }).catch((error) => {
-      //         console.log('Error deleting user details', error)
-      //       })
-
-      //     }
-      //   })
-      // }
+      if (window.confirm("Delete user account and details permantently?")) {
+        this.$store.commit('DELETE_ACCOUNT')
+        this.$router.push('/login')
+      }
     }
   }
 }

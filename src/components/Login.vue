@@ -94,7 +94,6 @@ export default {
             this.errorMessage = ""
             this.$router.push('/music')
             this.$q.loading.hide()
-            router.push('/music')
           }).catch(error => {
             this.errorMessage = "Email or password incorrect"
           })

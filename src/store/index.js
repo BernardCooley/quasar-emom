@@ -72,35 +72,62 @@ const store = new Vuex.Store({
       })
     },
     DELETE_ACCOUNT(state) {
+      let storageRef = firebase.storage().ref()
+      let trackNames = []
       Loading.show({
         message: 'Deleting account...'
       })
-      let storageRef = firebase.storage().ref()
-      db.collection('tracks').where('uploadedBy', '==', state.loggedInUserId).get().then(tracks => {
-        tracks.docs.map(track => {
-          db.collection('tracks').doc(track.id).delete().then(() => {
-            let tracksRef = storageRef.child(`tracks/${track.id}`)
-            tracksRef.delete().then(() => {
-              db.collection('users').doc(state.loggedInUserId).delete().then(() => {
-                let user = firebase.auth().currentUser;
-                
-                user.delete().then(function() {
-                  // User deleted.
-                }).catch(function(error) {
-                  // An error happened.
-                });
+
+      db.collection('users').doc(state.loggedInUserId).get().then(user => {
+        if(user.data().bandImage) {
+          let bandImage = user.data().bandImage
+
+          let imageRef = storageRef.child(`bandImages/${bandImage}`)
+          imageRef.delete().then(() => {
+            deleteAccountAndTracks()
+          })
+        }else {
+          deleteAccountAndTracks()
+        }
+      }).catch(error => {
+        console.error(error)
+      })
+
+      function deleteAccountAndTracks() {
+        db.collection('tracks').where('uploadedBy', '==', state.loggedInUserId).get().then(tracks => {
+          if(tracks) {
+            tracks.docs.map(track => {
+              trackNames.push(track.id)
+            })
+            trackNames.map((trackName, index) => {
+              db.collection('tracks').doc(trackName).delete().then(() => {
+                storageRef.child(`tracks/${trackName}`).delete()
               }).catch(error => {
                 console.error(error)
               })
-            }).catch(error => {
-              console.error(error)
+              if(index == trackNames.length-1) {
+                db.collection('users').doc(state.loggedInUserId).delete().then(() => {
+                  firebase.auth().currentUser.delete().then(() => {
+                    Loading.hide()
+                  }).catch(error => {
+                    console.error(error)
+                  })
+                })
+              }
             })
-          }).catch(error => {
-            console.error(error)
-          })
+          }else {
+            db.collection('users').doc(state.loggedInUserId).delete().then(() => {
+              firebase.auth().currentUser.delete().then(() => {
+                Loading.hide()
+              }).catch(error => {
+                console.error(error)
+              })
+            })
+          }
+        }).catch(error => {
+          console.error(error)
         })
-        Loading.hide()
-      })
+      } 
     },
     UPLOAD_TRACK(state, value1, value2) {
       let thisState = state
