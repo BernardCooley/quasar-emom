@@ -29,8 +29,8 @@
             </q-field>
           </q-item>
           <q-btn v-on:click.prevent="register()">Register</q-btn>
-          <span>{{registerMessage}}</span>
         </q-list>
+        <div class="regMessage">{{registerMessage}}</div>
       </div>
     </div>
   </div>
@@ -40,6 +40,7 @@
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { Loading } from 'quasar'
+import { mapMutations, mapState } from "vuex"
 
 export default {
   name: 'register',
@@ -70,6 +71,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['UPDATE_ISLOGGED_IN']),
     validation(e) {
       this.errorsBool = false;
       this.user.artistName.errors = [];
@@ -117,13 +119,12 @@ export default {
       this.bandImageFileToUpload = this.$refs.bandImageFileToUpload.files[0]
     },
     register(e) {
-      Loading.show({
-        message: 'Registering'
-      })
-      this.validation();
+      this.validation()
       if (!this.errorsBool) {
-        this.registerUser();
-        e.preventDefault()
+        Loading.show({
+          message: 'Registering...'
+        })
+        this.registerUser()
       }
     },
     registerUser() {
@@ -133,35 +134,47 @@ export default {
         )
         .then(data => {
           this.createUserAccount(data.user.uid)
-          this.$router.push('/music')
+        }).catch(error => {
+          this.registerMessage = error.message == 'The email address is already in use by another account.' ? 'Email address already exists' : ''
+          Loading.hide()
         })
     },
     createUserAccount(userID) {
       db.collection('users').doc(userID).set({
         userID: userID,
         artistName: this.user.artistName.value,
-        bandImage: this.bandImageFileToUpload.name
+        bandImage: this.bandImageFileToUpload ? this.bandImageFileToUpload.name : ''
       }).then(() => {
         this.uploadImage(this.bandImageFileToUpload)
-      }).catch(error => console.log(error))
+      }).catch(error => {
+        firebase.auth().currentUser.delete()
+        console.error(error)
+      })
     },
     uploadImage(image) {
-      let storageRef = firebase.storage().ref()
+      if(image) {
+        let storageRef = firebase.storage().ref()
 
-      let focusedArtwork = storageRef.child('bandImages').child(image.name)
+        let focusedArtwork = storageRef.child('bandImages').child(image.name)
 
-      var artworkMetadata = {
-        customMetadata: {
-          'uploadedById': firebase.auth().currentUser.uid
+        var artworkMetadata = {
+          customMetadata: {
+            'uploadedById': firebase.auth().currentUser.uid
+          }
         }
+        focusedArtwork.put(image, artworkMetadata).then(data => {
+          Loading.hide()
+          this.registerMessage = 'Registration successful'
+          this.$store.commit('UPDATE_ISLOGGED_IN', true)
+          this.$router.push('/music')
+          setTimeout(() => {
+            this.registerMessage = null
+          }, 1000)
+        }).catch(error => console.log(error))
+      }else {
+          this.$store.commit('UPDATE_ISLOGGED_IN', true)
+          this.$router.push('/music')
       }
-      focusedArtwork.put(image, artworkMetadata).then(data => {
-        Loading.hide()
-        this.registerMessage = 'Registration successful'
-        setTimeout(() => {
-          this.registerMessage = null
-        }, 1000)
-      }).catch(error => console.log(error))
     }
   }
 };
@@ -173,5 +186,13 @@ export default {
 .validationMessage {
   color: red;
   text-align: center;
+}
+.regMessage {
+  width: 100%;
+  height: 75px;
+  text-align: center;
+  margin: auto;
+  padding-top: 30px;
+  font-size: 20px;
 }
 </style>

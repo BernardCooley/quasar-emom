@@ -8,6 +8,6 @@
 button {
     background-image: linear-gradient(#009e98, #256f77);
 }
-input {
+input[type="text"], input[type="password"] {
     color: white !important;
 }
