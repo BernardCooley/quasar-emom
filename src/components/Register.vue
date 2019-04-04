@@ -104,7 +104,7 @@ export default {
       }
 
       if (this.user.password.value.length < 6) {
-        this.user.password.errors.push("Minimum 6 characters.")
+        this.user.password.errors.push("Minimum 6 characters required.")
       }
 
       if (!this.user.password.value) {
