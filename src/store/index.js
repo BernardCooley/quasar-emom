@@ -74,6 +74,7 @@ const store = new Vuex.Store({
     DELETE_ACCOUNT(state) {
       let storageRef = firebase.storage().ref()
       let trackNames = []
+      let artworkNames = []
       Loading.show({
         message: 'Deleting account...'
       })
@@ -98,6 +99,14 @@ const store = new Vuex.Store({
           if(tracks) {
             tracks.docs.map(track => {
               trackNames.push(track.id)
+              artworkNames.push(track.data().artworkFilename)
+            })
+            artworkNames.map(artworkName => {
+              storageRef.child(`artwork/${artworkName}`).delete().then(() => {
+
+              }).catch(error => {
+                console.error(error)
+              })
             })
             trackNames.map((trackName, index) => {
               db.collection('tracks').doc(trackName).delete().then(() => {
