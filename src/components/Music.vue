@@ -35,7 +35,7 @@ export default {
 @import "../css/commonStyles.scss";
 
 .fixedBottom {
-    height: 50px;
+    height: 60px;
     position: fixed;
     bottom: 49px;
     width: 100%;
