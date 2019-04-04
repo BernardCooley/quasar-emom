@@ -21,7 +21,7 @@
         <img class="chevron" :class="[displayAccountTracks ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
       <div v-if="displayAccountTracks">
-        <q-item class="accountTracks" v-for="(track, index) in userTracksArray" :key="index">
+        <q-item class="accountTracks" v-for="(track, index) in userTracks" :key="index">
           <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
             <div class="">
               <div class="trackArtist">{{track.metaData.artist}}</div>
@@ -59,6 +59,9 @@ export default {
     ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'loggedInUserId']),
     computedDeleteMesage() {
       return this.deleteMessage
+    },
+    userTracks() {
+      return this.userTracksArray
     }
   },
   methods: {
@@ -72,7 +75,6 @@ export default {
     deleteTrack(track) {
       if (window.confirm("Are you sure?")) {
         this.$store.commit('DELETE_TRACK', track.filename)
-        this.$store.commit('GET_ACCOUNT_TRACKS')
       }
     },
     toggleAccountTracks() {

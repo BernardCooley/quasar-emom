@@ -203,32 +203,31 @@ const store = new Vuex.Store({
       })
     },
     DELETE_TRACK(state, value) {
-      let trackToDelete = state.tracksArray.filter(track => track.filename == value)
       Loading.show({
         message: 'Deleting...'
       })
-      db.collection('tracks').doc(value).delete().then(() => {
-        let storageRef = firebase.storage().ref()
-        let tracksRef = storageRef.child(`tracks/${value}`)
-        tracksRef.delete().then(function() {
-          state.tracksArray = state.tracksArray.reduce((acc, curr) => {            
-            if (curr.filename !== value) acc.push(curr);
-            return acc;
-          }, []);
-          Loading.hide()
-        }).catch(error => {
-          console.error(error)
-          db.collection("tracks").doc(value).set({
-              trackToDelete
-          }).then(() => {})
-          .catch(error => {
-              console.error(error)
-          })
-        })
-      }).catch(function(error) {
-        console.error(error)
-      })
-      mutations.commit('GET_ACCOUNT_TRACKS')
+      let storageRef = firebase.storage().ref()
+      let trackRef = storageRef.child(`tracks/${value}`)
+      trackRef.delete().then(() => {
+        let artworkName = ''
+        db.collection('tracks').doc(value).get().then(track => {
+          artworkName = track.data().artworkFilename ? track.data().artworkFilename : ''
+          db.collection('tracks').doc(value).delete().then(() => {
+            if(track.data().artworkFilename) {
+              let artworkRef = storageRef.child(`artwork/${artworkName}`)
+              artworkRef.delete().then(() => {
+                Loading.hide()
+                this.commit('GET_TRACKS')
+                this.commit('GET_ACCOUNT_TRACKS')
+              }).catch(error => {console.error(error)}) 
+            }else {
+              Loading.hide()
+              this.commit('GET_TRACKS')
+              this.commit('GET_ACCOUNT_TRACKS')
+            }
+          }).catch(error => {console.error(error)})
+        }).catch(error => {console.error(error)})
+      }).catch(error => {console.error(error)})
     },
     UPDATE_BAND_IMAGE(state) {
       db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
