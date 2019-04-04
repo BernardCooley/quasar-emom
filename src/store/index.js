@@ -187,7 +187,7 @@ const store = new Vuex.Store({
                 db.collection('tracks').doc(value1[0].name).set(
                   {
                     uploadedBy: state.loggedInUserId,
-                    artworkFilename: value1[1].name
+                    artworkFilename: value1[1] ? value1[1].name : ''
                   }
                 )
               }

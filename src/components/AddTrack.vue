@@ -4,26 +4,24 @@
       <div class="pageContainer">
         <q-list v-if="!uploadingFile">
           <q-item>
-            <q-field label="Artist">
-              <q-input id="artist" v-model="track.artist.value"/>
-              <div class="validationMessage">{{track.artist.errorMessage}}</div>
-            </q-field>
-          </q-item>
-          <q-item>
             <q-field label="Title">
-              <q-input id="trackTitle" v-model="track.title.value"/>
-              <div class="validationMessage">{{track.title.errorMessage}}</div>
+              <q-input id="trackTitle" value='' v-model="track.title.value"/>
+              <div class="validationMessage" v-for="(titleValidationMessage, index) in track.title.errors" :key="index">
+                {{titleValidationMessage}}
+              </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Upload Track">
-              <input type="file" ref="trackUpload" multiple @change="getSelectedFile('audio')" class="input-file">
-              <div class="validationMessage">{{track.uploadFile.errorMessage}}</div>
+              <input type="file" ref="trackUpload" multiple @change="getSelectedFile('audio')" class="input-file"/>
+              <div class="validationMessage" v-for="(uploadFileValidationMessage, index) in track.uploadFile.errors" :key="index">
+                {{uploadFileValidationMessage}}
+              </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field label="Artwork Url (optional)">
-              <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file">
+              <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file"/>
             </q-field>
           </q-item>
         </q-list>
@@ -54,13 +52,22 @@ export default {
   data() {
     return {
       track: {
-        artist: { value: null, errorMessage: '' },
-        title: { value: null, errorMessage: '' },
-        uploadFile: { value: null, errorMessage: '' },
-        artworkUrl: { value: null },
-        uploadedById: { value: null },
-        uploadedByArtist: { value: null }
+        artist: {
+          value: null,
+          errors: []
+        },
+        title: {
+          value: null, 
+          errors: []
+        },
+        uploadFile: {
+          errors: []
+        },
       },
+      errorsBool: null,
+      artworkUrl: { value: null },
+      uploadedById: { value: null },
+      uploadedByArtist: { value: null },
       userID: null,
       addTrackMessage: null,
       trackUpload: null,
@@ -70,7 +77,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -87,33 +94,25 @@ export default {
   methods: {
     ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY']),
     validation() {
-      if (!this.track.artist.value) {
-        this.track.artist.errorMessage = 'Artist is required.'
-      } else {
-        this.track.artist.errorMessage = ''
-      }
+      this.errorsBool = false
+      this.track.title.errors = []
+      this.track.uploadFile.errors = []
+
       if (!this.track.title.value) {
-        this.track.title.errorMessage = 'Title is required.'
-      } else {
-        this.track.title.errorMessage = ''
+        this.track.title.errors.push('Title is required.')
       }
-      if (!this.track.uploadFile.value) {
-        this.track.uploadFile.errorMessage = 'File is required.'
-      } else {
-        this.track.uploadFile.errorMessage = ''
+      if (!this.audioFileToUpload) {
+        this.track.uploadFile.errors.push('MP3 file is required.')
       }
 
       for (var x in this.track) {
-        if (this.track[x].errorMessage.length > 0) {
-          return true
-        } else {
-          return false
+        if (this.track[x].errors.length > 0) {
+          this.errorsBool = true
         }
       }
     },
     getSelectedFile(fileType) {
       if (fileType === 'audio') {
-        this.track.uploadFile.value = true
         this.audioFileToUpload = this.$refs.trackUpload.files[0]
       } else if (fileType === 'artwork') {
         this.artworkFileToUpload = this.$refs.artworkUpload.files[0]
@@ -134,11 +133,15 @@ export default {
       })
     },
     uploadFile(audioFileToUpload, artworkFileToUpload) {
-      let files = []
-      files.push(audioFileToUpload)
-      files.push(artworkFileToUpload)
-      files.push(this.track)
-      this.$store.commit('UPLOAD_TRACK', files, true)
+      this.validation()
+      if(!this.errorsBool) {
+        let files = []
+        this.track.artist.value = this.loggedInUserName
+        files.push(audioFileToUpload)
+        files.push(artworkFileToUpload)
+        files.push(this.track)
+        this.$store.commit('UPLOAD_TRACK', files, true)
+      }
     },
     cancelUpload() {
       this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
@@ -160,9 +163,8 @@ export default {
       this.fileUploading = false
       this.$store.commit('UPDATE_COMPLETED_STATE', false)
       this.track = {
-        artist: { value: null, errorMessage: '' },
-        title: { value: null, errorMessage: '' },
-        uploadFile: { value: null, errorMessage: '' },
+        title: { value: null, errors: [] },
+        uploadFile: { errors: [] },
         artworkUrl: { value: null },
         uploadedById: { value: null },
         uploadedByArtist: { value: null }

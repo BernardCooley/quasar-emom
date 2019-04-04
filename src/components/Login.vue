@@ -60,7 +60,7 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_ISLOGGED_IN']),
-    validation(e) {
+    validation() {
       this.errorsBool = false
       this.user.email.errors = []
       this.user.password.errors = []
@@ -68,7 +68,6 @@ export default {
       if (!this.user.email.value) {
         this.user.email.errors.push('Email required.')
       }
-
       if (!this.user.password.value) {
         this.user.password.errors.push("Password required.")
       }
