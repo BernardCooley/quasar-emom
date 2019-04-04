@@ -202,12 +202,4 @@ export default {
     text-align: center;
   }
 }
-
-.input-file {
-  width: 110px;
-  height: 25px;
-  opacity: 1;
-  overflow: hidden;
-  background-color: gray;
-}
 </style>

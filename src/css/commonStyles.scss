@@ -16,3 +16,10 @@ input[type="text"], input[type="password"] {
     font-size: 18px;
     text-align: left;
 }
+.input-file {
+    width: 100%;
+    height: 25px;
+    opacity: 1;
+    overflow: hidden;
+    background-image: linear-gradient(#009e98, #256f77);
+}
