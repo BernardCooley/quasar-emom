@@ -175,7 +175,12 @@ const store = new Vuex.Store({
               function complete() {
                 thisState.uploadComplete = true
                 state.fileUploading = false
-                db.collection('tracks').doc(value1[0].name).set({uploadedBy: state.loggedInUserId})
+                db.collection('tracks').doc(value1[0].name).set(
+                  {
+                    uploadedBy: state.loggedInUserId,
+                    artworkFilename: value1[1].name
+                  }
+                )
               }
             )
           }
