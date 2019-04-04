@@ -115,8 +115,4 @@ export default {
   font-size: 20px;
   padding-top: 20px;
 }
-.validationMessage {
-  color: red;
-  font-size: 18px;
-}
 </style>

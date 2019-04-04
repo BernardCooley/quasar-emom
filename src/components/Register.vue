@@ -6,21 +6,33 @@
           <q-item>
             <q-field class="inputField" label="Artist name" error-label="">
               <q-input id="artistName" v-model="user.artistName.value" />
+                <div class="validationMessage" v-for="(artistNameValidationMessage, index) in user.artistName.errors" :key="index">
+                  {{artistNameValidationMessage}}
+                </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field class="inputField" label="Email" error-label="">
               <q-input id="email" v-model="user.email.value" />
+                <div class="validationMessage" v-for="(emailValidationMessage, index) in user.email.errors" :key="index">
+                  {{emailValidationMessage}}
+                </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field class="inputField" label="Password" error-label="">
               <q-input type="password" id="password" v-model="user.password.value"/>
+                <div class="validationMessage" v-for="(passwordValidationMessage, index) in user.password.errors" :key="index">
+                  {{passwordValidationMessage}}
+                </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field class="inputField" label="Confirm password" error-label="">
               <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value"/>
+                <div class="validationMessage" v-for="(passwordConfirmValidationMessage, index) in user.passwordConfirm.errors" :key="index">
+                  {{passwordConfirmValidationMessage}}
+                </div>
             </q-field>
           </q-item>
           <q-item>
@@ -179,10 +191,6 @@ export default {
 <style lang="scss" scoped>
 @import "../css/commonStyles.scss";
 
-.validationMessage {
-  color: red;
-  text-align: center;
-}
 .regMessage {
   width: 100%;
   height: 75px;
