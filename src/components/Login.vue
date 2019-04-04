@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_ISLOGGED_IN']),
-    validation: function(e) {
+    validation(e) {
       this.errorsBool = false
       this.user.email.errors = []
       this.user.password.errors = []
@@ -78,14 +78,9 @@ export default {
         }
       }
     },
-    login: function() {
-      this.$q.loading.show({
-        message: 'Logging in...'
-      })
+    login() {
       this.validation()
       if (!this.errorsBool) {
-        console.log("Logging in.....")
-
         firebase.auth().signInWithEmailAndPassword(
             this.user.email.value,
             this.user.password.value
@@ -93,7 +88,6 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.errorMessage = ""
             this.$router.push('/music')
-            this.$q.loading.hide()
           }).catch(error => {
             this.errorMessage = "Email or password incorrect"
           })
