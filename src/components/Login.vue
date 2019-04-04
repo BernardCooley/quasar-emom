@@ -6,11 +6,17 @@
           <q-item>
             <q-field class="inputField" label="Email" error-label>
               <q-input id="email" v-model="user.email.value"/>
+              <div class="validationMessage" v-for="(emailValidationMessage, index) in user.email.errors" :key="index">
+                {{emailValidationMessage}}
+              </div>
             </q-field>
           </q-item>
           <q-item>
             <q-field class="inputField" label="Password" error-label>
               <q-input type="password" id="password" v-model="user.password.value" initial-show-password="false"/>
+              <div class="validationMessage" v-for="(passwordValidationMessage, index) in user.password.errors" :key="index">
+                {{passwordValidationMessage}}
+              </div>
             </q-field>
           </q-item>
           <q-btn v-on:click.prevent="login()">Log In</q-btn>
@@ -63,11 +69,6 @@ export default {
         this.user.email.errors.push('Email required.')
       }
 
-      var emailRegex = /^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.")
-      }
-
       if (!this.user.password.value) {
         this.user.password.errors.push("Password required.")
       }
@@ -79,6 +80,7 @@ export default {
       }
     },
     login() {
+      this.errorMessage = ''
       this.validation()
       if (!this.errorsBool) {
         firebase.auth().signInWithEmailAndPassword(
@@ -112,5 +114,9 @@ export default {
   text-align: center;
   font-size: 20px;
   padding-top: 20px;
+}
+.validationMessage {
+  color: red;
+  font-size: 18px;
 }
 </style>
