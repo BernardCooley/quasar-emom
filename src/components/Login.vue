@@ -95,10 +95,12 @@ export default {
               firebase.auth().signOut().then(() => {
                 this.$store.commit("UPDATE_ISLOGGED_IN", false)
               }).catch(error => {
+                Loading.hide()
                 console.error(error)
               })
             }
           }).catch(error => {
+            Loading.hide()
             this.errorMessage = "Email or password incorrect"
           })
       }

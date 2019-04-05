@@ -91,6 +91,8 @@ const store = new Vuex.Store({
           deleteAccountAndTracks()
         }
       }).catch(error => {
+        Loading.hide()
+        alert('Something went wrong. Please try again later.')
         console.error(error)
       })
 
@@ -103,8 +105,8 @@ const store = new Vuex.Store({
             })
             artworkNames.map(artworkName => {
               storageRef.child(`artwork/${artworkName}`).delete().then(() => {
-
               }).catch(error => {
+                Loading.hide()
                 console.error(error)
               })
             })
@@ -112,6 +114,7 @@ const store = new Vuex.Store({
               db.collection('tracks').doc(trackName).delete().then(() => {
                 storageRef.child(`tracks/${trackName}`).delete()
               }).catch(error => {
+                Loading.hide()
                 console.error(error)
               })
               if(index == trackNames.length-1) {
@@ -120,6 +123,8 @@ const store = new Vuex.Store({
                     Loading.hide()
                     state.isLoggedIn = false
                   }).catch(error => {
+                    Loading.hide()
+                    alert('User not deleted. Please try again later.')
                     console.error(error)
                   })
                 })
@@ -131,11 +136,15 @@ const store = new Vuex.Store({
                 Loading.hide()
                 state.isLoggedIn = false
               }).catch(error => {
+                Loading.hide()
+                alert('User not deleted. Please try again later.')
                 console.error(error)
               })
             })
           }
         }).catch(error => {
+          Loading.hide()
+          alert('Something went wrong. Please try again later.')
           console.error(error)
         })
       } 
@@ -219,15 +228,31 @@ const store = new Vuex.Store({
                 Loading.hide()
                 this.commit('GET_TRACKS')
                 this.commit('GET_ACCOUNT_TRACKS')
-              }).catch(error => {console.error(error)}) 
+              }).catch(error => {
+                Loading.hide()
+                alert('Something went wrong. Please try again later.')
+                console.error(error)
+              }) 
             }else {
               Loading.hide()
               this.commit('GET_TRACKS')
               this.commit('GET_ACCOUNT_TRACKS')
             }
-          }).catch(error => {console.error(error)})
-        }).catch(error => {console.error(error)})
-      }).catch(error => {console.error(error)})
+          }).catch(error => {
+            Loading.hide()
+            alert('Something went wrong. Please try again later.')
+            console.error(error)
+          })
+        }).catch(error => {
+          Loading.hide()
+          alert('Something went wrong. Please try again later.')
+          console.error(error)
+        })
+      }).catch(error => {
+        Loading.hide()
+        alert('Something went wrong. Please try again later.')
+        console.error(error)
+      })
     },
     UPDATE_BAND_IMAGE(state) {
       db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
@@ -341,13 +366,21 @@ const store = new Vuex.Store({
                   filename: trackFilename,
                   currentTrack: index == 0 ? true : false
                 })
-              }).catch(error => {console.error(error)})
+              }).catch(error => {
+                Loading.hide()
+                alert('Something went wrong. Please try again later.')
+                console.error(error)
+              })
             })
             setTimeout(() => {
               Loading.hide()
               this.$router.push('/music')
             }, 1500)
-          }).catch(error => {console.error(error)})
+          }).catch(error => {
+            Loading.hide()
+            alert('Something went wrong. Please try again later.')
+            console.error(error)
+          })
         })
       }
     },
@@ -371,9 +404,13 @@ const store = new Vuex.Store({
         trackRef.updateMetadata(newMetadata).then(metadata => {
           this.state.currentTrack['favourite'] = metadata.customMetadata.favourites.includes(currentUserId) ? true : false
         }).catch(error => {
+          Loading.hide()
+          alert('Something went wrong. Please try again later.')
           console.error(error)
         });
       }).catch(error => {
+        Loading.hide()
+        alert('Something went wrong. Please try again later.')
         console.error(error)
       });
     }

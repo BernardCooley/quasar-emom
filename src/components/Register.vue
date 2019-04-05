@@ -147,6 +147,7 @@ export default {
         .then(data => {
           this.sendVerificationEmail(data)
         }).catch(error => {
+          Loading.hide()
           this.registerMessage = error.message == 'The email address is already in use by another account.' ? 'Email address already exists' : ''
           Loading.hide()
         })
@@ -159,6 +160,7 @@ export default {
       }).then(() => {
         this.uploadImage(this.bandImageFileToUpload)
       }).catch(error => {
+        Loading.hide()
         firebase.auth().currentUser.delete()
         console.error(error)
       })
@@ -168,6 +170,8 @@ export default {
         alert('Confirmation email sent.')
         this.createUserAccount(data.user.uid)
       }).catch(error => {
+        Loading.hide()
+        alert('email verification failed. Please try again later.')
         console.error(error)
       });
     },
@@ -186,6 +190,7 @@ export default {
           Loading.hide()
           firebase.auth().signOut().then(() => {
           }).catch(error => {
+            Loading.hide()
             console.error(error)
           });
           this.$router.push('/login')
@@ -194,6 +199,7 @@ export default {
         Loading.hide()
         firebase.auth().signOut().then(() => {
           }).catch(error => {
+            Loading.hide()
             console.error(error)
           })
           this.$router.push('/login')
