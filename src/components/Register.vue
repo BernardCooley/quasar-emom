@@ -4,7 +4,7 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field class="inputField" label="Artist name" error-label="">
+            <q-field class="inputField" label="Artist Name" error-label="">
               <q-input id="artistName" v-model="user.artistName.value" />
                 <div class="validationMessage" v-for="(artistNameValidationMessage, index) in user.artistName.errors" :key="index">
                   {{artistNameValidationMessage}}
@@ -28,7 +28,7 @@
             </q-field>
           </q-item>
           <q-item>
-            <q-field class="inputField" label="Confirm password" error-label="">
+            <q-field class="inputField" label="Confirm Password" error-label="">
               <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value"/>
                 <div class="validationMessage" v-for="(passwordConfirmValidationMessage, index) in user.passwordConfirm.errors" :key="index">
                   {{passwordConfirmValidationMessage}}
@@ -36,8 +36,13 @@
             </q-field>
           </q-item>
           <q-item>
-            <q-field label="Band image (optional)">
+            <q-field label="Band Image (optional)">
               <input type="file" ref="bandImageFileToUpload" multiple @change="getSelectedFile()" class="input-file">
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field label="Artist Bio (optional)">
+                <q-input class="artistBio" type="textarea" v-model="user.artistBio.value"/>
             </q-field>
           </q-item>
           <q-btn v-on:click.prevent="register()">Register</q-btn>
@@ -72,6 +77,10 @@ export default {
           errors: []
         },
         passwordConfirm: {
+          value: "",
+          errors: []
+        },
+        artistBio: {
           value: "",
           errors: []
         }
@@ -156,7 +165,8 @@ export default {
       db.collection('users').doc(userID).set({
         userID: userID,
         artistName: this.user.artistName.value,
-        bandImage: this.bandImageFileToUpload ? this.bandImageFileToUpload.name : ''
+        bandImage: this.bandImageFileToUpload ? this.bandImageFileToUpload.name : '',
+        artistBio: this.user.artistBio
       }).then(() => {
         this.uploadImage(this.bandImageFileToUpload)
       }).catch(error => {
@@ -219,5 +229,8 @@ export default {
   margin: auto;
   padding-top: 30px;
   font-size: 20px;
+}
+.artistBio {
+  min-height: 30px;
 }
 </style>

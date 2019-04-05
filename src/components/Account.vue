@@ -11,6 +11,7 @@
         </q-item>
         <q-item>Artist Name: {{accountDetails.artistName}}</q-item>
         <q-item>Email address: {{accountDetails.email}}</q-item>
+        <q-item>Bio: {{accountDetails.artistBio.value}}</q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
