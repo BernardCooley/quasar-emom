@@ -136,6 +136,7 @@ export default {
         return false
       })
     },
+    
     uploadFile(audioFileToUpload, artworkFileToUpload) {
       this.validation()
       if(!this.errorsBool) {
