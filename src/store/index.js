@@ -330,7 +330,7 @@ const store = new Vuex.Store({
               trackRef.getDownloadURL().then(trackURL => {
                 this.state.tracksArray.push({
                   metaData: {
-                    artist: metadata.customMetadata.artist,
+                    artist: metadata.customMetadata.uploadedByName,
                     title: metadata.customMetadata.title,
                     artworkUrl: artworkUrl,
                     uploadedByArtist: metadata.customMetadata.uploadedByName,
