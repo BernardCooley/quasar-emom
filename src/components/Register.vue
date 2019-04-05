@@ -93,21 +93,21 @@ export default {
   },
   methods: {
     ...mapMutations(['UPDATE_ISLOGGED_IN']),
-    validation(e) {
-      this.errorsBool = false;
-      this.user.artistName.errors = [];
-      this.user.email.errors = [];
-      this.user.password.errors = [];
-      this.user.passwordConfirm.errors = [];
+    validation() {
+      this.errorsBool = false
+      this.user.artistName.errors = []
+      this.user.email.errors = []
+      this.user.password.errors = []
+      this.user.passwordConfirm.errors = []
 
       if (!this.user.artistName.value) {
-        this.user.artistName.errors.push("Artist name required.");
+        this.user.artistName.errors.push("Artist name required.")
       }
       if (!this.user.email.value) {
-        this.user.email.errors.push("Email required.");
+        this.user.email.errors.push("Email required.")
       }
 
-      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if (!emailRegex.test(this.user.email.value)) {
         this.user.email.errors.push("Invalid email format.")
       }

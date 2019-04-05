@@ -3,15 +3,44 @@
     <div class="accountDetails accountSection">
       <div class="accountSectionContainer" v-on:click="toggleAccountDetails()">
         <div class="accountSectionTitle">Account Details</div>
-        <img class="chevron" :class="[displayAccountDetails ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
-      <div v-if="displayAccountDetails">
+      <div>
         <q-item class="bandImageContainer">
           <img v-if="bandImageUrl.length > 0" :src="bandImageUrl" alt="band image"/>
         </q-item>
-        <q-item>Artist Name: {{accountDetails.artistName}}</q-item>
-        <q-item>Email address: {{accountDetails.email}}</q-item>
-        <q-item>Bio: {{accountDetails.artistBio.value}}</q-item>
+
+        <q-item class="accountDetail">
+          <div v-if="fieldToEdit != 'artistName'">{{accountDetailsComp.artistName}}</div>
+          <q-field v-else class="inputField" label="Artist Name" error-label="">
+            <q-input id="artistName" v-model="user.artistName.value" />
+            <div class="validationMessage" v-for="(artistNameValidationMessage, index) in user.artistName.errors" :key="index">
+              {{artistNameValidationMessage}}
+            </div>
+          </q-field>
+          <i v-if="fieldToEdit != 'artistName'" class="editIcon fas fa-pen" v-on:click="editAccount('artistName')"></i>
+          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('artistName')"></i>
+        </q-item>
+
+        <q-item class="accountDetail">
+          <div v-if="fieldToEdit != 'email'">{{accountDetailsComp.email}}</div>
+          <q-field v-else class="inputField" label="Email" error-label="">
+            <q-input id="email" v-model="user.email.value" />
+            <div class="validationMessage" v-for="(emailValidationMessage, index) in user.email.errors" :key="index">
+              {{emailValidationMessage}}
+            </div>
+          </q-field>
+          <i v-if="fieldToEdit != 'email'" class="editIcon fas fa-pen" v-on:click="editAccount('email')"></i>
+          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('email')"></i>
+        </q-item>
+
+        <q-item class="accountDetail">
+          <div v-if="fieldToEdit != 'artistBio'">{{accountDetailsComp.artistBio.value}}</div>
+          <q-field v-else label="Artist Bio">
+            <q-input class="artistBio" type="textarea" v-model="user.artistBio.value"/>
+          </q-field>
+          <i v-if="fieldToEdit != 'artistBio'" class="editIcon fas fa-pen" v-on:click="editAccount('artistBio')"></i>
+          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('artistBio')"></i>
+          </q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
@@ -19,9 +48,8 @@
     <div class="userTracks accountSection">
       <div class="accountSectionContainer" v-on:click="toggleAccountTracks()">
         <div class="accountSectionTitle">User Tracks</div>
-        <img class="chevron" :class="[displayAccountTracks ? 'open' : 'closed']" src="statics/icons/right-chevron.svg"/>
       </div>
-      <div v-if="displayAccountTracks">
+      <div>
         <q-item class="accountTracks" v-for="(track, index) in userTracks" :key="index">
           <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
             <div class="">
@@ -53,7 +81,30 @@ export default {
       deleteMessage: null,
       displayAccountTracks: false,
       displayAccountDetails: false,
-      user: []
+      user: [],
+      fieldToEdit: '',
+      user: {
+        artistName: {
+          value: "",
+          errors: []
+        },
+        email: {
+          value: "",
+          errors: []
+        },
+        password: {
+          value: "",
+          errors: []
+        },
+        passwordConfirm: {
+          value: "",
+          errors: []
+        },
+        artistBio: {
+          value: "",
+          errors: []
+        }
+      }
     }
   },
   computed: {
@@ -63,10 +114,24 @@ export default {
     },
     userTracks() {
       return this.userTracksArray
+    },
+    accountDetailsComp() {
+      return this.accountDetails
     }
   },
   methods: {
     ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT']),
+    validation() {
+      this.user.email.errors = []
+
+      if (!this.user.email.value) {
+        this.user.email.errors.push("Email required.")
+      }
+      let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      if (!emailRegex.test(this.user.email.value)) {
+        this.user.email.errors.push("Invalid email format.")
+      }
+    },
     logout() {
       firebase.auth().signOut().then(() => {
         this.$store.commit('UPDATE_ISLOGGED_IN', false)
@@ -90,6 +155,41 @@ export default {
       if (window.confirm("Delete user account and details permantently?")) {
         this.$store.commit('DELETE_ACCOUNT')
         this.$router.push('/login')
+      }
+    },
+    editAccount(field) {
+      if(field == 'artistName') {
+        this.fieldToEdit = 'artistName'
+      }else if(field == 'email') {
+        this.fieldToEdit = 'email'
+      }else if(field == 'artistBio') {
+        this.fieldToEdit = 'artistBio'
+      }
+    },
+    saveAccountChanges(field) {
+      if(field == 'artistName') {
+        
+      }else if(field == 'email') {
+        this.validation()
+        if(this.user.email.errors.length == 0) {
+          firebase.auth().currentUser.updateEmail(this.user.email.value).then(() => {
+            alert('Email updated')
+            firebase.auth().currentUser.sendEmailVerification().then(() => {
+              alert('Confirmation email sent.')
+              this.$store.commit('GET_ACCOUNT_DETAILS')
+            }).catch(function(error) {
+              console.log(error)
+            });
+          }).catch(error => {
+            console.log(error)
+          });
+          this.fieldToEdit = ''
+          this.user.email.value = ''
+        }else {
+          console.log('invalid')
+        }
+      }else if(field == 'artistBio') {
+        
       }
     }
   }
@@ -164,5 +264,9 @@ export default {
   img {
     width: 100%;
   }
+}
+.editIcon {
+  margin-left: 10px;
+  color: darkgray
 }
 </style>
