@@ -1,7 +1,7 @@
 <template>
   <div class="addTrackContainer">
     <div class="content">
-      <div class="pageContainer">
+      <div class="pageContainer" v-if="accountTracks.length < 3">
         <q-list v-if="!uploadingFile">
           <q-item>
             <q-field label="Title">
@@ -38,6 +38,7 @@
           <q-btn v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
         </div>
       </div>
+      <div class="maxTracksReachedMessage" v-else>gthstrhrt</div>
     </div>
   </div>
 </template>
@@ -77,7 +78,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -86,6 +87,9 @@ export default {
     },
     uploadPercentage() {
       return this.fileUploadPercentage
+    },
+    accountTracks() {
+      return this.userTracksArray
     }
   },
   created() {
@@ -206,5 +210,11 @@ export default {
     color: green;
     text-align: center;
   }
+}
+.maxTracksReachedMessage {
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  color: red;
 }
 </style>
