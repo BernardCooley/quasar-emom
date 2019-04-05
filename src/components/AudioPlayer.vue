@@ -20,7 +20,7 @@
       </div>
       <q-card-main v-if="supportedFormat">
         <div class="trackProgress">
-          <div v-on:click="seek()" class="player-progress" title="Time played : Total time">
+          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
             <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
           </div>
           <div class="player-time">
