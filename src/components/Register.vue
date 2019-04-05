@@ -145,7 +145,7 @@ export default {
           this.user.password.value
         )
         .then(data => {
-          this.createUserAccount(data.user.uid)
+          this.sendVerificationEmail(data)
         }).catch(error => {
           this.registerMessage = error.message == 'The email address is already in use by another account.' ? 'Email address already exists' : ''
           Loading.hide()
@@ -163,6 +163,14 @@ export default {
         console.error(error)
       })
     },
+    sendVerificationEmail(data) {
+      firebase.auth().currentUser.sendEmailVerification().then(() => {
+        alert('Confirmation email sent.')
+        this.createUserAccount(data.user.uid)
+      }).catch(error => {
+        console.error(error)
+      });
+    },
     uploadImage(image) {
       if(image) {
         let storageRef = firebase.storage().ref()
@@ -176,12 +184,19 @@ export default {
         }
         focusedArtwork.put(image, artworkMetadata).then(data => {
           Loading.hide()
-          this.$store.commit('UPDATE_ISLOGGED_IN', true)
-          this.$router.push('/music')
+          firebase.auth().signOut().then(() => {
+          }).catch(error => {
+            console.error(error)
+          });
+          this.$router.push('/login')
         }).catch(error => console.log(error))
       }else {
-          this.$store.commit('UPDATE_ISLOGGED_IN', true)
-          this.$router.push('/music')
+        Loading.hide()
+        firebase.auth().signOut().then(() => {
+          }).catch(error => {
+            console.error(error)
+          })
+          this.$router.push('/login')
       }
     }
   }

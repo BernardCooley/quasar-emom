@@ -86,9 +86,18 @@ export default {
             this.user.email.value,
             this.user.password.value
           ).then(() => {
-            this.$store.commit("UPDATE_ISLOGGED_IN", true)
-            this.errorMessage = ""
-            this.$router.push('/music')
+            if(firebase.auth().currentUser.emailVerified) {
+              this.$store.commit("UPDATE_ISLOGGED_IN", true)
+              this.errorMessage = ""
+              this.$router.push('/music')
+            }else {
+              alert('Email address not verified.')
+              firebase.auth().signOut().then(() => {
+                this.$store.commit("UPDATE_ISLOGGED_IN", false)
+              }).catch(error => {
+                console.error(error)
+              })
+            }
           }).catch(error => {
             this.errorMessage = "Email or password incorrect"
           })
