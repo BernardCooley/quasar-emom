@@ -137,10 +137,15 @@ export default {
       if(!this.errorsBool) {
         let files = []
         this.track.artist.value = this.loggedInUserName
-        files.push(audioFileToUpload)
-        files.push(artworkFileToUpload)
-        files.push(this.track)
-        this.$store.commit('UPLOAD_TRACK', files, true)
+
+        if(audioFileToUpload.name.substr(audioFileToUpload.name.length - 4) == '.mp3') {
+          files.push(audioFileToUpload)
+          files.push(artworkFileToUpload)
+          files.push(this.track)
+          this.$store.commit('UPLOAD_TRACK', files, true)
+        }else {
+          alert('.mp3 file format only')
+        }
       }
     },
     cancelUpload() {

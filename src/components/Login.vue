@@ -31,6 +31,7 @@
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
 import { mapMutations } from "vuex"
+import { Loading } from 'quasar'
 
 export default {
   name: "login",
@@ -83,27 +84,37 @@ export default {
       this.validation()
       if (!this.errorsBool) {
         firebase.auth().signInWithEmailAndPassword(
-            this.user.email.value,
-            this.user.password.value
-          ).then(() => {
-            if(firebase.auth().currentUser.emailVerified) {
-              this.$store.commit("UPDATE_ISLOGGED_IN", true)
-              this.errorMessage = ""
-              this.$router.push('/music')
-            }else {
-              alert('Email address not verified.')
-              firebase.auth().signOut().then(() => {
-                this.$store.commit("UPDATE_ISLOGGED_IN", false)
-              }).catch(error => {
-                Loading.hide()
-                console.error(error)
-              })
+          this.user.email.value,
+          this.user.password.value
+        ).then(() => {
+          if(firebase.auth().currentUser.emailVerified) {
+            this.$store.commit("UPDATE_ISLOGGED_IN", true)
+            this.errorMessage = ""
+            this.$router.push('/music')
+          }else {
+            alert('Account not verified.')
+            if (window.confirm("Re-send confirmation email")) {
+              this.resendConfirmationEmail()
             }
-          }).catch(error => {
-            Loading.hide()
-            this.errorMessage = "Email or password incorrect"
-          })
+            firebase.auth().signOut().then(() => {
+              this.$store.commit("UPDATE_ISLOGGED_IN", false)
+            }).catch(error => {
+              Loading.hide()
+              console.error(error)
+            })
+          }
+        }).catch(error => {
+          Loading.hide()
+          this.errorMessage = "Email or password incorrect"
+        })
       }
+    },
+    resendConfirmationEmail() {
+      firebase.auth().currentUser.sendEmailVerification().then(() => {
+        alert('Confirmation email sent.')
+      }).catch(error => {
+        console.error(error)
+      });
     }
   }
 }
