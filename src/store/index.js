@@ -33,9 +33,19 @@ const store = new Vuex.Store({
     uploadComplete: false,
     fileUploading: false,
     trackComments: [],
-    commentsOpen: false
+    commentsOpen: false,
+    trackLimitReached: false
   },
   mutations: {
+    UPDATE_TRACK_LIMIT_REACHED(state) {
+      state.trackLimitReached = state.userTracksArray.length > 2 ? true : false
+    },
+    UPDATE_COMPLETED_STATE(state, value) {
+      state.uploadComplete = value
+    },
+    UPDATE_FILE_UPLOADING_FLAG(state, value) {
+      state.fileUploading = value
+    },
     TOGGLE_COMMENTS(state, value) {
       if(value == 'toggle') {
         state.commentsOpen = !state.commentsOpen
@@ -192,7 +202,7 @@ const store = new Vuex.Store({
               },
               function complete() {
                 thisState.uploadComplete = true
-                state.fileUploading = false
+                thisState.fileUploading = false
                 db.collection('tracks').doc(value1[0].name).set(
                   {
                     uploadedBy: state.loggedInUserId,
@@ -201,6 +211,8 @@ const store = new Vuex.Store({
                 )
               }
             )
+          }else {
+            alert('Track already exists')
           }
         })
       }
@@ -366,6 +378,7 @@ const store = new Vuex.Store({
                   filename: trackFilename,
                   currentTrack: index == 0 ? true : false
                 })
+                Loading.hide()
               }).catch(error => {
                 Loading.hide()
                 alert('Something went wrong. Please try again later.')
@@ -374,8 +387,10 @@ const store = new Vuex.Store({
             })
             setTimeout(() => {
               Loading.hide()
-              this.$router.push('/music')
-            }, 1500)
+              this.commit('GET_ACCOUNT_DETAILS')
+              this.commit('GET_ACCOUNT_TRACKS')
+              this.commit('UPDATE_TRACK_LIMIT_REACHED')
+            }, 1000)
           }).catch(error => {
             Loading.hide()
             alert('Something went wrong. Please try again later.')

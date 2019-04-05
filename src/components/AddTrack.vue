@@ -1,8 +1,8 @@
 <template>
   <div class="addTrackContainer">
     <div class="content">
-      <div class="pageContainer" v-if="accountTracks.length < 3">
-        <q-list v-if="!uploadingFile">
+      <div class="pageContainer" v-if="userTracksArray.length < 3">
+        <q-list v-if="!uploadingFile && !completedUpload">
           <q-item>
             <q-field label="Title">
               <q-input id="trackTitle" value='' v-model="track.title.value"/>
@@ -24,21 +24,23 @@
               <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file"/>
             </q-field>
           </q-item>
+          <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
         </q-list>
         <q-item>
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
 
-        <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
-
         <q-btn v-if="uploadingFile && !completedUpload" v-on:click.prevent="cancelUpload()">Cancel</q-btn>
         <div class="uploadCompleteContainer" v-if="completedUpload">
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
-          <q-btn v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
+          <q-btn class="finishedUploadBtn" v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
         </div>
       </div>
-      <div class="maxTracksReachedMessage" v-else>gthstrhrt</div>
+      <div class="maxTracksReachedMessage" v-else>
+        Maximum live track allowance reached. <br/><br/>
+        Please remove one track to upload.
+      </div>
     </div>
   </div>
 </template>
@@ -78,7 +80,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -90,13 +92,17 @@ export default {
     },
     accountTracks() {
       return this.userTracksArray
+    },
+    limitReached() {
+      return this.trackLimitReached
     }
   },
   created() {
     this.$store.commit('GET_ACCOUNT_DETAILS')
+    this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   methods: {
-    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY']),
+    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY', 'GET_ACCOUNT_TRACKS', 'UPDATE_FILE_UPLOADING_FLAG', 'UPDATE_TRACK_LIMIT_REACHED']),
     validation() {
       this.errorsBool = false
       this.track.title.errors = []
@@ -136,7 +142,6 @@ export default {
         return false
       })
     },
-    
     uploadFile(audioFileToUpload, artworkFileToUpload) {
       this.validation()
       if(!this.errorsBool) {
@@ -157,7 +162,7 @@ export default {
       this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
       this.uploadAudioTask.cancel()
       this.resetForm()
-    },
+ },
     deleteFile(fileReference) {
       if (fileReference) {
         fileReference.delete().then(function () {
@@ -170,8 +175,9 @@ export default {
       }
     },
     resetForm() {
-      this.fileUploading = false
       this.$store.commit('UPDATE_COMPLETED_STATE', false)
+      this.$store.commit('UPDATE_FILE_UPLOADING_FLAG', false)
+      this.$store.commit('GET_TRACKS')
       this.track = {
         title: { value: null, errors: [] },
         uploadFile: { errors: [] },
@@ -205,6 +211,7 @@ export default {
   padding-top: 50px;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 
   .uploadSuccessMessage {
     margin: 50px 20px;
@@ -214,8 +221,13 @@ export default {
 }
 .maxTracksReachedMessage {
   margin: auto;
-  width: 100%;
+  width: 60%;
   height: 100%;
-  color: red;
+  text-align: center;
+  padding-top: 50px;
+  font-size: 30px;
+}
+.finishedUploadBtn {
+  margin: 20px;
 }
 </style>
