@@ -18,7 +18,10 @@
             </div>
           </q-field>
           <i v-if="fieldToEdit != 'artistName'" class="editIcon fas fa-pen" v-on:click="editAccount('artistName')"></i>
-          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('artistName')"></i>
+          <div class="editIcons" v-else>
+            <i class="editIcon fas fa-check" v-on:click="saveAccountChanges('artist name')"></i>
+            <i class="editIcon fas fa-times" v-on:click="cancelChanges()"></i>
+          </div>
         </q-item>
 
         <q-item class="accountDetail">
@@ -30,16 +33,22 @@
             </div>
           </q-field>
           <i v-if="fieldToEdit != 'email'" class="editIcon fas fa-pen" v-on:click="editAccount('email')"></i>
-          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('email')"></i>
+          <div class="editIcons" v-else>
+            <i class="editIcon fas fa-check" v-on:click="saveAccountChanges('email')"></i>
+            <i class="editIcon fas fa-times" v-on:click="cancelChanges()"></i>
+          </div>
         </q-item>
 
         <q-item class="accountDetail">
-          <div v-if="fieldToEdit != 'artistBio'">{{accountDetailsComp.artistBio.value}}</div>
+          <div v-if="fieldToEdit != 'artistBio'">{{accountDetailsComp.artistBio}}</div>
           <q-field v-else label="Artist Bio">
             <q-input class="artistBio" type="textarea" v-model="user.artistBio.value"/>
           </q-field>
           <i v-if="fieldToEdit != 'artistBio'" class="editIcon fas fa-pen" v-on:click="editAccount('artistBio')"></i>
-          <i v-else class="editIcon fas fa-check" v-on:click="saveAccountChanges('artistBio')"></i>
+          <div class="editIcons" v-else>
+            <i class="editIcon fas fa-check" v-on:click="saveAccountChanges('artist bio')"></i>
+            <i class="editIcon fas fa-times" v-on:click="cancelChanges()"></i>
+          </div>
           </q-item>
         <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
@@ -85,23 +94,23 @@ export default {
       fieldToEdit: '',
       user: {
         artistName: {
-          value: "",
+          value: '',
           errors: []
         },
         email: {
-          value: "",
+          value: '',
           errors: []
         },
         password: {
-          value: "",
+          value: '',
           errors: []
         },
         passwordConfirm: {
-          value: "",
+          value: '',
           errors: []
         },
         artistBio: {
-          value: "",
+          value: '',
           errors: []
         }
       }
@@ -167,30 +176,60 @@ export default {
       }
     },
     saveAccountChanges(field) {
-      if(field == 'artistName') {
-        
-      }else if(field == 'email') {
-        this.validation()
-        if(this.user.email.errors.length == 0) {
-          firebase.auth().currentUser.updateEmail(this.user.email.value).then(() => {
-            alert('Email updated')
-            firebase.auth().currentUser.sendEmailVerification().then(() => {
-              alert('Confirmation email sent.')
+      if(this.user.artistName.value != '' || this.user.email.value != '' || this.user.artistBio.value != '') {
+        if (window.confirm(`Update ${field}?`)) {
+          if(field == 'artist name') {
+            db.collection('users').doc(this.loggedInUserId).update({
+              artistName: this.user.artistName.value
+            }).then(() => {
+              alert('Artist name updated')
               this.$store.commit('GET_ACCOUNT_DETAILS')
-            }).catch(function(error) {
-              console.log(error)
-            });
-          }).catch(error => {
-            console.log(error)
-          });
-          this.fieldToEdit = ''
-          this.user.email.value = ''
-        }else {
-          console.log('invalid')
+              this.fieldToEdit = ''
+              this.user.artistName.value = ''
+            }).catch(error => {
+                console.error(error);
+            })
+        }else if(field == 'email') {
+            this.validation()
+            if(this.user.email.errors.length == 0) {
+              firebase.auth().currentUser.updateEmail(this.user.email.value).then(() => {
+                alert('Email updated')
+                firebase.auth().currentUser.sendEmailVerification().then(() => {
+                  alert('Confirmation email sent.')
+                  this.$store.commit('GET_ACCOUNT_DETAILS')
+                }).catch(function(error) {
+                  console.log(error)
+                });
+              }).catch(error => {
+                console.log(error)
+              });
+              this.fieldToEdit = ''
+              this.user.email.value = ''
+            }else {
+              console.log('invalid')
+            }
+          }else if(field == 'artist bio') {
+            db.collection('users').doc(this.loggedInUserId).update({
+              artistBio: this.user.artistBio.value
+            }).then(() => {
+              alert('Artist name updated')
+              this.$store.commit('GET_ACCOUNT_DETAILS')
+              this.fieldToEdit = ''
+              this.user.artistBio.value = ''
+            }).catch(error => {
+                console.error(error);
+            })
+          } 
         }
-      }else if(field == 'artistBio') {
-        
+      }else {
+        alert('Field cannot be blank.')
       }
+    },
+    cancelChanges() {
+      this.fieldToEdit = ''
+      this.user.artistName.value = ''
+      this.user.email.value = ''
+      this.user.artistBio.value = ''
     }
   }
 }
@@ -240,6 +279,7 @@ export default {
   right: 20px;
 }
 .deleteAccountButton {
+  margin-top: 20px;
   color: red;
 }
 .allTracksArtistAndTitle {
@@ -268,5 +308,8 @@ export default {
 .editIcon {
   margin-left: 10px;
   color: darkgray
+}
+.editIcons {
+  display: flex;
 }
 </style>

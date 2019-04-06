@@ -166,7 +166,7 @@ export default {
         userID: userID,
         artistName: this.user.artistName.value,
         bandImage: this.bandImageFileToUpload ? this.bandImageFileToUpload.name : '',
-        artistBio: this.user.artistBio
+        artistBio: this.user.artistBio.value
       }).then(() => {
         this.uploadImage(this.bandImageFileToUpload)
       }).catch(error => {
