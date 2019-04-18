@@ -17,8 +17,8 @@
           <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
           <div>Filter by:</div>
           <div class="filterOptionsContainer">
-            <q-button v-on:click="filterByArtist(currentUserName)">YOURS</q-button>
-            <q-button>FAVOURITES</q-button>
+            <q-btn v-on:click="filterByArtist(currentUserName)">YOURS</q-btn>
+            <q-btn>FAVOURITES</q-btn>
             <q-item>
               <q-btn-dropdown split label="Artists">
                 <q-list class="artistDropdown" link>
@@ -117,7 +117,14 @@ export default {
       this.$store.commit('TOGGLE_EXPLORE')
     },
     submitSearch(searchTerm) {
+      this.tracksArray.map(track => {
+        console.log(track.metaData.artist.toLowerCase())
+        console.log(searchTerm.toLowerCase())
+      })
+
       let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(searchTerm.toLowerCase()) || track.metaData.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+      console.log(newTracksArray)
 
       this.$store.commit('UPDATE_FILTERED_TRACKS_ARRAY', newTracksArray)
 
