@@ -142,7 +142,7 @@ export default {
   justify-content: space-between;
   background-color: #11363a;
   align-items: center;
-  height: 50px;
+  height: 60px;
 }
 .trackDetails {
   flex-grow: 1;

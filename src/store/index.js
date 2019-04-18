@@ -37,6 +37,22 @@ const store = new Vuex.Store({
     trackLimitReached: false
   },
   mutations: {
+    UPDATE_TRACK_ARTIST(state, value) {
+      db.collection('tracks').where('uploadedBy', '==', firebase.auth().currentUser.uid).get().then(tracks => {
+        tracks.docs.map(track => {
+          let tracksRef = firebase.storage().ref().child('tracks').child(track.id)
+          tracksRef.getMetadata().then(meta => {
+            let customMetadata = meta.customMetadata
+
+            customMetadata.uploadedByName = value
+            let metadata = {
+              customMetadata
+            }
+            tracksRef.updateMetadata(metadata)
+          })
+        })
+      })
+    },
     UPDATE_TRACK_LIMIT_REACHED(state) {
       state.trackLimitReached = state.userTracksArray.length > 2 ? true : false
     },

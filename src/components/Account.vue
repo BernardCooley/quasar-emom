@@ -129,7 +129,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT']),
+    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT', 'UPDATE_TRACK_ARTIST']),
     validation() {
       this.user.email.errors = []
 
@@ -169,10 +169,13 @@ export default {
     editAccount(field) {
       if(field == 'artistName') {
         this.fieldToEdit = 'artistName'
+        this.user.artistName.value = this.accountDetailsComp.artistName
       }else if(field == 'email') {
         this.fieldToEdit = 'email'
+        this.user.email.value = this.accountDetailsComp.email
       }else if(field == 'artistBio') {
         this.fieldToEdit = 'artistBio'
+        this.user.artistBio.value = this.accountDetailsComp.artistBio
       }
     },
     saveAccountChanges(field) {
@@ -185,28 +188,31 @@ export default {
               alert('Artist name updated')
               this.$store.commit('GET_ACCOUNT_DETAILS')
               this.fieldToEdit = ''
+              this.$store.commit('UPDATE_TRACK_ARTIST', this.user.artistName.value)
               this.user.artistName.value = ''
             }).catch(error => {
                 console.error(error);
             })
         }else if(field == 'email') {
             this.validation()
-            if(this.user.email.errors.length == 0) {
-              firebase.auth().currentUser.updateEmail(this.user.email.value).then(() => {
-                alert('Email updated')
-                firebase.auth().currentUser.sendEmailVerification().then(() => {
-                  alert('Confirmation email sent.')
-                  this.$store.commit('GET_ACCOUNT_DETAILS')
-                }).catch(function(error) {
+            if(this.user.email.value != this.accountDetailsComp.email) {
+              if(this.user.email.errors.length == 0) {
+                firebase.auth().currentUser.updateEmail(this.user.email.value).then(() => {
+                  alert('Email updated')
+                  firebase.auth().currentUser.sendEmailVerification().then(() => {
+                    alert('Confirmation email sent.')
+                    this.$store.commit('GET_ACCOUNT_DETAILS')
+                  }).catch(function(error) {
+                    console.log(error)
+                  });
+                }).catch(error => {
                   console.log(error)
                 });
-              }).catch(error => {
-                console.log(error)
-              });
-              this.fieldToEdit = ''
-              this.user.email.value = ''
-            }else {
-              console.log('invalid')
+                this.fieldToEdit = ''
+                this.user.email.value = ''
+              }else {
+                console.log('invalid')
+              }
             }
           }else if(field == 'artist bio') {
             db.collection('users').doc(this.loggedInUserId).update({
@@ -311,5 +317,9 @@ export default {
 }
 .editIcons {
   display: flex;
+}
+.accountDetail {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
