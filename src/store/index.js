@@ -219,6 +219,7 @@ const store = new Vuex.Store({
               function complete() {
                 thisState.uploadComplete = true
                 thisState.fileUploading = false
+                thisState.fileUploadPercentage = 0
                 db.collection('tracks').doc(value1[0].name).set(
                   {
                     uploadedBy: state.loggedInUserId,

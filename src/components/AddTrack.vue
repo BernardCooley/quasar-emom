@@ -179,11 +179,9 @@ export default {
       this.$store.commit('UPDATE_FILE_UPLOADING_FLAG', false)
       this.$store.commit('GET_TRACKS')
       this.track = {
+        artist: { value: null, errors: [] },
         title: { value: null, errors: [] },
-        uploadFile: { errors: [] },
-        artworkUrl: { value: null },
-        uploadedById: { value: null },
-        uploadedByArtist: { value: null }
+        uploadFile: { errors: [] }
       }
     },
     finishedUploading() {
