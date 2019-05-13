@@ -43,4 +43,8 @@ export default {
   justify-content: center;
   align-items: center;
 }
+
+.active {
+  background-image: linear-gradient(#11363a, #0d6d69);
+}
 </style>
