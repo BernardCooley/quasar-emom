@@ -11,7 +11,7 @@
 import db from './firestore/firebaseInit'
 import Navigation from './components/Navigation'
 import firebase from 'firebase/app'
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -30,6 +30,7 @@ export default {
           this.$store.commit('UPDATE_ISLOGGED_IN', true)
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID')
           this.$store.commit('UPDATE_LOGGED_IN_USER_NAME')
+          this.$router.push('/music')
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }
