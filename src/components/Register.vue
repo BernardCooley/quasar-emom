@@ -4,7 +4,7 @@
       <div class="pageContainer">
         <q-list>
           <q-item>
-            <q-field class="inputField" label="Artist Name" error-label="">
+            <q-field class="inputField" label="Artist Name (this will be used for all track uploads)" error-label="">
               <q-input id="artistName" v-model="user.artistName.value" />
                 <div class="validationMessage" v-for="(artistNameValidationMessage, index) in user.artistName.errors" :key="index">
                   {{artistNameValidationMessage}}

@@ -29,8 +29,6 @@
         <q-item>
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
-
-        <q-btn v-if="uploadingFile && !completedUpload" v-on:click.prevent="cancelUpload()">Cancel</q-btn>
         <div class="uploadCompleteContainer" v-if="completedUpload">
           <div class="uploadSuccessMessage">Upload Complete</div>
           <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
@@ -158,11 +156,6 @@ export default {
         }
       }
     },
-    cancelUpload() {
-      this.deleteFile(storageRef.child('artwork/' + artworkFileToUpload.name))
-      this.uploadAudioTask.cancel()
-      this.resetForm()
- },
     deleteFile(fileReference) {
       if (fileReference) {
         fileReference.delete().then(function () {
