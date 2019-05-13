@@ -34,9 +34,13 @@ const store = new Vuex.Store({
     fileUploading: false,
     trackComments: [],
     commentsOpen: false,
-    trackLimitReached: false
+    trackLimitReached: false,
+    isUserAdmin: false
   },
   mutations: {
+    UPDATE_IS_USER_LOGGED_IN(state, value) {
+      state.isUserAdmin = value
+    },
     UPDATE_TRACK_ARTIST(state, value) {
       db.collection('tracks').where('uploadedBy', '==', firebase.auth().currentUser.uid).get().then(tracks => {
         tracks.docs.map(track => {

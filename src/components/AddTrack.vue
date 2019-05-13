@@ -2,7 +2,12 @@
   <div class="addTrackContainer">
     <div class="content">
       <div class="pageContainer" v-if="userTracksArray.length < 3">
-        <q-list v-if="!uploadingFile && !completedUpload">
+        <div class="singleOrCompilation" v-if="loggedInUserId">
+          <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
+          <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
+        </div>
+
+        <q-list v-if="!uploadingFile && !completedUpload && singleUpload">
           <q-item>
             <q-field label="Title">
               <q-input id="trackTitle" value='' v-model="track.title.value"/>
@@ -26,6 +31,13 @@
           </q-item>
           <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
         </q-list>
+
+        <q-list v-else>
+          <div class="" v-for="(trackField, index) in numberOfCompilationTracks" :key="index">
+              {{trackField}}
+            </div>
+        </q-list>
+
         <q-item>
           <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
         </q-item>
@@ -74,11 +86,13 @@ export default {
       trackUpload: null,
       audioFileToUpload: null,
       artworkFileToUpload: null,
-      uploadAudioTask: null
+      uploadAudioTask: null,
+      singleUpload: false,
+      numberOfCompilationTracks: 5
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -220,5 +234,27 @@ export default {
 }
 .finishedUploadBtn {
   margin: 20px;
+}
+.q-list {
+  border: none;
+}
+.singleOrCompilation {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
+
+  .singleCompilationTab {
+    height: 50px;
+    width: 50%;
+    text-align: center;
+    font-size: 20px;
+    line-height: 50px;
+    opacity: 0.3;
+  }
+
+  .active {
+    opacity: 1;
+  }
 }
 </style>

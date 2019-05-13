@@ -30,7 +30,7 @@
 <script>
 import db from "../firestore/firebaseInit"
 import firebase from "firebase/app"
-import { mapMutations } from "vuex"
+import { mapMutations, mapState } from "vuex"
 import { Loading } from 'quasar'
 
 export default {
@@ -55,12 +55,13 @@ export default {
     }
   },
   computed: {
+    ...mapState(['loggedInUserId']),
     errorMsgComputed() {
       return this.errorMessage
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_IS_USER_LOGGED_IN']),
     validation() {
       this.errorsBool = false
       this.user.email.errors = []
@@ -91,6 +92,15 @@ export default {
             this.$store.commit("UPDATE_ISLOGGED_IN", true)
             this.errorMessage = ""
             this.$router.push('/music')
+
+            db.collection('users').where('userID', '==', this.loggedInUserId).get()
+              .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                  doc.data().admin ? this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true) : this.$store.commit('UPDATE_IS_USER_LOGGED_IN', false)
+                })
+              })
+
+            this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true)
           }else {
             alert('Account not verified.')
             if (window.confirm("Re-send confirmation email")) {

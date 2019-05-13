@@ -11,14 +11,17 @@
 import db from './firestore/firebaseInit'
 import Navigation from './components/Navigation'
 import firebase from 'firebase/app'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
     Navigation
   },
+  computed: {
+    ...mapState(['loggedInUserId'])
+  },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID', 'UPDATE_IS_USER_LOGGED_IN']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -31,6 +34,13 @@ export default {
           this.$store.commit('UPDATE_LOGGED_IN_USER_ID')
           this.$store.commit('UPDATE_LOGGED_IN_USER_NAME')
           this.$router.push('/music')
+
+          db.collection('users').where('userID', '==', this.loggedInUserId).get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
+                doc.data().admin ? this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true) : this.$store.commit('UPDATE_IS_USER_LOGGED_IN', false)
+              })
+            })
         } else {
           this.$store.commit('UPDATE_ISLOGGED_IN', false)
         }
