@@ -1,11 +1,21 @@
 <template>
   <div class="addTrackContainer">
     <div class="content">
-      <div class="pageContainer" v-if="userTracksArray.length < 3">
-        <div class="singleOrCompilation" v-if="loggedInUserId">
-          <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
-          <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
-        </div>
+      <div class="singleOrCompilation" v-if="loggedInUserId">
+        <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
+        <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
+      </div>
+
+      <div class="compilationUpload" v-if="!singleUpload">
+        <compilation-form></compilation-form>
+      </div>
+
+
+
+
+
+      <!-- <div class="pageContainer" v-if="userTracksArray.length < 3">
+        
 
         <q-list v-if="!uploadingFile && !completedUpload && singleUpload">
           <q-item>
@@ -46,11 +56,11 @@
           <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
           <q-btn class="finishedUploadBtn" v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
         </div>
-      </div>
-      <div class="maxTracksReachedMessage" v-else>
+      </div> -->
+      <!-- <div class="maxTracksReachedMessage" v-else>
         Maximum live track allowance reached. <br/><br/>
         Please remove one track to upload.
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -59,9 +69,13 @@
 import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { mapMutations, mapState } from "vuex"
+import CompilationForm from './forms/CompilationForm'
 
 export default {
   name: "add-track",
+  components: {
+    CompilationForm
+  },
   data() {
     return {
       track: {
@@ -256,5 +270,13 @@ export default {
   .active {
     opacity: 1;
   }
+}
+
+.compilationUpload {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 </style>

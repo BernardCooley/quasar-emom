@@ -35,9 +35,13 @@ const store = new Vuex.Store({
     trackComments: [],
     commentsOpen: false,
     trackLimitReached: false,
-    isUserAdmin: false
+    isUserAdmin: false,
+    compilationTrackAmount: 2
   },
   mutations: {
+    UPDATE_COMPILATION_TRACK_AMOUNT(state, value) {
+      value == 'add' ? state.compilationTrackAmount++ : state.compilationTrackAmount--
+    },
     UPDATE_IS_USER_LOGGED_IN(state, value) {
       state.isUserAdmin = value
     },
