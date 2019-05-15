@@ -36,7 +36,19 @@ const store = new Vuex.Store({
     commentsOpen: false,
     trackLimitReached: false,
     isUserAdmin: false,
-    compilationTrackAmount: 2
+    compilationTrackAmount: 2,
+    compilationTracks: [
+      {
+        artist: '',
+        title: '',
+        filename: ''
+      },
+      {
+        artist: '',
+        title: '',
+        filename: ''
+      }
+    ]
   },
   mutations: {
     UPDATE_COMPILATION_TRACK_AMOUNT(state, value) {
