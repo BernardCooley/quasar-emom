@@ -61,13 +61,8 @@
       <div>
         <q-item class="accountTracks" v-for="(track, index) in userTracks" :key="index">
           <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
-            <div class="">
-              <div class="trackTitle">{{track.metaData.title}}</div>
-            </div>
-            <q-btn v-on:click.prevent="deleteTrack(track)">Delete</q-btn>
-            <a>
-              <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
-            </a>
+            <div class="trackTitle">{{track.metaData.title}}</div>
+            <q-btn class="deleteButton" v-on:click.prevent="deleteTrack(track)">Delete</q-btn>
           </div>
           <div v-else>{{computedDeleteMesage}}</div>
         </q-item>
@@ -299,6 +294,10 @@ export default {
 }
 .trackTitle {
   font-size: 20px;
+  flex-grow: 5;
+}
+.deleteButton {
+  width: 75px;
 }
 .bandImageContainer {
   width: 100%;
