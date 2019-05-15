@@ -43,8 +43,7 @@
     <div class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
       <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
-      <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl">
-      <div class="trackInfoContainer"></div>
+      <!-- <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl"> -->
     </div>
   </div>
   <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
@@ -159,10 +158,13 @@ export default {
 
 .trackCard {
   width: 100%;
-  height: auto;
+  height: 105px;
   padding: 20px;
   margin-bottom: 20px;
   background-color: #256f77;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .cardImage {
   width: 100%;
@@ -174,13 +176,6 @@ export default {
 }
 .title {
   font-size: 20px;
-  padding-bottom: 10px;
-}
-.trackInfoContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  padding-top: 10px;
 }
 .trackInfoItem {
   height: 35px;
@@ -298,10 +293,6 @@ input.q-input-target {
 .artistDropdown {
   color: white;
   background-color: #256f77;
-}
-
-.dropdownLabel {
-  
 }
 
 .filterOptionsContainer {

@@ -2,17 +2,24 @@
     <div class="compilationFormContainer">
         <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
             <div class="compilationField">
+                Track No. {{track.trackNumber}}
                 <q-field label="Artist">
-                    <q-input class="" v-model="track.index" type="text" value="" multiple/>
+                    <q-input class="" v-model="track.artist" type="text" value="" multiple/>
                 </q-field>
                 <q-field label="Title">
-                    <q-input class="" v-model="track.index" type="text" value="" multiple/>
+                    <q-input class="" v-model="track.title" type="text" value="" multiple/>
                 </q-field>
                 <q-field>
                     <q-input class="" v-model="track.index" type="file" value="" multiple @change="getSelectedFile('audio')"/>
                 </q-field>
             </div>
-            <i class="fas fa-times" v-on:click="removeTrack($event)"></i>
+            <div class="trackActionsContainer">
+                <i class="closeButton fas fa-times" v-on:click="removeTrack(index)"></i>
+                <div class="upDownContainer">
+                    <i class="moveTrack fas fa-sort-up" v-on:click="moveTrack('up', track.trackNumber)"></i>
+                    <i class="moveTrack fas fa-sort-down" v-on:click="moveTrack('down', track.trackNumber)"></i>
+                </div>
+            </div>
         </div>
         <div class="addCompilationTrack" v-on:click="addTrack()">Add track</div>
     </div>
@@ -20,45 +27,88 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import _ from 'lodash'
 
 export default {
     computed: {
-        ...mapState(['compilationTrackAmount', 'compilationTracks']),
-        trackAmount() {
-            return this.compilationTrackAmount
-        },
+        ...mapState(['compilationTracks']),
         compTracks() {
-            return this.compilationTracks
+            // console.log(JSON.stringify(_.orderBy(this.compilationTracks, 'trackNumber', 'asc')))
+            return _.orderBy(this.compilationTracks, 'trackNumber', 'asc')
         }
     },
     methods: {
-        ...mapMutations(['UPDATE_COMPILATION_TRACK_AMOUNT']),
+        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS']),
         addTrack() {
-            this.$store.commit('UPDATE_COMPILATION_TRACK_AMOUNT', 'add')
+            this.$store.commit('ADD_COMPILATION_TRACK')
         },
-        removeTrack(e) {
-            console.log(e.target)
+        removeTrack(trackIndex) {
+            this.$store.commit('REMOVE_COMPILATION_TRACK', this.compilationTracks.filter(track => track != this.compilationTracks[trackIndex]))
+        },
+        moveTrack(upDown, trackNum) {
+            let tracks = this.compilationTracks
+            if(upDown == 'down') {
+                if(trackNum < tracks.length) {
+                    console.log(JSON.stringify(tracks[trackNum-1]))
+                    // console.log(JSON.stringify(tracks[trackNum-1].trackNumber))
+                    // console.log(JSON.stringify(tracks[trackNum-1]))
+                    // tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber + 1
+                    // tracks[trackNum].trackNumber = tracks[trackNum].trackNumber - 1
+                }
+            }else {
+                if(trackNumber > 1) {
+                    // console.log(JSON.stringify(tracks[trackNumber-1].trackNumber))
+                }
+            }
+            this.$store.commit('UPDATE_COMPILATION_TRACKS', tracks)
         }
-    }
+    },
 }
 </script>
 
 <style lang="scss" scoped>
 .compilationFieldContainer {
     display: flex;
+    align-items: center;
+    border-bottom: 1px solid white;
+    height: 195px;
+}
 
-    .compilationField {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        padding: 10px 20px;
+i {
+    opacity: 0.8;
+}
 
-        i {
-            margin-left: 20px;
-            font-size: 30px;
-        }
-    }
+.trackActionsContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 50px;
+}
+
+.upDownContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.moveTrack {
+    font-size: 30px;
+}
+
+.closeButton {
+    font-size: 20px;
+}
+
+.compilationField {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    padding: 10px 5px 10px 20px;
+    margin: 25px 0;
 }
 
 .addCompilationTrack {

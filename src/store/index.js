@@ -36,23 +36,50 @@ const store = new Vuex.Store({
     commentsOpen: false,
     trackLimitReached: false,
     isUserAdmin: false,
-    compilationTrackAmount: 2,
     compilationTracks: [
       {
-        artist: '',
-        title: '',
-        filename: ''
+        artist: '1',
+        title: '1',
+        filename: '1',
+        trackNumber: 1
       },
       {
-        artist: '',
-        title: '',
-        filename: ''
+        artist: '2',
+        title: '2',
+        filename: '2',
+        trackNumber: 2
+      },
+      {
+        artist: '3',
+        title: '3',
+        filename: '3',
+        trackNumber: 3
+      },
+      {
+        artist: '4',
+        title: '4',
+        filename: '4',
+        trackNumber: 4
       }
     ]
   },
   mutations: {
-    UPDATE_COMPILATION_TRACK_AMOUNT(state, value) {
-      value == 'add' ? state.compilationTrackAmount++ : state.compilationTrackAmount--
+    ADD_COMPILATION_TRACK(state) {
+      state.compilationTracks.push({
+        artist: '7',
+        title: '8',
+        filename: '9',
+        trackNumber: state.compilationTracks.length + 1
+      });
+    },
+    REMOVE_COMPILATION_TRACK(state, value) {
+      value.forEach((val, index) => {
+        val.trackNumber = index + 1
+      })
+      state.compilationTracks = value
+    },
+    UPDATE_COMPILATION_TRACKS(state, value) {
+      state.compilationTracks = value
     },
     UPDATE_IS_USER_LOGGED_IN(state, value) {
       state.isUserAdmin = value
