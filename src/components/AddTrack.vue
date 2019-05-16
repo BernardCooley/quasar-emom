@@ -1,66 +1,27 @@
 <template>
   <div class="addTrackContainer">
     <div class="content">
+
       <div class="singleOrCompilation" v-if="loggedInUserId">
-        <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
-        <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
+        <div :class="[singleCompilation ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="updateSingleCompilation(true)">Single track</div>
+        <div :class="[!singleCompilation ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="updateSingleCompilation(false)">Compilation</div>
       </div>
 
-      <div class="compilationUpload" v-if="!singleUpload">
+      <div class="compilationUpload" v-if="!singleCompilation">
         <compilation-form></compilation-form>
       </div>
 
-
-
-
-
-      <!-- <div class="pageContainer" v-if="userTracksArray.length < 3">
-        
-
-        <q-list v-if="!uploadingFile && !completedUpload && singleUpload">
-          <q-item>
-            <q-field label="Title">
-              <q-input id="trackTitle" value='' v-model="track.title.value"/>
-              <div class="validationMessage" v-for="(titleValidationMessage, index) in track.title.errors" :key="index">
-                {{titleValidationMessage}}
-              </div>
-            </q-field>
-          </q-item>
-          <q-item>
-            <q-field label="Upload Track">
-              <input type="file" ref="trackUpload" multiple @change="getSelectedFile('audio')" class="input-file"/>
-              <div class="validationMessage" v-for="(uploadFileValidationMessage, index) in track.uploadFile.errors" :key="index">
-                {{uploadFileValidationMessage}}
-              </div>
-            </q-field>
-          </q-item>
-          <q-item>
-            <q-field label="Artwork Url (optional)">
-              <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file"/>
-            </q-field>
-          </q-item>
-          <q-btn v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
-        </q-list>
-
-        <q-list v-else>
-          <div class="" v-for="(trackField, index) in numberOfCompilationTracks" :key="index">
-              {{trackField}}
-            </div>
-        </q-list>
-
-        <q-item>
-          <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
-        </q-item>
-        <div class="uploadCompleteContainer" v-if="completedUpload">
-          <div class="uploadSuccessMessage">Upload Complete</div>
-          <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
-          <q-btn class="finishedUploadBtn" v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
+      <div class="singleUpload" v-else>
+        <div class="pageContainer" v-if="userTracksArray.length < 3">
+          <single-upload-form></single-upload-form>
         </div>
-      </div> -->
-      <!-- <div class="maxTracksReachedMessage" v-else>
-        Maximum live track allowance reached. <br/><br/>
-        Please remove one track to upload.
-      </div> -->
+        <div class="maxTracksReachedMessage" v-else>
+          Maximum live track allowance reached. <br/><br/>
+          Please remove one track to upload.
+        </div>
+      </div>
+
+      <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
     </div>
   </div>
 </template>
@@ -70,11 +31,13 @@ import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { mapMutations, mapState } from "vuex"
 import CompilationForm from './forms/CompilationForm'
+import SingleUploadForm from './forms/SingleUploadForm'
 
 export default {
   name: "add-track",
   components: {
-    CompilationForm
+    CompilationForm,
+    SingleUploadForm
   },
   data() {
     return {
@@ -101,17 +64,13 @@ export default {
       audioFileToUpload: null,
       artworkFileToUpload: null,
       uploadAudioTask: null,
-      singleUpload: false,
       numberOfCompilationTracks: 5
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId', 'singleUpload']),
     uploadingFile() {
       return this.fileUploading
-    },
-    completedUpload() {
-      return this.uploadComplete
     },
     uploadPercentage() {
       return this.fileUploadPercentage
@@ -121,6 +80,9 @@ export default {
     },
     limitReached() {
       return this.trackLimitReached
+    },
+    singleCompilation() {
+      return this.singleUpload
     }
   },
   created() {
@@ -128,7 +90,7 @@ export default {
     this.$store.commit('GET_ACCOUNT_TRACKS')
   },
   methods: {
-    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY', 'GET_ACCOUNT_TRACKS', 'UPDATE_FILE_UPLOADING_FLAG', 'UPDATE_TRACK_LIMIT_REACHED']),
+    ...mapMutations(['UPDATE_FILE_UPLOAD_PERCENTAGE', 'GET_TRACKS', 'UPLOAD_TRACK', 'UPDATE_COMPLETED_STATE','GET_ACCOUNT_DETAILS', 'CLEAR_TRACKS_ARRAY', 'GET_ACCOUNT_TRACKS', 'UPDATE_FILE_UPLOADING_FLAG', 'UPDATE_TRACK_LIMIT_REACHED', 'UPDATE_SINGLE_DOWNLOAD']),
     validation() {
       this.errorsBool = false
       this.track.title.errors = []
@@ -207,6 +169,9 @@ export default {
     },
     finishedUploading() {
       this.$store.commit('GET_TRACKS')
+    },
+    updateSingleCompilation(boolean) {
+      this.$store.commit('UPDATE_SINGLE_DOWNLOAD', boolean)
     }
   }
 };
@@ -278,5 +243,10 @@ export default {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.uploadBtn {
+  margin: auto;
 }
 </style>

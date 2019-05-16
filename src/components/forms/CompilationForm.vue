@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <div class="addCompilationTrack" v-on:click="addTrack()">Add track</div>
+        <i class="addCompilationTrack fas fa-plus" v-on:click="addTrack()"></i>
     </div>
 </template>
 
@@ -109,7 +109,13 @@ i {
 }
 
 .addCompilationTrack {
-  font-size: 30px;
-  text-align: center;
+    font-size: 30px;
+    text-align: center;
+    position: fixed;
+    right: 10px;
+    bottom: 63px;
+    background-color: rgba(27, 131, 132, 0.4);
+    padding: 10px;
+    border-radius: 25px;
 }
 </style>

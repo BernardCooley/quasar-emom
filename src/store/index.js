@@ -36,39 +36,31 @@ const store = new Vuex.Store({
     commentsOpen: false,
     trackLimitReached: false,
     isUserAdmin: false,
+    singleUpload: true,
     compilationTracks: [
       {
-        artist: '1',
-        title: '1',
-        filename: '1',
+        artist: '',
+        title: '',
+        filename: '',
         trackNumber: 1
       },
       {
-        artist: '2',
-        title: '2',
-        filename: '2',
+        artist: '',
+        title: '',
+        filename: '',
         trackNumber: 2
-      },
-      {
-        artist: '3',
-        title: '3',
-        filename: '3',
-        trackNumber: 3
-      },
-      {
-        artist: '4',
-        title: '4',
-        filename: '4',
-        trackNumber: 4
       }
     ]
   },
   mutations: {
+    UPDATE_SINGLE_DOWNLOAD(state , value) {
+      state.singleUpload = value
+    },
     ADD_COMPILATION_TRACK(state) {
       state.compilationTracks.push({
-        artist: '7',
-        title: '8',
-        filename: '9',
+        artist: '',
+        title: '',
+        filename: '',
         trackNumber: state.compilationTracks.length + 1
       });
     },
