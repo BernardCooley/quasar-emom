@@ -42,7 +42,7 @@ export default {
             this.$store.commit('ADD_COMPILATION_TRACK')
         },
         removeTrack(trackIndex) {
-            this.$store.commit('REMOVE_COMPILATION_TRACK', this.compilationTracks.filter(track => track != this.compilationTracks[trackIndex]))
+            this.$store.commit('REMOVE_COMPILATION_TRACK', _.sortBy(this.compilationTracks.filter(track => track != this.compilationTracks[trackIndex], 'trackNumber', 'asc')))
         },
         moveTrack(upDown, trackNum) {
             let tracks = this.compilationTracks
