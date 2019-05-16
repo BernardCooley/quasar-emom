@@ -33,8 +33,7 @@ export default {
     computed: {
         ...mapState(['compilationTracks']),
         compTracks() {
-            // console.log(JSON.stringify(_.orderBy(this.compilationTracks, 'trackNumber', 'asc')))
-            return _.orderBy(this.compilationTracks, 'trackNumber', 'asc')
+            return _.sortBy(this.compilationTracks, 'trackNumber', 'asc')
         }
     },
     methods: {
@@ -49,18 +48,16 @@ export default {
             let tracks = this.compilationTracks
             if(upDown == 'down') {
                 if(trackNum < tracks.length) {
-                    console.log(JSON.stringify(tracks[trackNum-1]))
-                    // console.log(JSON.stringify(tracks[trackNum-1].trackNumber))
-                    // console.log(JSON.stringify(tracks[trackNum-1]))
-                    // tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber + 1
-                    // tracks[trackNum].trackNumber = tracks[trackNum].trackNumber - 1
+                    tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber + 1
+                    tracks[trackNum].trackNumber = tracks[trackNum].trackNumber - 1
                 }
             }else {
-                if(trackNumber > 1) {
-                    // console.log(JSON.stringify(tracks[trackNumber-1].trackNumber))
+                if(trackNum > 1) {
+                    tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber - 1
+                    tracks[trackNum-2].trackNumber = tracks[trackNum-2].trackNumber + 1
                 }
             }
-            this.$store.commit('UPDATE_COMPILATION_TRACKS', tracks)
+            this.$store.commit('UPDATE_COMPILATION_TRACKS', _.sortBy(tracks, 'trackNumber', 'asc'))
         }
     },
 }
