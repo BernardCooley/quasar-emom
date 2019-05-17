@@ -1,5 +1,16 @@
 <template>
     <div class="compilationFormContainer">
+
+        <q-field label="Compilation title">
+            <q-input class="" v-model="compDetails.title" type="text" value="" multiple/>
+        </q-field>
+        <q-field label="Release date">
+            <q-input class="" v-model="compDetails.releaseDate" type="date" value="" multiple/>
+        </q-field>
+        <q-field>
+            <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork')"/>
+        </q-field>
+
         <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
             <div class="compilationField">
                 Track No. {{track.trackNumber}}
@@ -10,7 +21,7 @@
                     <q-input class="" v-model="track.title" type="text" value="" multiple/>
                 </q-field>
                 <q-field>
-                    <q-input class="" v-model="track.index" type="file" value="" multiple @change="getSelectedFile('audio')"/>
+                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'audio', track.trackNumber)"/>
                 </q-field>
             </div>
             <div class="trackActionsContainer">
@@ -30,10 +41,19 @@ import { mapMutations, mapState } from 'vuex'
 import _ from 'lodash'
 
 export default {
+    data() {
+        return {
+            audioFilesToUpload: [],
+            artworkFileToUpload: null
+        }
+    },
     computed: {
-        ...mapState(['compilationTracks']),
+        ...mapState(['compilationData']),
         compTracks() {
-            return _.sortBy(this.compilationTracks, 'trackNumber', 'asc')
+            return _.sortBy(this.compilationData.trackDetails, 'trackNumber', 'asc')
+        },
+        compDetails() {
+            return this.compilationData.compilationDetails
         }
     },
     methods: {
@@ -42,10 +62,10 @@ export default {
             this.$store.commit('ADD_COMPILATION_TRACK')
         },
         removeTrack(trackIndex) {
-            this.$store.commit('REMOVE_COMPILATION_TRACK', _.sortBy(this.compilationTracks.filter(track => track != this.compilationTracks[trackIndex], 'trackNumber', 'asc')))
+            this.$store.commit('REMOVE_COMPILATION_TRACK', _.sortBy(this.compilationData.trackDetails.filter(track => track != this.compilationData.trackDetails[trackIndex], 'trackNumber', 'asc')))
         },
         moveTrack(upDown, trackNum) {
-            let tracks = this.compilationTracks
+            let tracks = this.compilationData.trackDetails
             if(upDown == 'down') {
                 if(trackNum < tracks.length) {
                     tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber + 1
@@ -58,7 +78,15 @@ export default {
                 }
             }
             this.$store.commit('UPDATE_COMPILATION_TRACKS', _.sortBy(tracks, 'trackNumber', 'asc'))
-        }
+        },
+            getSelectedFile(e, fileType, trackNumber) {
+                var files = e.target.files || e.dataTransfer.files;
+                if (fileType === 'audio') {
+                    this.compilationData.trackDetails[trackNumber - 1].file = files[0]
+                } else if (fileType === 'artwork') {
+                    this.compilationData.compilationDetails.file = files[0]
+                }
+            },
     },
 }
 </script>

@@ -105,7 +105,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId', 'compilationData']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -167,21 +167,24 @@ export default {
         return false
       })
     },
-    uploadFile(audioFileToUpload, artworkFileToUpload) {
-      this.validation()
-      if(!this.errorsBool) {
-        let files = []
-        this.track.artist.value = this.loggedInUserName
+    uploadFile() {
+      console.log(this.compilationData)
 
-        if(audioFileToUpload.name.substr(audioFileToUpload.name.length - 4) == '.mp3') {
-          files.push(audioFileToUpload)
-          files.push(artworkFileToUpload)
-          files.push(this.track)
-          this.$store.commit('UPLOAD_TRACK', files, true)
-        }else {
-          alert('.mp3 file format only')
-        }
-      }
+
+      // this.validation()
+      // if(!this.errorsBool) {
+      //   let files = []
+      //   this.track.artist.value = this.loggedInUserName
+
+      //   if(audioFileToUpload.name.substr(audioFileToUpload.name.length - 4) == '.mp3') {
+      //     files.push(audioFileToUpload)
+      //     files.push(artworkFileToUpload)
+      //     files.push(this.track)
+      //     this.$store.commit('UPLOAD_TRACK', files, true)
+      //   }else {
+      //     alert('.mp3 file format only')
+      //   }
+      // }
     },
     deleteFile(fileReference) {
       if (fileReference) {
