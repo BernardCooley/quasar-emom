@@ -28,7 +28,6 @@ const store = new Vuex.Store({
     exploreExpanded: true,
     isTrackPlaying: false,
     bandImageUrl: '',
-    userTracksArray: null,
     accountDetails: null,
     uploadComplete: false,
     fileUploading: false,
@@ -38,37 +37,107 @@ const store = new Vuex.Store({
     isUserAdmin: false,
     singleUpload: true,
     compilationData: {
-      compilationDetails: {
-        title: null,
-        file: null,
-        releaseDate: null
-      },
+      compilationDetails: [
+        {
+          title: {
+            value: null,
+            errors: []
+          },
+          artworkFile: {
+            value: null,
+            errors: []
+          },
+          releaseDate: {
+            value: null,
+            errors: []
+          }
+        }
+      ],
       trackDetails: [
         {
-          artist: null,
-          title: null,
-          file: null,
-          trackNumber: 1
+          artist: {
+            value: null,
+            errors: []
+          },
+          title: {
+            value: null,
+            errors: []
+          },
+          audioFile: {
+            value: null,
+            errors: []
+          },
+          trackNumber: {
+            value: 1,
+            errors: []
+          }
         },
         {
-          artist: null,
-          title: null,
-          file: null,
-          trackNumber: 2
+          artist: {
+            value: null,
+            errors: []
+          },
+          title: {
+            value: null,
+            errors: []
+          },
+          audioFile: {
+            value: null,
+            errors: []
+          },
+          trackNumber: {
+            value: 2,
+            errors: []
+          }
         }
       ]
     }
   },
   mutations: {
+    REINSTANTIATE_COMPILATION_TRACKS(state) {
+      state.compilationData = {
+        compilationDetails: {
+          title: null,
+          artworkFile: null,
+          releaseDate: null
+        },
+        trackDetails: [
+          {
+            artist: null,
+            title: null,
+            audioFile: null,
+            trackNumber: 1
+          },
+          {
+            artist: null,
+            title: null,
+            audioFile: null,
+            trackNumber: 2
+          }
+        ]
+      }
+    },
     UPDATE_SINGLE_DOWNLOAD(state , value) {
       state.singleUpload = value
     },
     ADD_COMPILATION_TRACK(state) {
       state.compilationData.trackDetails.push({
-        artist: '',
-        title: '',
-        file: '',
-        trackNumber: state.compilationData.trackDetails.length + 1
+        artist: {
+          value: null,
+          errors: []
+        },
+        title: {
+          value: null,
+          errors: []
+        },
+        audioFile: {
+          value: null,
+          errors: []
+        },
+        trackNumber: {
+          value: state.compilationData.trackDetails.length + 1,
+          errors: []
+        }
       });
     },
     REMOVE_COMPILATION_TRACK(state, value) {
@@ -220,6 +289,9 @@ const store = new Vuex.Store({
           console.error(error)
         })
       } 
+    },
+    UPLOAD_COMPILATION(state, value) {
+      console.log(value)
     },
     UPLOAD_TRACK(state, value1, value2) {
       let thisState = state

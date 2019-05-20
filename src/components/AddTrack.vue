@@ -57,9 +57,10 @@
             Maximum live track allowance reached. <br/><br/>
             Please remove one track to upload.
           </div>
-        </div>
 
-        <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
+          <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
+          
+        </div>
       </div>
     </div>
 </template>
