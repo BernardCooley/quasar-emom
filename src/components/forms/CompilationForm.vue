@@ -14,10 +14,13 @@
                     {{releaseDateValidationMessage}}
                 </div>
             </q-field>
-            <q-field>
-                <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork'); isFormValid()"/>
-                <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in compDetails[0].artworkFile.errors" :key="index">
-                    {{artworkFileValidationMessage}}
+            <q-field >
+                <div class="artworkUploadContainer">
+                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork'); isFormValid()"/>
+                    <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in compDetails[0].artworkFile.errors" :key="index">
+                        {{artworkFileValidationMessage}}
+                    </div>
+                    <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
                 </div>
             </q-field>
         </div>
@@ -66,7 +69,8 @@ export default {
     data() {
         return {
             audioFilesToUpload: [],
-            artworkFileToUpload: null
+            artworkFileToUpload: null,
+            artworkUrl: null
         }
     },
     computed: {
@@ -159,8 +163,8 @@ export default {
                 this.compilationData.trackDetails[trackNumber - 1].audioFile.value = files[0]
             } else if (fileType === 'artwork') {
                 this.compilationData.compilationDetails[0].artworkFile.value = files[0]
+                this.artworkUrl = URL.createObjectURL(this.compilationData.compilationDetails[0].artworkFile.value);
             }
-            
         },
         uploadFile() {
             if(this.isFormValid()) {
@@ -230,5 +234,16 @@ i {
 .releaseDatePicker {
     display: flex;
     justify-content: center;
+}
+
+.artworkUploadContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.artworkPreview {
+    width: 100%;
 }
 </style>
