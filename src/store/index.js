@@ -70,6 +70,10 @@ const store = new Vuex.Store({
           trackNumber: {
             value: 1,
             errors: []
+          },
+          uploadPercentage: {
+            value: 0,
+            errors: []
           }
         },
         {
@@ -88,34 +92,57 @@ const store = new Vuex.Store({
           trackNumber: {
             value: 2,
             errors: []
+          },
+          uploadPercentage: {
+            value: 0,
+            errors: []
           }
         }
       ]
     }
   },
   mutations: {
-    REINSTANTIATE_COMPILATION_TRACKS(state) {
-      state.compilationData = {
-        compilationDetails: {
-          title: null,
-          artworkFile: null,
-          releaseDate: null
-        },
-        trackDetails: [
-          {
-            artist: null,
-            title: null,
-            audioFile: null,
-            trackNumber: 1
-          },
-          {
-            artist: null,
-            title: null,
-            audioFile: null,
-            trackNumber: 2
+    UPLOAD_TRACK(state, uploadTrack) {
+      let compDetails = state.compilationData.compilationDetails[0]
+      let thisState = state
+      db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).get().then(track => {
+        if (!track.exists) {
+          let artworkName = ''
+          let audioMetadata = {
+            customMetadata: {
+              'artist': uploadTrack.artist.value,
+              'title': uploadTrack.title.value,
+              'uploadedById': state.loggedInUserId,
+              'artworkName': compDetails.artworkFile.value.name,
+              'uploadedByName': state.accountDetails.artistName
+            }
           }
-        ]
-      }
+
+          let storageRef = firebase.storage().ref()
+          let focusedTrack = storageRef.child('tracks').child(`${uploadTrack.artist.value} - ${uploadTrack.title.value}`)
+          this.uploadAudioTask = focusedTrack.put(uploadTrack.audioFile.value, audioMetadata)
+          
+          this.uploadAudioTask.on('state_changed',
+            function progress(snapshot) {
+              thisState.compilationData.trackDetails[uploadTrack.trackNumber.value-1].uploadPercentage.value = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+            },
+            function errors(error) {console.error(error)},
+            function complete() {
+              db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).set(
+                {
+                  uploadedBy: state.loggedInUserId,
+                  artworkFilename: compDetails.artworkFile.value.name,
+                  compilation: {
+                    title: compDetails.title.value,
+                    releaseDate: compDetails.releaseDate.value,
+                    artworkName: compDetails.artworkFile.value.name
+                  }
+                }
+              )
+            }
+          )
+        } else {alert('Track already exists')}
+      })
     },
     UPDATE_SINGLE_DOWNLOAD(state, value) {
       state.singleUpload = value
@@ -136,6 +163,10 @@ const store = new Vuex.Store({
         },
         trackNumber: {
           value: state.compilationData.trackDetails.length + 1,
+          errors: []
+        },
+        uploadPercentage: {
+          value: 0,
           errors: []
         }
       });
@@ -295,69 +326,6 @@ const store = new Vuex.Store({
       let storageRef = firebase.storage().ref()
       let focusedArtwork = storageRef.child('artwork').child(compDetails.artworkFile.value.name)
       focusedArtwork.put(compDetails.artworkFile.value)
-    },
-    UPLOAD_TRACK(state, uploadTrack) {
-      let compDetails = state.compilationData.compilationDetails[0]
-      let thisState = state
-      db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).get().then(track => {
-        if (!track.exists) {
-          state.uploadComplete = false
-          state.fileUploading = true
-          let artworkName = ''
-          let storageRef = firebase.storage().ref()
-          let focusedTrack = storageRef.child('tracks').child(`${uploadTrack.artist.value}-${uploadTrack.title.value}`)
-
-          // if (value1[1]) {
-          //   let focusedArtwork = storageRef.child('artwork').child(value1[1].name)
-
-          //   let artworkMetadata = {
-          //     customMetadata: { 'uploadedById': state.loggedInUserId }
-          //   }
-          //   focusedArtwork.put(value1[1], artworkMetadata)
-          //   artworkName = value1[1].name
-          // } else {
-          //   artworkName = 'default.png'
-          // }
-
-          let audioMetadata = {
-            customMetadata: {
-              'artist': uploadTrack.artist.value,
-              'title': uploadTrack.title.value,
-              'uploadedById': state.loggedInUserId,
-              'artworkName': compDetails.artworkFile.value.name,
-              'uploadedByName': state.accountDetails.artistName
-            }
-          }
-          this.uploadAudioTask = focusedTrack.put(uploadTrack.audioFile.value, audioMetadata)
-
-          this.uploadAudioTask.on('state_changed',
-            function progress(snapshot) {
-              thisState.fileUploadPercentage = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-            },
-            function errors(error) {
-              console.error(error)
-            },
-            function complete() {
-              thisState.uploadComplete = true
-              thisState.fileUploading = false
-              thisState.fileUploadPercentage = 0
-              db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).set(
-                {
-                  uploadedBy: state.loggedInUserId,
-                  artworkFilename: compDetails.artworkFile.value.name,
-                  compilation: {
-                    title: compDetails.title.value,
-                    releaseDate: compDetails.releaseDate.value,
-                    artworkName: compDetails.artworkFile.value.name
-                  }
-                }
-              )
-            }
-          )
-        } else {
-          alert('Track already exists')
-        }
-      })
     },
     GET_ACCOUNT_DETAILS(state) {
       db.collection('users').doc(state.loggedInUserId).get().then(user => {

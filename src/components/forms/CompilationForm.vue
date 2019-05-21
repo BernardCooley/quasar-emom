@@ -1,7 +1,7 @@
 <template>
     <div class="compilationFormContainer">
 
-        <div class="compilationField">
+        <div class="compilationField" v-if="compTracks[0].uploadPercentage.value == 0">
             <q-field label="Compilation title">
                 <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
@@ -25,29 +25,39 @@
             </q-field>
         </div>
 
-        <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
-            <div class="compilationField">
-                Track No. {{track.trackNumber.value}}
-                <q-field label="Artist">
-                    <q-input class="" v-model="track.artist.value" type="text" value="" multiple/>
-                    <div class="validationMessage" v-for="(artistValidationMessage, index) in track.artist.errors" :key="index">
-                        {{artistValidationMessage}}
-                    </div>
-                </q-field>
-                <q-field label="Title">
-                    <q-input class="" v-model="track.title.value" type="text" value="" multiple/>
-                    <div class="validationMessage" v-for="(trackTitleValidationMessage, index) in track.title.errors" :key="index">
-                        {{trackTitleValidationMessage}}
-                    </div>
-                </q-field>
-                <q-field>
-                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'audio', track.trackNumber.value)"/>
-                    <div class="validationMessage" v-for="(audioFileValidationMessage, index) in track.audioFile.errors" :key="index">
-                        {{audioFileValidationMessage}}
-                    </div>
-                </q-field>
+        <div :class="[compTracks[0].uploadPercentage.value == 0 ? 'largeUploadContainer' : 'smallUploadContainer', 'compilationFieldContainer']" v-for="(track, index) in compTracks" v-bind:key="index">
+            <div class="compilationField" v-if="track.uploadPercentage.value == 0">
+                <div>
+                    Track No. {{track.trackNumber.value}}
+                    <q-field label="Artist">
+                        <q-input class="" v-model="track.artist.value" type="text" value="" multiple/>
+                        <div class="validationMessage" v-for="(artistValidationMessage, index) in track.artist.errors" :key="index">
+                            {{artistValidationMessage}}
+                        </div>
+                    </q-field>
+                    <q-field label="Title">
+                        <q-input class="" v-model="track.title.value" type="text" value="" multiple/>
+                        <div class="validationMessage" v-for="(trackTitleValidationMessage, index) in track.title.errors" :key="index">
+                            {{trackTitleValidationMessage}}
+                        </div>
+                    </q-field>
+                    <q-field>
+                        <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'audio', track.trackNumber.value)"/>
+                        <div class="validationMessage" v-for="(audioFileValidationMessage, index) in track.audioFile.errors" :key="index">
+                            {{audioFileValidationMessage}}
+                        </div>
+                    </q-field>
+                </div>
             </div>
-            <div class="trackActionsContainer">
+            <div class="uploadProgressContainer" v-else>
+                <div class="artist">{{track.artist.value}}ethtehtrhsrthj</div>
+                <div class="title">{{track.title.value}}srjhsrjsryjry</div>
+                <div class="percentage">
+                    <span v-if="track.uploadPercentage.value != 100">{{track.uploadPercentage.value}}%</span>
+                    <span v-else>Upload Complete <i class="closeButton fas fa-check-circle"></i></span>
+                </div>
+            </div>
+            <div class="trackActionsContainer" v-if="track.uploadPercentage.value == 0">
                 <i class="closeButton fas fa-times" v-on:click="removeTrack(index)"></i>
                 <div class="upDownContainer">
                     <i class="moveTrack fas fa-sort-up" v-on:click="moveTrack('up', track.trackNumber.value)"></i>
@@ -55,9 +65,9 @@
                 </div>
             </div>
         </div>
-        <i class="addCompilationTrack fas fa-plus" v-on:click="addTrack()"></i>
+        <i class="addCompilationTrack fas fa-plus" v-if="compTracks[0].uploadPercentage.value == 0" v-on:click="addTrack()"></i>
 
-        <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile()">Upload</q-btn>
+        <q-btn class="uploadBtn" v-if="compTracks[0].uploadPercentage.value == 0" v-on:click.prevent="uploadFile()">Upload</q-btn>
     </div>
 </template>
 
@@ -74,15 +84,12 @@ export default {
         }
     },
     computed: {
-        ...mapState(['compilationData', 'fileUploading']),
+        ...mapState(['compilationData', 'multiFileUploadPercentage']),
         compTracks() {
             return _.sortBy(this.compilationData.trackDetails, 'trackNumber.value', 'asc')
         },
         compDetails() {
             return this.compilationData.compilationDetails
-        },
-        uploadingFile() {
-            return this.fileUploading
         },
         currentDate() {
             let currentDate = new Date()
@@ -113,20 +120,22 @@ export default {
 
                         transformedKey[1] = transformedKey[1] ? transformedKey[1].toLowerCase() : null
 
-                        if(!detail[detailKey].value) {
-                            detail[detailKey].errors.push(`${transformedKey.join(' ')} is required`)
-                            allFieldsValid = false
-                        }else {
-                            if(detailKey == 'audioFile') {
-                                if(detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.mp3') {
-                                    detail[detailKey].errors.push('mp3 files only')
-                                    allFieldsValid = false
+                        if(detailKey != 'uploadPercentage') {
+                            if(!detail[detailKey].value) {
+                                detail[detailKey].errors.push(`${transformedKey.join(' ')} is required`)
+                                allFieldsValid = false
+                            }else {
+                                if(detailKey == 'audioFile') {
+                                    if(detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.mp3') {
+                                        detail[detailKey].errors.push('mp3 files only')
+                                        allFieldsValid = false
+                                    }
                                 }
-                            }
-                            if(detailKey == 'artworkFile') {
-                                if(detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.jpg' && detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.png') {
-                                    detail[detailKey].errors.push('jpg or png files only')
-                                    allFieldsValid = false
+                                if(detailKey == 'artworkFile') {
+                                    if(detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.jpg' && detail[detailKey].value.name.substr(detail[detailKey].value.name.length - 4) != '.png') {
+                                        detail[detailKey].errors.push('jpg or png files only')
+                                        allFieldsValid = false
+                                    }
                                 }
                             }
                         }
@@ -186,8 +195,19 @@ export default {
 .compilationFieldContainer {
     display: flex;
     align-items: center;
+    margin: 10px 0;
+    background-image: linear-gradient(#009e98, #256f77);
+}
+
+.largeUploadContainer {
     height: 195px;
-    margin: 50px 0;
+}
+
+.smallUploadContainer {
+    height: auto;
+    margin: 0;
+    padding: 20px;
+    border-bottom: 1px solid lightgray;
 }
 
 i {
@@ -247,5 +267,26 @@ i {
 
 .artworkPreview {
     width: 100%;
+}
+
+.uploadProgressContainer {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .artist {
+        font-size: 30px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .percentage {
+        font-size: 20px;
+        margin-top: 15px;
+    }
 }
 </style>
