@@ -40,10 +40,10 @@
         <i class="closeSearchIcon fas fa-arrow-left" v-on:click="resultsFiltered = !resultsFiltered"></i>
       </div>
     </div>
-    <div class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
-      <div v-on:click="getUserTracks(track.metaData.uploadedById)" class="artist">{{track.metaData.artist}}</div>
+    <div v-on:click="toggleExplore(); changeTrack(track)" class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
+      <div class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
-      <!-- <img class="cardImage" v-on:click="toggleExplore(); changeTrack(track)" :src="track.metaData.artworkUrl"> -->
+      <!-- <img class="cardImage" :src="track.metaData.artworkUrl"> -->
     </div>
   </div>
   <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
