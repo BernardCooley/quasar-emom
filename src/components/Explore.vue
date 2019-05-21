@@ -43,7 +43,7 @@
     <div v-on:click="toggleExplore(); changeTrack(track)" class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
       <div class="artist">{{track.metaData.artist}}</div>
       <div class="title">{{track.metaData.title}}</div>
-      <!-- <img class="cardImage" :src="track.metaData.artworkUrl"> -->
+      <img class="cardImage" :src="track.metaData.artworkUrl">
     </div>
   </div>
   <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
@@ -161,11 +161,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
 }
 .cardImage {
-  width: 100%;
-  padding: 0 20px;
   height: 100%;
+  position: absolute;
+  right: 0;
+  padding: 15px;
 }
 .artist {
   font-size: 30px;
