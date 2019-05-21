@@ -21,11 +21,24 @@
             <q-btn>FAVOURITES</q-btn>
             <q-item>
               <q-btn-dropdown split label="Artists">
-                <q-list class="artistDropdown" link>
+                <q-list class="filterDropdown" link>
                   <div v-for="(artist, index) in allArtists" :key="index" >
                     <q-item @click.native="filterByArtist(artist)" v-close-overlay>
                       <q-item-main>
                         <q-item-tile class="dropdownLabel" label>{{artist}}</q-item-tile>
+                      </q-item-main>
+                    </q-item>
+                  </div>
+                </q-list>
+              </q-btn-dropdown>
+            </q-item>
+            <q-item>
+              <q-btn-dropdown split label="EMOM Compilations">
+                <q-list class="filterDropdown" link>
+                  <div v-for="(compilation, index) in allCompilations" :key="index" >
+                    <q-item @click.native="filterByCompilation(compilation)" v-close-overlay>
+                      <q-item-main>
+                        <q-item-tile class="dropdownLabel" label>{{compilation}}</q-item-tile>
                       </q-item-main>
                     </q-item>
                   </div>
@@ -100,6 +113,13 @@ export default {
       })
       return [...new Set(artists)]
     },
+    allCompilations() {
+      let compilations = []
+      this.tracksArray.map(track => {
+        track.metaData.compilation != '' ? compilations.push(track.metaData.compilation) : null
+      })
+      return [...new Set(compilations)]
+    },
     currentUserName() {
       return this.loggedInUserName
     }
@@ -116,10 +136,11 @@ export default {
       this.$store.commit('TOGGLE_EXPLORE')
     },
     submitSearch(searchTerm) {
-      this.tracksArray.map(track => {
-      })
-
-      let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(searchTerm.toLowerCase()) || track.metaData.title.toLowerCase().includes(searchTerm.toLowerCase()))
+      let newTracksArray = this.tracksArray.filter(track => 
+        track.metaData.artist.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        track.metaData.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        track.metaData.compilation.toLowerCase().includes(searchTerm.toLowerCase())
+      )
 
       this.$store.commit('UPDATE_FILTERED_TRACKS_ARRAY', newTracksArray)
 
@@ -137,6 +158,10 @@ export default {
     filterByArtist(artist) {
       this.openFilterModal = false
       this.submitSearch(artist)
+    },
+    filterByCompilation(compilation) {
+      this.openFilterModal = false
+      this.submitSearch(compilation)
     },
     getAllArtists() {
       let artists = []
@@ -288,7 +313,7 @@ input.q-input-target {
   }
 }
 
-.artistDropdown {
+.filterDropdown {
   color: white;
   background-color: #256f77;
 }
@@ -296,6 +321,7 @@ input.q-input-target {
 .filterOptionsContainer {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column;
 }
 </style>

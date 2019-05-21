@@ -482,6 +482,8 @@ const store = new Vuex.Store({
                   let artistName = track.data().artist
                   let title = track.data().title
 
+                  let compilation = track.data().compilation ? track.data().compilation.title : ''
+
                   this.state.tracksArray.push({
                     metaData: {
                       artist: artistName,
@@ -489,7 +491,8 @@ const store = new Vuex.Store({
                       artworkUrl: artworkUrl,
                       uploadedByArtist: metadata.customMetadata.uploadedByName,
                       uploadedById: metadata.customMetadata.uploadedById,
-                      favourites: metadata.customMetadata.favourites
+                      favourites: metadata.customMetadata.favourites,
+                      compilation: compilation
                     },
                     downloadURL: trackURL,
                     filename: trackFilename,
