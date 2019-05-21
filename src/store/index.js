@@ -128,7 +128,7 @@ const store = new Vuex.Store({
             },
             function errors(error) {console.error(error)},
             function complete() {
-              db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).set(
+              db.collection('tracks').doc(`${uploadTrack.artist.value} - ${uploadTrack.title.value}`).set(
                 {
                   uploadedBy: state.loggedInUserId,
                   artworkFilename: compDetails.artworkFile.value.name,
