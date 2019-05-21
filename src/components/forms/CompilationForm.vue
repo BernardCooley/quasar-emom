@@ -170,17 +170,13 @@ export default {
 
         },
         uploadFile() {
-            // if(this.isFormValid()) {
-                // this.$store.commit('UPLOAD_COMPILATION_DETAILS')
-
-                // this.$store.commit('UPLOAD_TRACK', this.compilationData.trackDetails[0])
+            if(this.isFormValid()) {
+                this.$store.commit('UPLOAD_COMPILATION_DETAILS')
 
                 this.compilationData.trackDetails.forEach(track => {
                     this.$store.commit('UPLOAD_TRACK', track)
                 })
-
-                // this.$store.commit('UPLOAD_COMPILATION', this.compilationData)
-            // }
+            }
         }
     },
 }
