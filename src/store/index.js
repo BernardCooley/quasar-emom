@@ -182,7 +182,7 @@ const store = new Vuex.Store({
     UPDATE_COMPILATION_TRACKS(state, value) {
       state.compilationData.trackDetails = value
     },
-    UPDATE_IS_USER_LOGGED_IN(state, value) {
+    UPDATE_IS_USER_ADMIN(state, value) {
       state.isUserAdmin = value
     },
     UPDATE_TRACK_ARTIST(state, value) {

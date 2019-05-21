@@ -61,7 +61,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_IS_USER_LOGGED_IN']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_IS_USER_ADMIN']),
     validation() {
       this.errorsBool = false
       this.user.email.errors = []
@@ -96,11 +96,11 @@ export default {
             db.collection('users').where('userID', '==', this.loggedInUserId).get()
               .then(querySnapshot => {
                 querySnapshot.forEach(doc => {
-                  doc.data().admin ? this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true) : this.$store.commit('UPDATE_IS_USER_LOGGED_IN', false)
+                  doc.data().admin ? this.$store.commit('UPDATE_IS_USER_ADMIN', true) : this.$store.commit('UPDATE_IS_USER_ADMIN', false)
                 })
               })
 
-            this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true)
+            this.$store.commit('UPDATE_IS_USER_ADMIN', true)
           }else {
             alert('Account not verified.')
             if (window.confirm("Re-send confirmation email")) {

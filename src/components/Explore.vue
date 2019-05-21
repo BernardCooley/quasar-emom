@@ -129,9 +129,6 @@ export default {
     playTrack(filename) {
       this.$store.commit('UPDATE_CURRENT_TRACK', this.$store.currentTrack = this.tracksArray.filter(track => track.filename == filename)[0])
     },
-    getUserTracks(userId) {
-      // this.$store.commit('GET_TRACKS', userId)
-    },
     toggleExplore() {
       this.$store.commit('TOGGLE_EXPLORE')
     },

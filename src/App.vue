@@ -21,7 +21,7 @@ export default {
     ...mapState(['loggedInUserId'])
   },
   methods: {
-    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID', 'UPDATE_IS_USER_LOGGED_IN']),
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_LOGGED_IN_USER_NAME', 'UPDATE_LOGGED_IN_USER_ID', 'UPDATE_IS_USER_ADMIN']),
     login() {
       const initializeAuth = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
@@ -38,7 +38,7 @@ export default {
           db.collection('users').where('userID', '==', this.loggedInUserId).get()
             .then(querySnapshot => {
               querySnapshot.forEach(doc => {
-                doc.data().admin ? this.$store.commit('UPDATE_IS_USER_LOGGED_IN', true) : this.$store.commit('UPDATE_IS_USER_LOGGED_IN', false)
+                doc.data().admin ? this.$store.commit('UPDATE_IS_USER_ADMIN', true) : this.$store.commit('UPDATE_IS_USER_ADMIN', false)
               })
             })
         } else {

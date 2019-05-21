@@ -2,7 +2,7 @@
   <div class="addTrackContainer">
       <div class="content">
 
-        <div class="singleOrCompilation" v-if="loggedInUserId">
+        <div v-if="isUserAdminComp" class="singleOrCompilation">
           <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
           <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
         </div>
@@ -105,7 +105,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId', 'compilationData']),
+    ...mapState(['fileUploadPercentage', 'currentUserArtistName', 'uploadComplete', 'fileUploading', 'loggedInUserName', 'userTracksArray', 'trackLimitReached', 'loggedInUserId', 'compilationData', 'isUserAdmin']),
     uploadingFile() {
       return this.fileUploading
     },
@@ -120,6 +120,9 @@ export default {
     },
     limitReached() {
       return this.trackLimitReached
+    },
+    isUserAdminComp() {
+      return this.isUserAdmin
     }
   },
   created() {
