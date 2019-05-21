@@ -54,8 +54,7 @@
           </div>
           </div>
           <div class="maxTracksReachedMessage" v-else>
-            Maximum live track allowance reached. <br/><br/>
-            Please remove one track to upload.
+            Three track limit reached <br/><br/>
           </div>
 
           <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>

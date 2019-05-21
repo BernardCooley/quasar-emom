@@ -9,7 +9,7 @@
                 </div>
             </q-field>
             <q-field label="Release date">
-                <q-datetime-picker color="#11363a" v-model="compDetails[0].releaseDate.value" type="date" minimal :min="currentDate" dark/>
+                <q-datetime-picker color="#11363a" v-model="compDetails[0].releaseDate.value" type="datetime" :min="currentDate" dark/>
                 <div class="validationMessage" v-for="(releaseDateValidationMessage, index) in compDetails[0].releaseDate.errors" :key="index">
                     {{releaseDateValidationMessage}}
                 </div>
@@ -211,7 +211,7 @@ export default {
 }
 
 .largeUploadContainer {
-    height: 195px;
+    height: auto;
 }
 
 .smallUploadContainer {
@@ -299,5 +299,9 @@ i {
         font-size: 20px;
         margin-top: 15px;
     }
+}
+
+.q-datetime {
+    width: 100%;
 }
 </style>
