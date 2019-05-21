@@ -130,6 +130,8 @@ const store = new Vuex.Store({
             function complete() {
               db.collection('tracks').doc(`${uploadTrack.artist.value} - ${uploadTrack.title.value}`).set(
                 {
+                  artist: uploadTrack.artist.value,
+                  title: uploadTrack.title.value,
                   uploadedBy: state.loggedInUserId,
                   artworkFilename: compDetails.artworkFile.value.name,
                   compilation: {
@@ -475,20 +477,26 @@ const store = new Vuex.Store({
 
             artworkRef.getDownloadURL().then(artworkUrl => {
               trackRef.getDownloadURL().then(trackURL => {
-                this.state.tracksArray.push({
-                  metaData: {
-                    artist: metadata.customMetadata.uploadedByName,
-                    title: metadata.customMetadata.title,
-                    artworkUrl: artworkUrl,
-                    uploadedByArtist: metadata.customMetadata.uploadedByName,
-                    uploadedById: metadata.customMetadata.uploadedById,
-                    favourites: metadata.customMetadata.favourites
-                  },
-                  downloadURL: trackURL,
-                  filename: trackFilename,
-                  currentTrack: index == 0 ? true : false
+
+                db.collection('tracks').doc(trackFilename).get().then(track => {
+                  let artistName = track.data().artist
+                  let title = track.data().title
+
+                  this.state.tracksArray.push({
+                    metaData: {
+                      artist: artistName,
+                      title: title,
+                      artworkUrl: artworkUrl,
+                      uploadedByArtist: metadata.customMetadata.uploadedByName,
+                      uploadedById: metadata.customMetadata.uploadedById,
+                      favourites: metadata.customMetadata.favourites
+                    },
+                    downloadURL: trackURL,
+                    filename: trackFilename,
+                    currentTrack: index == 0 ? true : false
+                  })
+                  Loading.hide()
                 })
-                Loading.hide()
               }).catch(error => {
                 Loading.hide()
                 alert('Something went wrong. Please try again later.')
