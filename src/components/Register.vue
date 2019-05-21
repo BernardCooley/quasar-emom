@@ -204,7 +204,7 @@ export default {
             console.error(error)
           });
           this.$router.push('/login')
-        }).catch(error => console.log(error))
+        }).catch(error => console.error(error))
       }else {
         Loading.hide()
         firebase.auth().signOut().then(() => {

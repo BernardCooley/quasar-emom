@@ -168,7 +168,6 @@ export default {
       })
     },
     uploadFile() {
-      console.log(this.compilationData)
 
 
       // this.validation()

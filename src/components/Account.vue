@@ -197,15 +197,15 @@ export default {
                     alert('Confirmation email sent.')
                     this.$store.commit('GET_ACCOUNT_DETAILS')
                   }).catch(function(error) {
-                    console.log(error)
+                    console.error(error)
                   });
                 }).catch(error => {
-                  console.log(error)
+                  console.error(error)
                 });
                 this.fieldToEdit = ''
                 this.user.email.value = ''
               }else {
-                console.log('invalid')
+                console.error('invalid')
               }
             }
           }else if(field == 'artist bio') {

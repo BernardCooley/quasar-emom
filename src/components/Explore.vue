@@ -117,13 +117,9 @@ export default {
     },
     submitSearch(searchTerm) {
       this.tracksArray.map(track => {
-        console.log(track.metaData.artist.toLowerCase())
-        console.log(searchTerm.toLowerCase())
       })
 
       let newTracksArray = this.tracksArray.filter(track => track.metaData.artist.toLowerCase().includes(searchTerm.toLowerCase()) || track.metaData.title.toLowerCase().includes(searchTerm.toLowerCase()))
-
-      console.log(newTracksArray)
 
       this.$store.commit('UPDATE_FILTERED_TRACKS_ARRAY', newTracksArray)
 
