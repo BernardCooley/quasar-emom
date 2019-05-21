@@ -100,7 +100,6 @@ export default {
       trackUpload: null,
       audioFileToUpload: null,
       artworkFileToUpload: null,
-      uploadAudioTask: null,
       singleUpload: true,
       numberOfCompilationTracks: 5
     };

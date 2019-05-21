@@ -3,20 +3,20 @@
 
         <div class="compilationField">
             <q-field label="Compilation title">
-                <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple v-on:keyup="isFormValid"/>
+                <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
                     {{compTitleValidationMessage}}
                 </div>
             </q-field>
             <q-field label="Release date">
-                <q-datetime-picker color="#11363a" v-model="compDetails[0].releaseDate.value" type="date" minimal :min="currentDate" dark @input="isFormValid"/>
+                <q-datetime-picker color="#11363a" v-model="compDetails[0].releaseDate.value" type="date" minimal :min="currentDate" dark/>
                 <div class="validationMessage" v-for="(releaseDateValidationMessage, index) in compDetails[0].releaseDate.errors" :key="index">
                     {{releaseDateValidationMessage}}
                 </div>
             </q-field>
-            <q-field >
+            <q-field>
                 <div class="artworkUploadContainer">
-                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork'); isFormValid()"/>
+                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork')"/>
                     <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in compDetails[0].artworkFile.errors" :key="index">
                         {{artworkFileValidationMessage}}
                     </div>
@@ -29,19 +29,19 @@
             <div class="compilationField">
                 Track No. {{track.trackNumber.value}}
                 <q-field label="Artist">
-                    <q-input class="" v-model="track.artist.value" type="text" value="" multiple v-on:keyup="isFormValid"/>
+                    <q-input class="" v-model="track.artist.value" type="text" value="" multiple/>
                     <div class="validationMessage" v-for="(artistValidationMessage, index) in track.artist.errors" :key="index">
                         {{artistValidationMessage}}
                     </div>
                 </q-field>
                 <q-field label="Title">
-                    <q-input class="" v-model="track.title.value" type="text" value="" multiple v-on:keyup="isFormValid"/>
+                    <q-input class="" v-model="track.title.value" type="text" value="" multiple/>
                     <div class="validationMessage" v-for="(trackTitleValidationMessage, index) in track.title.errors" :key="index">
                         {{trackTitleValidationMessage}}
                     </div>
                 </q-field>
                 <q-field>
-                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'audio', track.trackNumber.value); isFormValid()"/>
+                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'audio', track.trackNumber.value)"/>
                     <div class="validationMessage" v-for="(audioFileValidationMessage, index) in track.audioFile.errors" :key="index">
                         {{audioFileValidationMessage}}
                     </div>
@@ -50,8 +50,8 @@
             <div class="trackActionsContainer">
                 <i class="closeButton fas fa-times" v-on:click="removeTrack(index)"></i>
                 <div class="upDownContainer">
-                    <i class="moveTrack fas fa-sort-up" v-on:click="moveTrack('up', track.trackNumber)"></i>
-                    <i class="moveTrack fas fa-sort-down" v-on:click="moveTrack('down', track.trackNumber)"></i>
+                    <i class="moveTrack fas fa-sort-up" v-on:click="moveTrack('up', track.trackNumber.value)"></i>
+                    <i class="moveTrack fas fa-sort-down" v-on:click="moveTrack('down', track.trackNumber.value)"></i>
                 </div>
             </div>
         </div>
@@ -76,7 +76,7 @@ export default {
     computed: {
         ...mapState(['compilationData', 'fileUploading']),
         compTracks() {
-            return _.sortBy(this.compilationData.trackDetails, 'trackNumber', 'asc')
+            return _.sortBy(this.compilationData.trackDetails, 'trackNumber.value', 'asc')
         },
         compDetails() {
             return this.compilationData.compilationDetails
@@ -96,7 +96,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION']),
+        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS']),
         isFormValid() {
             let allFieldsValid = true
 
@@ -140,22 +140,22 @@ export default {
             this.$store.commit('ADD_COMPILATION_TRACK')
         },
         removeTrack(trackIndex) {
-            this.$store.commit('REMOVE_COMPILATION_TRACK', _.sortBy(this.compilationData.trackDetails.filter(track => track != this.compilationData.trackDetails[trackIndex], 'trackNumber', 'asc')))
+            this.$store.commit('REMOVE_COMPILATION_TRACK', _.sortBy(this.compilationData.trackDetails.filter(track => track != this.compilationData.trackDetails[trackIndex], 'trackNumber.value', 'asc')))
         },
         moveTrack(upDown, trackNum) {
             let tracks = this.compilationData.trackDetails
             if(upDown == 'down') {
                 if(trackNum < tracks.length) {
-                    tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber + 1
-                    tracks[trackNum].trackNumber = tracks[trackNum].trackNumber - 1
+                    tracks[trackNum-1].trackNumber.value = tracks[trackNum-1].trackNumber.value + 1
+                    tracks[trackNum].trackNumber.value = tracks[trackNum].trackNumber.value - 1
                 }
             }else {
                 if(trackNum > 1) {
-                    tracks[trackNum-1].trackNumber = tracks[trackNum-1].trackNumber - 1
-                    tracks[trackNum-2].trackNumber = tracks[trackNum-2].trackNumber + 1
+                    tracks[trackNum-1].trackNumber.value = tracks[trackNum-1].trackNumber.value - 1
+                    tracks[trackNum-2].trackNumber.value = tracks[trackNum-2].trackNumber.value + 1
                 }
             }
-            this.$store.commit('UPDATE_COMPILATION_TRACKS', _.sortBy(tracks, 'trackNumber', 'asc'))
+            this.$store.commit('UPDATE_COMPILATION_TRACKS', _.sortBy(tracks, 'trackNumber.value', 'asc'))
         },
         getSelectedFile(e, fileType, trackNumber) {
             var files = e.target.files || e.dataTransfer.files;
@@ -166,10 +166,21 @@ export default {
                 this.artworkUrl = URL.createObjectURL(this.compilationData.compilationDetails[0].artworkFile.value);
             }
         },
+        uploadCompilationDetails() {
+
+        },
         uploadFile() {
-            if(this.isFormValid()) {
-                this.$store.commit('UPLOAD_COMPILATION', this.compilationData)
-            }
+            // if(this.isFormValid()) {
+                // this.$store.commit('UPLOAD_COMPILATION_DETAILS')
+
+                // this.$store.commit('UPLOAD_TRACK', this.compilationData.trackDetails[0])
+
+                this.compilationData.trackDetails.forEach(track => {
+                    this.$store.commit('UPLOAD_TRACK', track)
+                })
+
+                // this.$store.commit('UPLOAD_COMPILATION', this.compilationData)
+            // }
         }
     },
 }
@@ -229,11 +240,6 @@ i {
     background-color: rgba(27, 131, 132, 0.4);
     padding: 10px;
     border-radius: 25px;
-}
-
-.releaseDatePicker {
-    display: flex;
-    justify-content: center;
 }
 
 .artworkUploadContainer {

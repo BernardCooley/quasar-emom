@@ -117,7 +117,7 @@ const store = new Vuex.Store({
         ]
       }
     },
-    UPDATE_SINGLE_DOWNLOAD(state , value) {
+    UPDATE_SINGLE_DOWNLOAD(state, value) {
       state.singleUpload = value
     },
     ADD_COMPILATION_TRACK(state) {
@@ -178,11 +178,11 @@ const store = new Vuex.Store({
       state.fileUploading = value
     },
     TOGGLE_COMMENTS(state, value) {
-      if(value == 'toggle') {
+      if (value == 'toggle') {
         state.commentsOpen = !state.commentsOpen
-      }else if(value == 'true') {
+      } else if (value == 'true') {
         state.commentsOpen = true
-      }else if(value == 'false') {
+      } else if (value == 'false') {
         state.commentsOpen = false
       }
     },
@@ -221,14 +221,14 @@ const store = new Vuex.Store({
       })
 
       db.collection('users').doc(state.loggedInUserId).get().then(user => {
-        if(user.data().bandImage) {
+        if (user.data().bandImage) {
           let bandImage = user.data().bandImage
 
           let imageRef = storageRef.child(`bandImages/${bandImage}`)
           imageRef.delete().then(() => {
             deleteAccountAndTracks()
           })
-        }else {
+        } else {
           deleteAccountAndTracks()
         }
       }).catch(error => {
@@ -239,7 +239,7 @@ const store = new Vuex.Store({
 
       function deleteAccountAndTracks() {
         db.collection('tracks').where('uploadedBy', '==', state.loggedInUserId).get().then(tracks => {
-          if(tracks) {
+          if (tracks) {
             tracks.docs.map(track => {
               trackNames.push(track.id)
               artworkNames.push(track.data().artworkFilename)
@@ -258,7 +258,7 @@ const store = new Vuex.Store({
                 Loading.hide()
                 console.error(error)
               })
-              if(index == trackNames.length-1) {
+              if (index == trackNames.length - 1) {
                 db.collection('users').doc(state.loggedInUserId).delete().then(() => {
                   firebase.auth().currentUser.delete().then(() => {
                     Loading.hide()
@@ -271,7 +271,7 @@ const store = new Vuex.Store({
                 })
               }
             })
-          }else {
+          } else {
             db.collection('users').doc(state.loggedInUserId).delete().then(() => {
               firebase.auth().currentUser.delete().then(() => {
                 Loading.hide()
@@ -288,69 +288,76 @@ const store = new Vuex.Store({
           alert('Something went wrong. Please try again later.')
           console.error(error)
         })
-      } 
-    },
-    UPLOAD_COMPILATION(state, value) {
-      console.log(value)
-    },
-    UPLOAD_TRACK(state, value1, value2) {
-      let thisState = state
-      if(!value2) {
-        db.collection('tracks').doc(value1[0].name).get().then(track => {
-          if(!track.exists) {
-            state.uploadComplete = false
-            state.fileUploading = true
-            let artworkName = ''
-            let storageRef = firebase.storage().ref()
-            let focusedTrack = storageRef.child('tracks').child(value1[0].name)
-
-            if (value1[1]) {
-              let focusedArtwork = storageRef.child('artwork').child(value1[1].name)
-
-              let artworkMetadata = {
-                customMetadata: {'uploadedById': state.loggedInUserId}
-              }
-              focusedArtwork.put(value1[1], artworkMetadata)
-              artworkName = value1[1].name
-            } else {
-              artworkName = 'default.png'
-            }
-            
-            let audioMetadata = {
-              customMetadata: {
-                'artist': value1[2].artist.value,
-                'title': value1[2].title.value,
-                'uploadedById': state.loggedInUserId,
-                'artworkName': artworkName,
-                'uploadedByName': state.accountDetails.artistName
-              }
-            }
-            this.uploadAudioTask = focusedTrack.put(value1[0], audioMetadata)
-
-            this.uploadAudioTask.on('state_changed',
-              function progress(snapshot) {
-                thisState.fileUploadPercentage = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-              },
-              function errors(error) {
-                console.error(error)
-              },
-              function complete() {
-                thisState.uploadComplete = true
-                thisState.fileUploading = false
-                thisState.fileUploadPercentage = 0
-                db.collection('tracks').doc(value1[0].name).set(
-                  {
-                    uploadedBy: state.loggedInUserId,
-                    artworkFilename: value1[1] ? value1[1].name : ''
-                  }
-                )
-              }
-            )
-          }else {
-            alert('Track already exists')
-          }
-        })
       }
+    },
+    UPLOAD_COMPILATION_DETAILS(state) {
+      let compDetails = state.compilationData.compilationDetails[0]
+      let storageRef = firebase.storage().ref()
+      let focusedArtwork = storageRef.child('artwork').child(compDetails.artworkFile.value.name)
+      focusedArtwork.put(compDetails.artworkFile.value)
+    },
+    UPLOAD_TRACK(state, uploadTrack) {
+      let compDetails = state.compilationData.compilationDetails[0]
+      let thisState = state
+      db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).get().then(track => {
+        if (!track.exists) {
+          state.uploadComplete = false
+          state.fileUploading = true
+          let artworkName = ''
+          let storageRef = firebase.storage().ref()
+          let focusedTrack = storageRef.child('tracks').child(`${uploadTrack.artist.value}-${uploadTrack.title.value}`)
+
+          // if (value1[1]) {
+          //   let focusedArtwork = storageRef.child('artwork').child(value1[1].name)
+
+          //   let artworkMetadata = {
+          //     customMetadata: { 'uploadedById': state.loggedInUserId }
+          //   }
+          //   focusedArtwork.put(value1[1], artworkMetadata)
+          //   artworkName = value1[1].name
+          // } else {
+          //   artworkName = 'default.png'
+          // }
+
+          let audioMetadata = {
+            customMetadata: {
+              'artist': uploadTrack.artist.value,
+              'title': uploadTrack.title.value,
+              'uploadedById': state.loggedInUserId,
+              'artworkName': compDetails.artworkFile.value.name,
+              'uploadedByName': state.accountDetails.artistName
+            }
+          }
+          this.uploadAudioTask = focusedTrack.put(uploadTrack.audioFile.value, audioMetadata)
+
+          this.uploadAudioTask.on('state_changed',
+            function progress(snapshot) {
+              thisState.fileUploadPercentage = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+            },
+            function errors(error) {
+              console.error(error)
+            },
+            function complete() {
+              thisState.uploadComplete = true
+              thisState.fileUploading = false
+              thisState.fileUploadPercentage = 0
+              db.collection('tracks').doc(`${uploadTrack.artist.value}-${uploadTrack.title.value}`).set(
+                {
+                  uploadedBy: state.loggedInUserId,
+                  artworkFilename: compDetails.artworkFile.value.name,
+                  compilation: {
+                    title: compDetails.title.value,
+                    releaseDate: compDetails.releaseDate.value,
+                    artworkName: compDetails.artworkFile.value.name
+                  }
+                }
+              )
+            }
+          )
+        } else {
+          alert('Track already exists')
+        }
+      })
     },
     GET_ACCOUNT_DETAILS(state) {
       db.collection('users').doc(state.loggedInUserId).get().then(user => {
@@ -369,7 +376,7 @@ const store = new Vuex.Store({
         db.collection('tracks').doc(value).get().then(track => {
           artworkName = track.data().artworkFilename ? track.data().artworkFilename : ''
           db.collection('tracks').doc(value).delete().then(() => {
-            if(track.data().artworkFilename) {
+            if (track.data().artworkFilename) {
               let artworkRef = storageRef.child(`artwork/${artworkName}`)
               artworkRef.delete().then(() => {
                 Loading.hide()
@@ -379,8 +386,8 @@ const store = new Vuex.Store({
                 Loading.hide()
                 alert('Something went wrong. Please try again later.')
                 console.error(error)
-              }) 
-            }else {
+              })
+            } else {
               Loading.hide()
               this.commit('GET_TRACKS')
               this.commit('GET_ACCOUNT_TRACKS')
@@ -404,12 +411,12 @@ const store = new Vuex.Store({
     UPDATE_BAND_IMAGE(state) {
       db.collection('users').where('userID', '==', state.loggedInUserId).get().then(users => {
         users.docs.map(user => {
-          if(user.data().bandImage.length > 0) {
+          if (user.data().bandImage.length > 0) {
             let bandImageRef = firebase.storage().ref().child('bandImages/' + user.data().bandImage)
             bandImageRef.getDownloadURL().then(bandImageDownloadUrl => {
               state.bandImageUrl = bandImageDownloadUrl
             })
-          }else {
+          } else {
             state.bandImageUrl = ''
           }
         })
@@ -475,15 +482,15 @@ const store = new Vuex.Store({
 
       state.tracksArray = []
       let trackNames = []
-      
-      if(value != undefined) {
+
+      if (value != undefined) {
         db.collection('tracks').where('uploadedBy', '==', value).get().then(tracks => {
           tracks.docs.map(track => {
             trackNames.push(track.id)
           })
           retrieveTracks(trackNames)
         })
-      }else {
+      } else {
         db.collection('tracks').get().then(tracks => {
           tracks.docs.map(track => {
             trackNames.push(track.id)
