@@ -26,6 +26,7 @@
         </div>
 
         <div :class="[compTracks[0].uploadPercentage.value == 0 ? 'largeUploadContainer' : 'smallUploadContainer', 'compilationFieldContainer']" v-for="(track, index) in compTracks" v-bind:key="index">
+            <div class="progressBar" :style="{ width: track.uploadPercentage.value + '%' }"></div>
             <div class="compilationField" v-if="track.uploadPercentage.value == 0">
                 <div>
                     Track No. {{track.trackNumber.value}}
@@ -197,6 +198,16 @@ export default {
     align-items: center;
     margin: 10px 0;
     background-image: linear-gradient(#009e98, #256f77);
+    position: relative;
+
+    .progressBar {
+        height: 100%;
+        background-color: white;
+        opacity: 0.3;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 }
 
 .largeUploadContainer {
