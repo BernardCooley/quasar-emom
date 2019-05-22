@@ -17,10 +17,14 @@
           <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
           <div>Filter by:</div>
           <div class="filterOptionsContainer">
-            <q-btn v-on:click="filterByArtist(currentUserName)">YOURS</q-btn>
-            <q-btn>FAVOURITES</q-btn>
             <q-item>
-              <q-btn-dropdown split label="Artists">
+              <q-btn v-on:click="filterByArtist(currentUserName)">YOURS</q-btn>
+            </q-item>
+            <q-item>
+              <q-btn>FAVOURITES</q-btn>
+            </q-item>
+            <q-item>
+              <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="Artists">
                 <q-list class="filterDropdown" link>
                   <div v-for="(artist, index) in allArtists" :key="index" >
                     <q-item @click.native="filterByArtist(artist)" v-close-overlay>
@@ -33,7 +37,7 @@
               </q-btn-dropdown>
             </q-item>
             <q-item>
-              <q-btn-dropdown split label="EMOM Compilations">
+              <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="EMOM Compilations">
                 <q-list class="filterDropdown" link>
                   <div v-for="(compilation, index) in allCompilations" :key="index" >
                     <q-item @click.native="filterByCompilation(compilation)" v-close-overlay>
@@ -319,6 +323,6 @@ input.q-input-target {
   display: flex;
   justify-content: space-evenly;
   align-items: flex-start;
-  flex-direction: column;
+  flex-wrap: wrap;
 }
 </style>

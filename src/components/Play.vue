@@ -28,7 +28,7 @@
       <div class="collapsedPlayItem trackDetails" v-on:click="toggleMusic()" >
         <div class="collapdesPlayTitle"><span class="collapdesPlayArtist">{{currentTrack.metaData.artist}}</span><span>{{currentTrack.metaData.title}}</span></div>
       </div>
-      <div class="collapsedPlayItem collapsedPlayPause">
+      <div class="collapsedPlayItem collapsedPlayPause" v-on:click="playPauseTrack()">
         <img class="collapseAudioControl playPause" v-if="!isTrackPlaying" src="statics/icons/play.svg">
         <img class="collapseAudioControl playPause" v-else src="statics/icons/pause.svg">
       </div>
@@ -90,7 +90,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'GET_TRACKS','TOGGLE_EXPLORE']),
+    ...mapMutations(['UPDATE_TRACK_ACTIONS_MODAL', 'UPDATE_CURR_TRACK', 'GET_TRACKS','TOGGLE_EXPLORE', 'TOGGLE_TRACK_PLAYING']),
     openTrackActionsModal() {
       this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true);
     },
@@ -111,6 +111,9 @@ export default {
     },
     toggleMusic() {
       this.$store.commit('TOGGLE_EXPLORE')
+    },
+    playPauseTrack(playPause) {
+      this.$store.commit('TOGGLE_TRACK_PLAYING', !this.isTrackPlaying)
     }
   }
 };
