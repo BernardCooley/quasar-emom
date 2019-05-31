@@ -17,6 +17,7 @@ const store = new Vuex.Store({
     loggedInUserId: null,
     loggedInUserName: null,
     trackActionsModalOpen: false,
+    trackInputModalOpen: false,
     filterModalOpen: false,
     currentTrack: null,
     fileUploadPercentage: null,
@@ -53,55 +54,15 @@ const store = new Vuex.Store({
           }
         }
       ],
-      trackDetails: [
-        {
-          artist: {
-            value: null,
-            errors: []
-          },
-          title: {
-            value: null,
-            errors: []
-          },
-          audioFile: {
-            value: null,
-            errors: []
-          },
-          trackNumber: {
-            value: 1,
-            errors: []
-          },
-          uploadPercentage: {
-            value: 0,
-            errors: []
-          }
-        },
-        {
-          artist: {
-            value: null,
-            errors: []
-          },
-          title: {
-            value: null,
-            errors: []
-          },
-          audioFile: {
-            value: null,
-            errors: []
-          },
-          trackNumber: {
-            value: 2,
-            errors: []
-          },
-          uploadPercentage: {
-            value: 0,
-            errors: []
-          }
-        }
-      ]
+      trackDetails: []
     }
   },
   mutations: {
+    ADD_TRACK_TO_COMPILATION(state, value) {
+      console.log(value)
+      state.compilationData.trackDetails.push(value)
+      console.log(state.compilationData)
+    },
     UPLOAD_TRACK(state, uploadTrack) {
       let compDetails = state.compilationData.compilationDetails[0]
       let thisState = state
@@ -419,6 +380,9 @@ const store = new Vuex.Store({
     },
     UPDATE_TRACK_ACTIONS_MODAL(state, value) {
       state.trackActionsModalOpen = value
+    },
+    OPEN_CLOSE_TRACK_INPUT_MODAL(state, value) {
+      state.trackInputModalOpen = value
     },
     TOGGLE_FILTER_MODAL(state) {
       state.filterModalOpen = !state.filterModalOpen

@@ -1,7 +1,7 @@
 <template>
     <div class="compilationFormContainer">
-
-        <div class="compilationField" v-if="compTracks[0].uploadPercentage.value == 0">
+        <track-input-modal v-if="modalIsOpen"></track-input-modal>
+        <div class="compilationField">
             <q-field label="Compilation title">
                 <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
@@ -25,9 +25,16 @@
             </q-field>
         </div>
 
-        <div :class="[compTracks[0].uploadPercentage.value == 0 ? 'largeUploadContainer' : 'smallUploadContainer', 'compilationFieldContainer']" v-for="(track, index) in compTracks" v-bind:key="index">
-            <div class="progressBar" :style="{ width: track.uploadPercentage.value + '%' }"></div>
-            <div class="compilationField" v-if="track.uploadPercentage.value == 0">
+        <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
+            <div class="progressBar"></div>
+            <div class="trackDetailsContainer">
+                <div class="artist">{{track.artist.value}}</div>
+                <div class="title">{{track.title.value}}</div>
+            </div>
+
+
+
+            <!-- <div class="compilationField">
                 <div>
                     Track No. {{track.trackNumber.value}}
                     <q-field label="Artist">
@@ -49,34 +56,38 @@
                         </div>
                     </q-field>
                 </div>
-            </div>
-            <div class="uploadProgressContainer" v-else>
+            </div> -->
+            <!-- <div class="uploadProgressContainer">
                 <div class="artist">{{track.artist.value}}ethtehtrhsrthj</div>
                 <div class="title">{{track.title.value}}srjhsrjsryjry</div>
                 <div class="percentage">
-                    <span v-if="track.uploadPercentage.value != 100">{{track.uploadPercentage.value}}%</span>
-                    <span v-else>Upload Complete <i class="closeButton fas fa-check-circle"></i></span>
+                    <span>{{track.uploadPercentage.value}}%</span>
+                    <span>Upload Complete <i class="closeButton fas fa-check-circle"></i></span>
                 </div>
-            </div>
-            <div class="trackActionsContainer" v-if="track.uploadPercentage.value == 0">
+            </div> -->
+            <!-- <div class="trackActionsContainer">
                 <i class="closeButton fas fa-times" v-on:click="removeTrack(index)"></i>
                 <div class="upDownContainer">
                     <i class="moveTrack fas fa-sort-up" v-on:click="moveTrack('up', track.trackNumber.value)"></i>
                     <i class="moveTrack fas fa-sort-down" v-on:click="moveTrack('down', track.trackNumber.value)"></i>
                 </div>
-            </div>
+            </div> -->
         </div>
-        <i class="addCompilationTrack fas fa-plus" v-if="compTracks[0].uploadPercentage.value == 0" v-on:click="addTrack()"></i>
+        <i class="addCompilationTrack fas fa-plus" v-on:click="openModal()"></i>
 
-        <q-btn class="uploadBtn" v-if="compTracks[0].uploadPercentage.value == 0" v-on:click.prevent="uploadFile()">Upload</q-btn>
+        <q-btn class="uploadBtn" v-on:click.prevent="uploadFile()">Upload</q-btn>
     </div>
 </template>
 
 <script>
 import { mapMutations, mapState } from 'vuex'
 import _ from 'lodash'
+import TrackInputModal from '.././TrackInputModal'
 
 export default {
+    components: {
+        TrackInputModal
+    },
     data() {
         return {
             audioFilesToUpload: [],
@@ -85,7 +96,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(['compilationData', 'multiFileUploadPercentage']),
+        ...mapState(['compilationData', 'multiFileUploadPercentage', 'trackInputModalOpen']),
+        modalIsOpen() {
+            return this.trackInputModalOpen
+        },
         compTracks() {
             return _.sortBy(this.compilationData.trackDetails, 'trackNumber.value', 'asc')
         },
@@ -104,7 +118,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS']),
+        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS','OPEN_CLOSE_TRACK_INPUT_MODAL']),
         isFormValid() {
             let allFieldsValid = true
 
@@ -187,6 +201,9 @@ export default {
                     this.$store.commit('UPLOAD_TRACK', track)
                 })
             }
+        },
+        openModal() {
+            this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', true)
         }
     },
 }
