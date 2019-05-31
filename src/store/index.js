@@ -59,9 +59,9 @@ const store = new Vuex.Store({
   },
   mutations: {
     ADD_TRACK_TO_COMPILATION(state, value) {
-      console.log(value)
+      state.compilationData.trackDetails.length > 0 ? value.trackNumber.value = state.compilationData.trackDetails[state.compilationData.trackDetails.length-1].trackNumber.value + 1 : null
+
       state.compilationData.trackDetails.push(value)
-      console.log(state.compilationData)
     },
     UPLOAD_TRACK(state, uploadTrack) {
       let compDetails = state.compilationData.compilationDetails[0]

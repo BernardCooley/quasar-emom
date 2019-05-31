@@ -251,7 +251,7 @@ export default {
     position: fixed;
     bottom: 70px;
     right: 15px;
-    font-size: 35px;
+    font-size: 30px;
     opacity: 0.7;
   }
 }

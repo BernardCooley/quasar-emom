@@ -70,7 +70,8 @@ module.exports = function (ctx) {
         'QSearch',
         'QBtnDropdown',
         'QItemTile',
-        'QDatetimePicker'
+        'QDatetimePicker',
+        'QToggle'
       ],
       directives: [
         'Ripple',
