@@ -62,6 +62,7 @@
       <div class="title">{{track.metaData.title}}</div>
       <img class="cardImage" :src="track.metaData.artworkUrl">
     </div>
+    <i class="fas fa-sync-alt refreshIcon" v-if="exploreIsExpanded" v-on:click="refreshTracks"></i>
   </div>
   <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
     <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
@@ -170,6 +171,9 @@ export default {
         artists.push(track.metaData.artist)
       })
       return [...new Set(artists)]
+    },
+    refreshTracks() {
+      this.$store.commit('GET_TRACKS')
     }
   }
 };
@@ -236,11 +240,20 @@ export default {
     }
 }
 .exploreContainer {
+  position: relative;
   overflow-y: hidden;
 	max-height: 10000px;
 	transition-property: all;
 	transition-duration: .5s;
 	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+
+  .refreshIcon {
+    position: fixed;
+    bottom: 70px;
+    right: 15px;
+    font-size: 35px;
+    opacity: 0.7;
+  }
 }
 .exploreCollapsed {
   max-height: 0;
