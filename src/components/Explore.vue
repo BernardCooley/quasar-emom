@@ -4,7 +4,7 @@
     <div class="searchBar">
       <div class="searchAndFilterContainer" v-if="!openFilterModal && !resultsFiltered">
         <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-          <q-search v-model="searchModel" no-icon="none" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
+          <q-search v-model="searchModel" :no-icon="false" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
           <div class="searchActions" v-if="searchExpanded">
             <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
             <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>

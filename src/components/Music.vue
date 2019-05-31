@@ -1,7 +1,7 @@
 <template>
     <div class="musicContainer">
         <explore></explore>
-        <play :class="exploreExpanded ? 'fixedBottom' : ''"></play>
+        <play v-if="!exploreExpanded" :class="exploreExpanded ? 'fixedBottom' : ''"></play>
     </div>
 </template>
 
