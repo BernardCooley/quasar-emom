@@ -1,48 +1,53 @@
 <template>
     <div class="compilationFormContainer">
         <track-input-modal v-if="modalIsOpen"></track-input-modal>
-        <div class="compilationField">
-            <q-field label="Compilation title">
-                <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
-                <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
-                    {{compTitleValidationMessage}}
-                </div>
-            </q-field>
-            <q-field>
-                <q-field>
-                    <q-toggle v-model="futureReleaseDate"></q-toggle>
-                    Future release date
-                </q-field>
-                <q-datetime-picker v-if="futureReleaseDate" color="#11363a" v-model="compDetails[0].releaseDate.value" type="datetime" :min="currentDate" @change="futureReleaseDate = !futureReleaseDate" dark/>
-                <div class="validationMessage" v-for="(releaseDateValidationMessage, index) in compDetails[0].releaseDate.errors" :key="index">
-                    {{releaseDateValidationMessage}}
-                </div>
-            </q-field>
-            <q-field  label="Compilation artwork upload">
-                <div class="artworkUploadContainer">
-                    <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork')"/>
-                    <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in compDetails[0].artworkFile.errors" :key="index">
-                        {{artworkFileValidationMessage}}
+        <div class="compilationContainer" v-if="!compilationFinished">
+            <div class="compilationField">
+                <q-field label="Compilation title">
+                    <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
+                    <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
+                        {{compTitleValidationMessage}}
                     </div>
-                    <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
-                </div>
-            </q-field>
-        </div>
+                </q-field>
+                <q-field>
+                    <q-field>
+                        <q-toggle v-model="futureReleaseDate"></q-toggle>
+                        Future release date
+                    </q-field>
+                    <q-datetime-picker v-if="futureReleaseDate" color="#11363a" v-model="compDetails[0].releaseDate.value" type="datetime" :min="currentDate" @change="futureReleaseDate = !futureReleaseDate" dark/>
+                    <div class="validationMessage" v-for="(releaseDateValidationMessage, index) in compDetails[0].releaseDate.errors" :key="index">
+                        {{releaseDateValidationMessage}}
+                    </div>
+                </q-field>
+                <q-field  label="Compilation artwork upload">
+                    <div class="artworkUploadContainer">
+                        <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event, 'artwork')"/>
+                        <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in compDetails[0].artworkFile.errors" :key="index">
+                            {{artworkFileValidationMessage}}
+                        </div>
+                        <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
+                    </div>
+                </q-field>
+            </div>
 
-        <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
-            <div class="progressBar" :style="{ width: track.uploadPercentage.value + '%' }"></div>
-            <div class="uploadProgressContainer">
-                <div class="artist">{{track.artist.value}}</div>
-                <div class="title">{{track.title.value}}</div>
-                <div v-if="track.uploadPercentage.value > 0" class="percentage">
-                    <span v-if="track.uploadPercentage.value > 0 && track.uploadPercentage.value < 100">{{track.uploadPercentage.value}}%</span>
-                    <span v-if="track.uploadPercentage.value == 100">Upload Complete <i class="closeButton fas fa-check-circle"></i></span>
+            <div class="compilationFieldContainer" v-for="(track, index) in compTracks" v-bind:key="index">
+                <div class="progressBar" :style="{ width: track.uploadPercentage.value + '%' }"></div>
+                <div class="uploadProgressContainer">
+                    <div class="trackInfoContainer">
+                        <div class="artist">{{track.artist.value}}</div>
+                        <div class="title">{{track.title.value}}</div>
+                    </div>
+                    <div v-if="track.uploadPercentage.value > 0" class="percentage">
+                        <span v-if="track.uploadPercentage.value > 0 && track.uploadPercentage.value < 100">{{track.uploadPercentage.value}}%</span>
+                        <i v-if="track.uploadPercentage.value == 100" class="closeButton fas fa-check-circle"></i>
+                    </div>
                 </div>
             </div>
-        </div>
-        <i class="addCompilationTrack fas fa-plus" v-on:click="openModal()"></i>
+            <i class="addCompilationTrack fas fa-plus" v-on:click="openModal()"></i>
 
-        <q-btn class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn>
+            <q-btn v-if="compilationData.trackDetails.length > 1" class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn>
+        </div>
+        <div class="uploadCompleteComntainer" v-else>Upload complete</div>
     </div>
 </template>
 
@@ -64,7 +69,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['compilationData', 'multiFileUploadPercentage', 'trackInputModalOpen']),
+        ...mapState(['compilationData', 'multiFileUploadPercentage', 'trackInputModalOpen', 'compilationUploaded']),
         modalIsOpen() {
             return this.trackInputModalOpen
         },
@@ -83,6 +88,9 @@ export default {
 
             currentDate = `${yyyy}-${mm < 10 ? '0' + mm : mm}-${dd < 10 ? '0' + dd : dd}`
             return currentDate
+        },
+        compilationFinished() {
+            return this.compilationUploaded
         }
     },
     methods: {
@@ -184,7 +192,7 @@ export default {
     margin: 10px 0;
     background-image: linear-gradient(#009e98, #256f77);
     position: relative;
-    height: 115px;
+    height: 75px;
 
     .progressBar {
         height: 100%;
@@ -270,21 +278,23 @@ i {
 .uploadProgressContainer {
     display: flex;
     width: 100%;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
+    margin: 15px;
 
-    .artist {
-        font-size: 30px;
-    }
+    .trackInfoContainer {
+        .artist {
+            font-size: 30px;
+        }
 
-    .title {
-        font-size: 20px;
+        .title {
+            font-size: 20px;
+        }
     }
 
     .percentage {
         font-size: 20px;
-        margin-top: 15px;
     }
 }
 
@@ -294,5 +304,12 @@ i {
 
 .q-field {
     margin-bottom: 15px;
+}
+
+.uploadCompleteComntainer {
+    text-align: center;
+    font-size: 30px;
+    color: green;
+
 }
 </style>

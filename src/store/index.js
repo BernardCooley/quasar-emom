@@ -55,7 +55,9 @@ const store = new Vuex.Store({
         }
       ],
       trackDetails: []
-    }
+    },
+    totalTracksUploaded: 0,
+    compilationUploaded: false
   },
   mutations: {
     ADD_TRACK_TO_COMPILATION(state, value) {
@@ -86,6 +88,19 @@ const store = new Vuex.Store({
           this.uploadAudioTask.on('state_changed',
             function progress(snapshot) {
               thisState.compilationData.trackDetails[uploadTrack.trackNumber.value-1].uploadPercentage.value = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+
+              if(thisState.compilationData.trackDetails[uploadTrack.trackNumber.value-1].uploadPercentage.value == 100) {
+                thisState.totalTracksUploaded++
+              }
+
+              if(thisState.totalTracksUploaded == thisState.compilationData.trackDetails.length) {
+                thisState.compilationData = []
+                thisState.compilationUploaded = true
+
+                setTimeout(() => {
+                  thisState.compilationUploaded = true
+                }, 5000)
+              }
             },
             function errors(error) {console.error(error)},
             function complete() {
