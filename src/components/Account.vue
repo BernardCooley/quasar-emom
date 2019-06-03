@@ -53,9 +53,9 @@
       </div>
 
       <div class="userTracks">
-        <div class="tracksContainer" v-if="accounTracks.length > 0">
+        <div class="tracksContainer" v-if="accountTracks.length > 0">
           <div class="accountSectionTitle">User Tracks</div>
-          <q-item class="accountTracks" v-for="(track, index) in accounTracks" :key="index">
+          <q-item class="accountTracks" v-for="(track, index) in accountTracks" :key="index">
             <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
               <div class="trackTitle">{{track.metaData.title}}</div>
               <q-btn class="deleteButton" v-on:click.prevent="deleteTrack(track)">Delete</q-btn>
@@ -121,6 +121,10 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$store.commit('GET_ACCOUNT_TRACKS')
+    this.$store.commit('GET_ACCOUNT_DETAILS')
+  },
   computed: {
     ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'loggedInUserId']),
     computedDeleteMesage() {
@@ -132,7 +136,7 @@ export default {
     accountDetailsComp() {
       return this.accountDetails
     },
-    accounTracks() {
+    accountTracks() {
       return this.userTracksArray.filter(track => !track.metaData.compilation)
     },
     accounCompilationTracks() {
@@ -140,8 +144,9 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['UPDATE_BAND_IMAGE', 'GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT', 'UPDATE_TRACK_ARTIST']),
+    ...mapMutations(['GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT', 'UPDATE_TRACK_ARTIST']),
     refreshTracks(done) {
+      this.$store.commit('GET_ACCOUNT_TRACKS')
       this.$store.commit('GET_ACCOUNT_DETAILS')
       setTimeout(() => {
         done()
