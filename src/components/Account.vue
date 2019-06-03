@@ -75,7 +75,7 @@
           </div>
           <div v-else>{{computedDeleteMesage}}</div>
         </q-item>
-        <q-btn class="deleteButton" v-on:click.prevent="deleteTrack(track)">Delete compilation</q-btn>
+        <q-btn class="deleteButton" v-on:click.prevent="deleteCompilation">Delete compilation</q-btn>
       </div>
 
     </div>
@@ -162,6 +162,11 @@ export default {
       if (window.confirm("Are you sure?")) {
         this.$store.commit('DELETE_TRACK', track.filename)
       }
+    },
+    deleteCompilation() {
+      this.accounCompilationTracks.forEach(track => {
+        this.$store.commit('DELETE_TRACK', track.filename)
+      })
     },
     toggleAccountTracks() {
       this.$store.commit('GET_ACCOUNT_TRACKS')

@@ -330,7 +330,6 @@ const store = new Vuex.Store({
                 this.commit('GET_ACCOUNT_TRACKS')
               }).catch(error => {
                 Loading.hide()
-                alert('Something went wrong. Please try again later.')
                 console.error(error)
               })
             } else {
@@ -340,17 +339,14 @@ const store = new Vuex.Store({
             }
           }).catch(error => {
             Loading.hide()
-            alert('Something went wrong. Please try again later.')
             console.error(error)
           })
         }).catch(error => {
           Loading.hide()
-          alert('Something went wrong. Please try again later.')
           console.error(error)
         })
       }).catch(error => {
         Loading.hide()
-        alert('Something went wrong. Please try again later.')
         console.error(error)
       })
     },
