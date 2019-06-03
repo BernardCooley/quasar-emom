@@ -1,75 +1,74 @@
 <template>
-<div>
-  <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
-    <div class="searchBar">
-      <div class="searchAndFilterContainer" v-if="!openFilterModal && !resultsFiltered">
-        <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-          <q-search v-model="searchModel" :no-icon="false" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
-          <div class="searchActions" v-if="searchExpanded">
-            <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
-            <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>
-          </div>
-        </q-item>
-        <div class="filterButton" v-on:click="openFilterModal = true" v-if="!searchExpanded">Filter</div>
+  <q-pull-to-refresh :handler="refreshTracks">
+    <div :class="[exploreIsExpanded ? 'exploreExpanded' : 'exploreCollapsed', 'exploreContainer']">
+      <div class="searchBar">
+        <div class="searchAndFilterContainer" v-if="!openFilterModal && !resultsFiltered">
+          <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
+            <q-search v-model="searchModel" :no-icon="false" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
+            <div class="searchActions" v-if="searchExpanded">
+              <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
+              <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>
+            </div>
+          </q-item>
+          <div class="filterButton" v-on:click="openFilterModal = true" v-if="!searchExpanded">Filter</div>
+        </div>
+        <div class="filterContainer" v-if="openFilterModal">
+          <q-list>
+            <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
+            <div>Filter by:</div>
+            <div class="filterOptionsContainer">
+              <q-item>
+                <q-btn v-on:click="filterByArtist(currentUserName)">YOURS</q-btn>
+              </q-item>
+              <q-item>
+                <q-btn>FAVOURITES</q-btn>
+              </q-item>
+              <q-item>
+                <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="Artists">
+                  <q-list class="filterDropdown" link>
+                    <div v-for="(artist, index) in allArtists" :key="index" >
+                      <q-item @click.native="filterByArtist(artist)" v-close-overlay>
+                        <q-item-main>
+                          <q-item-tile class="dropdownLabel" label>{{artist}}</q-item-tile>
+                        </q-item-main>
+                      </q-item>
+                    </div>
+                  </q-list>
+                </q-btn-dropdown>
+              </q-item>
+              <q-item>
+                <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="EMOM Compilations">
+                  <q-list class="filterDropdown" link>
+                    <div v-for="(compilation, index) in allCompilations" :key="index" >
+                      <q-item @click.native="filterByCompilation(compilation)" v-close-overlay>
+                        <q-item-main>
+                          <q-item-tile class="dropdownLabel" label>{{compilation}}</q-item-tile>
+                        </q-item-main>
+                      </q-item>
+                    </div>
+                  </q-list>
+                </q-btn-dropdown>
+              </q-item>
+            </div>
+          </q-list>
+        </div>
+        <div class="resultsMessageContainer" v-if="resultsFiltered">
+          <div class="resultsMessage">Results for: "{{resultsMessage}}"</div>
+          <i class="closeSearchIcon fas fa-arrow-left" v-on:click="resultsFiltered = !resultsFiltered"></i>
+        </div>
       </div>
-      <div class="filterContainer" v-if="openFilterModal">
-        <q-list>
-          <i class="closeSearchIcon fas fa-arrow-left" v-on:click="openFilterModal = false"></i>
-          <div>Filter by:</div>
-          <div class="filterOptionsContainer">
-            <q-item>
-              <q-btn v-on:click="filterByArtist(currentUserName)">YOURS</q-btn>
-            </q-item>
-            <q-item>
-              <q-btn>FAVOURITES</q-btn>
-            </q-item>
-            <q-item>
-              <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="Artists">
-                <q-list class="filterDropdown" link>
-                  <div v-for="(artist, index) in allArtists" :key="index" >
-                    <q-item @click.native="filterByArtist(artist)" v-close-overlay>
-                      <q-item-main>
-                        <q-item-tile class="dropdownLabel" label>{{artist}}</q-item-tile>
-                      </q-item-main>
-                    </q-item>
-                  </div>
-                </q-list>
-              </q-btn-dropdown>
-            </q-item>
-            <q-item>
-              <q-btn-dropdown style="background-image: linear-gradient(#009e98, #256f77)" split label="EMOM Compilations">
-                <q-list class="filterDropdown" link>
-                  <div v-for="(compilation, index) in allCompilations" :key="index" >
-                    <q-item @click.native="filterByCompilation(compilation)" v-close-overlay>
-                      <q-item-main>
-                        <q-item-tile class="dropdownLabel" label>{{compilation}}</q-item-tile>
-                      </q-item-main>
-                    </q-item>
-                  </div>
-                </q-list>
-              </q-btn-dropdown>
-            </q-item>
-          </div>
-        </q-list>
-      </div>
-      <div class="resultsMessageContainer" v-if="resultsFiltered">
-        <div class="resultsMessage">Results for: "{{resultsMessage}}"</div>
-        <i class="closeSearchIcon fas fa-arrow-left" v-on:click="resultsFiltered = !resultsFiltered"></i>
+      <div v-on:click="toggleExplore(); changeTrack(track)" class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
+        <div class="artist">{{track.metaData.artist}}</div>
+        <div class="title">{{track.metaData.title}}</div>
+        <img class="cardImage" :src="track.metaData.artworkUrl">
       </div>
     </div>
-    <div v-on:click="toggleExplore(); changeTrack(track)" class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
-      <div class="artist">{{track.metaData.artist}}</div>
-      <div class="title">{{track.metaData.title}}</div>
-      <img class="cardImage" :src="track.metaData.artworkUrl">
+    <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
+      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+      <div class="">Traklist</div>
+      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
     </div>
-    <i class="fas fa-sync-alt refreshIcon" v-if="exploreIsExpanded" v-on:click="refreshTracks"></i>
-  </div>
-  <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
-    <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
-    <div class="">Traklist</div>
-    <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
-  </div>
-</div>
+  </q-pull-to-refresh>
 </template>
 
 <script>
@@ -172,8 +171,11 @@ export default {
       })
       return [...new Set(artists)]
     },
-    refreshTracks() {
+    refreshTracks(done) {
       this.$store.commit('GET_TRACKS')
+      setTimeout(() => {
+        done()
+      }, 3000)
     }
   }
 };
@@ -263,6 +265,7 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   align-items: flex-start;
+  height: 55px;
   
   .searchAndFilterContainer {
     width: 100%;

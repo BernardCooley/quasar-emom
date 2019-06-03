@@ -71,7 +71,8 @@ module.exports = function (ctx) {
         'QBtnDropdown',
         'QItemTile',
         'QDatetimePicker',
-        'QToggle'
+        'QToggle',
+        'QPullToRefresh'
       ],
       directives: [
         'Ripple',
