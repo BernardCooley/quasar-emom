@@ -55,11 +55,9 @@
     </div>
 
     <div class="userTracks accountSection">
-      <div class="accountSectionContainer" v-on:click="toggleAccountTracks()">
+      <div class="tracksContainer" v-if="accounTracks.length > 0">
         <div class="accountSectionTitle">User Tracks</div>
-      </div>
-      <div>
-        <q-item class="accountTracks" v-for="(track, index) in userTracks" :key="index">
+        <q-item class="accountTracks" v-for="(track, index) in accounTracks" :key="index">
           <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle">
             <div class="trackTitle">{{track.metaData.title}}</div>
             <q-btn class="deleteButton" v-on:click.prevent="deleteTrack(track)">Delete</q-btn>
@@ -67,6 +65,19 @@
           <div v-else>{{computedDeleteMesage}}</div>
         </q-item>
       </div>
+
+      <div class="tracksContainer" v-if="accounCompilationTracks.length > 0">
+        <div class="accountSectionTitle">Compilation tracks</div>
+        <q-item class="accountTracks" v-for="(track, index) in accounCompilationTracks" :key="index">
+          <div v-if="computedDeleteMesage == null" class="allTracksArtistAndTitle compilation">
+            <div class="trackTitle">{{track.metaData.artist}}</div>
+            <div class="trackTitle">{{track.metaData.title}}</div>
+          </div>
+          <div v-else>{{computedDeleteMesage}}</div>
+        </q-item>
+        <q-btn class="deleteButton" v-on:click.prevent="deleteTrack(track)">Delete compilation</q-btn>
+      </div>
+
     </div>
     <q-btn class="logoutButton" v-on:click.prevent="logout()">Logout</q-btn>
   </div>
@@ -120,6 +131,12 @@ export default {
     },
     accountDetailsComp() {
       return this.accountDetails
+    },
+    accounTracks() {
+      return this.userTracksArray.filter(track => !track.metaData.compilation)
+    },
+    accounCompilationTracks() {
+      return this.userTracksArray.filter(track => track.metaData.compilation.length > 0)
     }
   },
   methods: {
@@ -247,6 +264,10 @@ export default {
 .userTracks, .accountDetails {
   margin: 10px;
   padding-bottom: 10px;
+
+  .tracksContainer {
+    margin-bottom: 50px;
+  }
 }
 .accountSection {
   border-bottom: 1px solid gray;
@@ -292,12 +313,16 @@ export default {
   border-bottom: 1px solid lightgray;
   color: white;
 }
+.compilation {
+  flex-direction: column;
+  align-items: flex-start;
+}
 .trackTitle {
   font-size: 20px;
   flex-grow: 5;
 }
 .deleteButton {
-  width: 75px;
+  width: auto;
 }
 .bandImageContainer {
   width: 100%;
