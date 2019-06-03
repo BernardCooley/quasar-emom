@@ -265,13 +265,14 @@ export default {
   justify-content: space-between;
   flex-direction: column;
   align-items: flex-start;
-  height: 55px;
+  height: auto;
   
   .searchAndFilterContainer {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: auto;
 
     .filterButton {
       margin-right: 10px;

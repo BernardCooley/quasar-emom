@@ -122,6 +122,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('GET_TRACKS')
     this.$store.commit('GET_ACCOUNT_TRACKS')
     this.$store.commit('GET_ACCOUNT_DETAILS')
   },
@@ -146,6 +147,7 @@ export default {
   methods: {
     ...mapMutations(['GET_ACCOUNT_TRACKS', 'DELETE_TRACK', 'GET_ACCOUNT_DETAILS', 'DELETE_ACCOUNT', 'UPDATE_TRACK_ARTIST']),
     refreshTracks(done) {
+      this.$store.commit('GET_TRACKS')
       this.$store.commit('GET_ACCOUNT_TRACKS')
       this.$store.commit('GET_ACCOUNT_DETAILS')
       setTimeout(() => {
