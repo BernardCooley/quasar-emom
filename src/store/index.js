@@ -242,7 +242,6 @@ const store = new Vuex.Store({
         }
       }).catch(error => {
         Loading.hide()
-        alert('Something went wrong. Please try again later.')
         console.error(error)
       })
 
@@ -294,7 +293,6 @@ const store = new Vuex.Store({
           }
         }).catch(error => {
           Loading.hide()
-          alert('Something went wrong. Please try again later.')
           console.error(error)
         })
       }
@@ -477,7 +475,6 @@ const store = new Vuex.Store({
                 })
               }).catch(error => {
                 Loading.hide()
-                alert('Something went wrong. Please try again later.')
                 console.error(error)
               })
             })
@@ -489,7 +486,6 @@ const store = new Vuex.Store({
             }, 1000)
           }).catch(error => {
             Loading.hide()
-            alert('Something went wrong. Please try again later.')
             console.error(error)
           })
         })
@@ -516,12 +512,10 @@ const store = new Vuex.Store({
           this.state.currentTrack['favourite'] = metadata.customMetadata.favourites.includes(currentUserId) ? true : false
         }).catch(error => {
           Loading.hide()
-          alert('Something went wrong. Please try again later.')
           console.error(error)
         });
       }).catch(error => {
         Loading.hide()
-        alert('Something went wrong. Please try again later.')
         console.error(error)
       });
     }
