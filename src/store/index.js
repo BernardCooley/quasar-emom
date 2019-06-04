@@ -51,6 +51,10 @@ const store = new Vuex.Store({
           releaseDate: {
             value: null,
             errors: []
+          },
+          releaseTime: {
+            value: null,
+            errors: []
           }
         }
       ],
@@ -113,6 +117,7 @@ const store = new Vuex.Store({
                   compilation: {
                     title: compDetails.title.value,
                     releaseDate: compDetails.releaseDate.value,
+                    releaseTime: compDetails.releaseTime.value,
                     artworkName: compDetails.artworkFile.value.name
                   }
                 }
@@ -436,6 +441,11 @@ const store = new Vuex.Store({
       } else {
         db.collection('tracks').get().then(tracks => {
           tracks.docs.map(track => {
+            if (track.data().compilation) {
+              console.log(track.data().compilation.releaseDate)
+              let date = new Date()
+              console.log(date)
+            }
             trackNames.push(track.id)
           })
           retrieveTracks(trackNames)

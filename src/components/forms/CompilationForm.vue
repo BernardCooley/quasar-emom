@@ -14,9 +14,19 @@
                         <q-toggle v-model="futureReleaseDate"></q-toggle>
                         Future release date
                     </q-field>
-                    <q-datetime-picker v-if="futureReleaseDate" color="#11363a" v-model="compDetails[0].releaseDate.value" type="datetime" :min="currentDate" @change="futureReleaseDate = !futureReleaseDate" dark/>
+                    <q-datetime v-if="futureReleaseDate" v-model="compDetails[0].releaseDate.value" type="date" dark/>
                     <div class="validationMessage" v-for="(releaseDateValidationMessage, index) in compDetails[0].releaseDate.errors" :key="index">
                         {{releaseDateValidationMessage}}
+                    </div>
+                </q-field>
+                <q-field v-if="futureReleaseDate">
+                    <q-field>
+                        <q-toggle v-model="customReleaseTime"></q-toggle>
+                        Custom time
+                    </q-field>
+                    <q-datetime v-if="customReleaseTime" v-model="compDetails[0].releaseTime.value" type="time" dark/>
+                    <div class="validationMessage" v-for="(releaseTimeValidationMessage, index) in compDetails[0].releaseTime.errors" :key="index">
+                        {{releaseTimeValidationMessage}}
                     </div>
                 </q-field>
                 <q-field  label="Compilation artwork upload">
@@ -65,7 +75,8 @@ export default {
             audioFilesToUpload: [],
             artworkFileToUpload: null,
             artworkUrl: null,
-            futureReleaseDate: false
+            futureReleaseDate: false,
+            customReleaseTime: false
         }
     },
     computed: {
@@ -165,9 +176,6 @@ export default {
                 this.compilationData.compilationDetails[0].artworkFile.value = files[0]
                 this.artworkUrl = URL.createObjectURL(this.compilationData.compilationDetails[0].artworkFile.value);
             }
-        },
-        uploadCompilationDetails() {
-
         },
         uploadCompilation() {
             if(this.isFormValid()) {
