@@ -121,11 +121,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.$store.commit('GET_TRACKS')
-    this.$store.commit('GET_ACCOUNT_TRACKS')
-    this.$store.commit('GET_ACCOUNT_DETAILS')
-  },
   computed: {
     ...mapState(['userTracksArray', 'bandImageUrl', 'accountDetails', 'loggedInUserId']),
     computedDeleteMesage() {
