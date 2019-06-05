@@ -60,6 +60,30 @@ const store = new Vuex.Store({
     compilationUploaded: false
   },
   mutations: {
+    RESET_COMPILATION_DATA(state) {
+      state.compilationData = {
+        compilationDetails: [
+          {
+            title: {
+              value: null,
+              errors: []
+            },
+            artworkFile: {
+              value: null,
+              errors: []
+            },
+            releaseDate: {
+              value: null,
+              errors: []
+            }
+          }
+        ],
+        trackDetails: []
+      }
+    },
+    SET_COMPILATION_UPLOADED(state, value) {
+      state.compilationUploaded = value
+    },
     ADD_TRACK_TO_COMPILATION(state, value) {
       state.compilationData.trackDetails.length > 0 ? value.trackNumber.value = state.compilationData.trackDetails[state.compilationData.trackDetails.length-1].trackNumber.value + 1 : null
 

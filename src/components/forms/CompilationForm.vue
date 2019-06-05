@@ -47,7 +47,10 @@
 
             <q-btn v-if="compilationData.trackDetails.length > 1" class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn>
         </div>
-        <div class="uploadCompleteComntainer" v-else>Upload complete</div>
+        <div class="uploadCompleteComntainer" v-else>
+            <div class="uploadCompleteMessage">Upload complete</div>
+            <q-btn v-on:click.prevent="setCompilationUploaded">Upload another compilation</q-btn>
+        </div>
     </div>
 </template>
 
@@ -94,7 +97,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS','OPEN_CLOSE_TRACK_INPUT_MODAL', 'SET_RELEASE_DATE_TO_TODAY']),
+        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS','OPEN_CLOSE_TRACK_INPUT_MODAL', 'SET_RELEASE_DATE_TO_TODAY', 'SET_COMPILATION_UPLOADED']),
         isFormValid() {
             let allFieldsValid = true
 
@@ -180,6 +183,10 @@ export default {
         },
         openModal() {
             this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', true)
+        },
+        setCompilationUploaded() {
+            this.$store.commit('RESET_COMPILATION_DATA')
+            this.$store.commit('SET_COMPILATION_UPLOADED', false)
         }
     },
 }
@@ -307,9 +314,16 @@ i {
 }
 
 .uploadCompleteComntainer {
-    text-align: center;
-    font-size: 30px;
-    color: green;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    justify-content: space-around;
+
+    .uploadCompleteMessage {
+        text-align: center;
+        font-size: 30px;
+        color: green;    
+    }
 
 }
 </style>
