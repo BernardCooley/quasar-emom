@@ -51,10 +51,6 @@ const store = new Vuex.Store({
           releaseDate: {
             value: null,
             errors: []
-          },
-          releaseTime: {
-            value: null,
-            errors: []
           }
         }
       ],
@@ -117,7 +113,6 @@ const store = new Vuex.Store({
                   compilation: {
                     title: compDetails.title.value,
                     releaseDate: compDetails.releaseDate.value,
-                    releaseTime: compDetails.releaseTime.value,
                     artworkName: compDetails.artworkFile.value.name
                   }
                 }
@@ -162,6 +157,15 @@ const store = new Vuex.Store({
     },
     UPDATE_COMPILATION_TRACKS(state, value) {
       state.compilationData.trackDetails = value
+    },
+    SET_RELEASE_DATE_TO_TODAY(state) {
+      let date = new Date()
+      let month = String(date.getMonth()+1)
+      let year = String(date.getFullYear())
+      let dayOfMonth = String(date.getDate())
+      let currentDate = `${year}-${month.length == 1 ? '0' + month : month}-${dayOfMonth.length == 1 ? '0' + dayOfMonth : dayOfMonth}`
+
+      state.compilationData.compilationDetails[0].releaseDate.value = currentDate
     },
     UPDATE_IS_USER_ADMIN(state, value) {
       state.isUserAdmin = value
@@ -442,11 +446,17 @@ const store = new Vuex.Store({
         db.collection('tracks').get().then(tracks => {
           tracks.docs.map(track => {
             if (track.data().compilation) {
-              console.log(track.data().compilation.releaseDate)
+              let releaseDate = track.data().compilation.releaseDate.slice(0, 10)
               let date = new Date()
-              console.log(date)
+              let month = String(date.getMonth()+1)
+              let year = String(date.getFullYear())
+              let dayOfMonth = String(date.getDate())
+              let currentDate = `${year}-${month.length == 1 ? '0' + month : month}-${dayOfMonth.length == 1 ? '0' + dayOfMonth : dayOfMonth}`
+
+              currentDate >= releaseDate ? trackNames.push(track.id) : null
+            }else {
+              trackNames.push(track.id)
             }
-            trackNames.push(track.id)
           })
           retrieveTracks(trackNames)
         })
