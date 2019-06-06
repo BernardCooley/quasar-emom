@@ -2,7 +2,7 @@
   <div class="loginContainer">
     <div class="content">
       <div class="pageContainer">
-        <q-list>
+        <q-list class="registerLoginFormContainer">
           <q-item>
             <q-field class="inputField" label="Email" error-label>
               <q-input id="email" v-model="user.email.value"/>
@@ -19,10 +19,11 @@
               </div>
             </q-field>
           </q-item>
-          <q-btn v-on:click.prevent="login()">Log In</q-btn>
+          <q-btn class="loginRegisterBtn" v-on:click.prevent="login()">Log In</q-btn>
         </q-list>
         <div class="errorMessage">{{errorMsgComputed}}</div>
       </div>
+      <div class="registerLoginLink">Dont have an account? <span class="hereLink" v-on:click="openRegister">Register here...</span></div>
     </div>
   </div>
 </template>
@@ -125,6 +126,9 @@ export default {
       }).catch(error => {
         console.error(error)
       });
+    },
+    openRegister() {
+      this.$router.push('/register')
     }
   }
 }

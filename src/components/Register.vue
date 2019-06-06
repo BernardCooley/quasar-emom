@@ -2,7 +2,7 @@
   <div class="registerContainer">
     <div class="content">
       <div class="pageContainer">
-        <q-list>
+        <q-list class="registerLoginFormContainer">
           <q-item>
             <q-field class="inputField" label="Artist Name (this will be used for all track uploads)" error-label="">
               <q-input id="artistName" v-model="user.artistName.value" />
@@ -45,8 +45,9 @@
                 <q-input class="artistBio" type="textarea" v-model="user.artistBio.value"/>
             </q-field>
           </q-item>
-          <q-btn v-on:click.prevent="register()">Register</q-btn>
+          <q-btn class="loginRegisterBtn" v-on:click.prevent="register()">Register</q-btn>
         </q-list>
+        <div class="registerLoginLink">Already have an account? <span class="hereLink" v-on:click="openLogin">Log in here...</span></div>
         <div class="regMessage">{{registerMessage}}</div>
       </div>
     </div>
@@ -214,6 +215,9 @@ export default {
           })
           this.$router.push('/login')
       }
+    },
+    openLogin() {
+      this.$router.push('/login')
     }
   }
 };

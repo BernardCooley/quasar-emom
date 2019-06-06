@@ -30,3 +30,26 @@ textarea{
 #q-app {
     height: 100%;
 }
+
+.registerLoginLink {
+    position: fixed;
+    bottom: 10px;
+    
+    .hereLink {
+        font-weight: bold;
+    }
+}
+
+.q-list {
+    border: none;
+}
+
+.loginRegisterBtn {
+    margin-top: 50px;
+}
+
+.registerLoginFormContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 10px;
+}
