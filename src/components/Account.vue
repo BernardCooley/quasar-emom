@@ -48,7 +48,7 @@
               <i class="editIcon fas fa-check" v-on:click="saveAccountChanges('artist bio')"></i>
               <i class="editIcon fas fa-times" v-on:click="cancelChanges()"></i>
             </div>
-            </q-item>
+          </q-item>
         </div>
       </div>
 
@@ -78,6 +78,7 @@
       </div>
       <div class="accountActionsContainer">
         <q-btn v-on:click.prevent="logout()">Logout</q-btn>
+        <q-btn v-on:click.prevent="resetPassword()">Password reset</q-btn>
         <q-btn v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
@@ -241,7 +242,7 @@ export default {
             }).catch(error => {
                 console.error(error);
             })
-          } 
+          }
         }
       }else {
         alert('Field cannot be blank.')
@@ -252,6 +253,13 @@ export default {
       this.user.artistName.value = ''
       this.user.email.value = ''
       this.user.artistBio.value = ''
+    },
+    resetPassword() {
+      var auth = firebase.auth();
+
+      auth.sendPasswordResetEmail(auth.currentUser.email).then(function() {
+        alert('Password reset email sent')
+      }).catch(error => {console.error(error)});
     }
   }
 }
