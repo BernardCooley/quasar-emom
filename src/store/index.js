@@ -36,7 +36,6 @@ const store = new Vuex.Store({
     commentsOpen: false,
     trackLimitReached: false,
     isUserAdmin: false,
-    singleUpload: true,
     compilationData: {
       compilationDetails: [
         {
@@ -57,9 +56,13 @@ const store = new Vuex.Store({
       trackDetails: []
     },
     totalTracksUploaded: 0,
-    compilationUploaded: false
+    compilationUploaded: false,
+    isUploadACompilation: false
   },
   mutations: {
+    TOGGLE_IS_COMPILATION(state, value) {
+      state.isUploadACompilation = value
+    },
     RESET_COMPILATION_DATA(state) {
       state.compilationData = {
         compilationDetails: [
@@ -146,9 +149,6 @@ const store = new Vuex.Store({
         } else {alert('Track already exists')}
       })
     },
-    UPDATE_SINGLE_DOWNLOAD(state, value) {
-      state.singleUpload = value
-    },
     ADD_COMPILATION_TRACK(state) {
       state.compilationData.trackDetails.push({
         artist: {
@@ -160,6 +160,10 @@ const store = new Vuex.Store({
           errors: []
         },
         audioFile: {
+          value: null,
+          errors: []
+        },
+        artworkFile: {
           value: null,
           errors: []
         },

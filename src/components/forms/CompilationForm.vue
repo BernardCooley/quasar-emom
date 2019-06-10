@@ -1,8 +1,12 @@
 <template>
     <div class="compilationFormContainer">
-        <track-input-modal v-if="modalIsOpen"></track-input-modal>
+        <track-input-modal v-model="modalIsOpen"></track-input-modal>
         <div class="compilationContainer" v-if="!compilationFinished">
-            <div class="compilationField">
+            <q-field v-if="isUserAdminComp">
+                <q-toggle v-model="isCompilation"></q-toggle>
+                Is this upload a compilation?
+            </q-field>
+            <div class="compilationField" v-if="isCompilation">
                 <q-field label="Compilation title">
                     <q-input class="" v-model="compDetails[0].title.value" type="text" value="" multiple/>
                     <div class="validationMessage" v-for="(compTitleValidationMessage, index) in compDetails[0].title.errors" :key="index">
@@ -68,11 +72,12 @@ export default {
             audioFilesToUpload: [],
             artworkFileToUpload: null,
             artworkUrl: null,
-            futureReleaseDate: false
+            futureReleaseDate: false,
+            isCompilation: false
         }
     },
     computed: {
-        ...mapState(['compilationData', 'multiFileUploadPercentage', 'trackInputModalOpen', 'compilationUploaded']),
+        ...mapState(['compilationData', 'multiFileUploadPercentage', 'trackInputModalOpen', 'compilationUploaded', 'isUserAdmin']),
         modalIsOpen() {
             return this.trackInputModalOpen
         },
@@ -94,10 +99,18 @@ export default {
         },
         compilationFinished() {
             return this.compilationUploaded
+        },
+        isUserAdminComp() {
+            return this.isUserAdmin
+        }
+    },
+    watch: {
+        isCompilation: function(val) {
+            this.$store.commit('TOGGLE_IS_COMPILATION', val)
         }
     },
     methods: {
-        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS','OPEN_CLOSE_TRACK_INPUT_MODAL', 'SET_RELEASE_DATE_TO_TODAY', 'SET_COMPILATION_UPLOADED']),
+        ...mapMutations(['ADD_COMPILATION_TRACK', 'REMOVE_COMPILATION_TRACK', 'UPDATE_COMPILATION_TRACKS', 'UPLOAD_COMPILATION', 'UPLOAD_COMPILATION_DETAILS','OPEN_CLOSE_TRACK_INPUT_MODAL', 'SET_RELEASE_DATE_TO_TODAY', 'SET_COMPILATION_UPLOADED', 'TOGGLE_IS_COMPILATION']),
         isFormValid() {
             let allFieldsValid = true
 
