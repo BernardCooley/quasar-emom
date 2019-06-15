@@ -3,22 +3,28 @@
     <q-modal :content-css="{width: '95%', height: '70%', background: '#11363a'}" class="trackInputModal" transition v-model="modalOpen">
       <div class="modalContent">
         <q-list>
-            <q-field label="Artist">
+            <q-field class="formField" label="Artist">
                 <q-input class="" v-model="track.artist.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(artistValidationMessage, index) in track.artist.errors" :key="index">
                     {{artistValidationMessage}}
                 </div>
             </q-field>
-            <q-field label="Title">
+            <q-field class="formField" label="Title">
                 <q-input class="" v-model="track.title.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(trackTitleValidationMessage, index) in track.title.errors" :key="index">
                     {{trackTitleValidationMessage}}
                 </div>
             </q-field>
-            <q-field>
+            <q-field class="formField" label="Audio file (mp3 only)">
                 <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
                 <div class="validationMessage" v-for="(audioFileValidationMessage, index) in track.audioFile.errors" :key="index">
                     {{audioFileValidationMessage}}
+                </div>
+            </q-field>
+            <q-field class="formField" v-if="!isCompilation"  label="Artwork file (jpg/png only)">
+                <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
+                <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in track.artworkFile.errors" :key="index">
+                    {{artworkFileValidationMessage}}
                 </div>
             </q-field>
         </q-list>
@@ -50,6 +56,10 @@ export default {
                     value: null,
                     errors: []
                 },
+                artworkFile: {
+                    value: null,
+                    errors: []
+                },
                 trackNumber: {
                     value: 1,
                     errors: []
@@ -62,9 +72,12 @@ export default {
         }
     },
     computed: {
-        ...mapState(['trackInputModalOpen']),
+        ...mapState(['trackInputModalOpen', 'isUploadACompilation']),
         modalOpen() {
             return this.trackInputModalOpen
+        },
+        isCompilation() {
+            return this.isUploadACompilation
         }
     },
     methods: {
@@ -80,7 +93,8 @@ export default {
         },
         getSelectedFile(e) {
             var files = e.target.files || e.dataTransfer.files;
-            this.track.audioFile.value = files[0]
+            
+            files[0].name.includes('.mp3') ? this.track.audioFile.value = files[0] : this.track.artworkFile.value = files[0]
         },
         isFormValid() {
             let allFieldsValid = true
@@ -142,5 +156,9 @@ export default {
         bottom: 20px;
         left: 10px;
     }
+}
+
+.formField {
+    margin: 20px 0;
 }
 </style>

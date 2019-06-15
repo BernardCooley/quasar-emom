@@ -1,64 +1,8 @@
 <template>
   <div class="addTrackContainer">
       <div class="content">
-
-        <div v-if="isUserAdminComp" class="singleOrCompilation">
-          <div :class="[singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = true">Single track</div>
-          <div :class="[!singleUpload ? 'active' : '', 'singleCompilationTab']" v-on:click.prevent="singleUpload = false">Compilation</div>
-        </div>
-
-        <div class="compilationUpload" v-if="!singleUpload">
+        <div class="compilationUpload">
           <compilation-form></compilation-form>
-        </div>
-
-        <div class="singleUpload" v-else>
-          <div class="pageContainer" v-if="userTracksArray.length < 3">
-                <q-list v-if="!uploadingFile && !completedUpload && singleUpload">
-              <q-item>
-                <q-field label="Title">
-                  <q-input id="trackTitle" value='' v-model="track.title.value"/>
-                  <div class="validationMessage" v-for="(titleValidationMessage, index) in track.title.errors" :key="index">
-                    {{titleValidationMessage}}
-                  </div>
-                </q-field>
-              </q-item>
-              <q-item>
-                <q-field label="Upload Track">
-                  <input type="file" ref="trackUpload" multiple @change="getSelectedFile('audio')" class="input-file"/>
-                  <div class="validationMessage" v-for="(uploadFileValidationMessage, index) in track.uploadFile.errors" :key="index">
-                    {{uploadFileValidationMessage}}
-                  </div>
-                </q-field>
-              </q-item>
-              <q-item>
-                <q-field label="Artwork Url (optional)">
-                  <input type="file" ref="artworkUpload" multiple @change="getSelectedFile('artwork')" class="input-file"/>
-                </q-field>
-              </q-item>
-              
-            </q-list>
-
-          <q-list v-else>
-            <div class="" v-for="(trackField, index) in numberOfCompilationTracks" :key="index">
-                {{trackField}}
-              </div>
-          </q-list>
-
-          <q-item>
-            <div v-if="uploadingFile && !completedUpload">{{fileUploadPercentage}}% uploaded</div>
-          </q-item>
-          <div class="uploadCompleteContainer" v-if="completedUpload">
-            <div class="uploadSuccessMessage">Upload Complete</div>
-            <q-btn v-on:click.prevent="resetForm()">Upload Another Track</q-btn>
-            <q-btn class="finishedUploadBtn" v-on:click.prevent="finishedUploading()">Finished uploading</q-btn>
-          </div>
-          </div>
-          <div class="maxTracksReachedMessage" v-else>
-            Three track limit reached <br/><br/>
-          </div>
-
-          <q-btn class="uploadBtn" v-if="!uploadingFile" v-on:click.prevent="uploadFile(audioFileToUpload, artworkFileToUpload)">Upload</q-btn>
-          
         </div>
       </div>
     </div>
@@ -99,7 +43,6 @@ export default {
       trackUpload: null,
       audioFileToUpload: null,
       artworkFileToUpload: null,
-      singleUpload: true,
       numberOfCompilationTracks: 5
     };
   },
@@ -119,9 +62,6 @@ export default {
     },
     limitReached() {
       return this.trackLimitReached
-    },
-    isUserAdminComp() {
-      return this.isUserAdmin
     }
   },
   created() {
@@ -255,26 +195,6 @@ export default {
 .q-list {
   border: none;
 }
-.singleOrCompilation {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  margin-bottom: 30px;
-
-  .singleCompilationTab {
-    height: 50px;
-    width: 50%;
-    text-align: center;
-    font-size: 20px;
-    line-height: 50px;
-    opacity: 0.3;
-  }
-
-  .active {
-    opacity: 1;
-  }
-}
-
 .compilationUpload {
   width: 100%;
   height: auto;
