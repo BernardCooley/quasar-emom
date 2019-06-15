@@ -7,6 +7,7 @@ import Music from "../components/Music"
 import AddTrack from "../components/AddTrack"
 import Explore from "../components/Explore"
 import Home from "../components/Home"
+import Upload from "../components/Upload"
 
 Vue.use(Router)
 export default new Router({
@@ -29,7 +30,7 @@ export default new Router({
     {
       path: '/upload',
       name: 'upload',
-      component: AddTrack
+      component: Upload
     },
     {
       path: '/account',

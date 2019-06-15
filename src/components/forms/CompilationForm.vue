@@ -45,7 +45,7 @@
             </div>
             <i class="addCompilationTrack fas fa-plus" v-on:click="openModal()"></i>
 
-            <q-btn v-if="compilationData.trackDetails.length > 1" class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn>
+            <!-- <q-btn v-if="compilationData.trackDetails.length > 1" class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn> -->
         </div>
         <div class="uploadCompleteComntainer" v-else>
             <div class="uploadCompleteMessage">Upload complete</div>
