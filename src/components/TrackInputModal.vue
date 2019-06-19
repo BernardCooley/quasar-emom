@@ -92,6 +92,7 @@ export default {
             if(this.isFormValid()) {
                 this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', false)
                 this.$store.commit('ADD_TRACK_TO_COMPILATION', this.track)
+                this.resetTrackDetails()
             }
         },
         getSelectedFile(e) {
@@ -129,7 +130,7 @@ export default {
                             }
                         }
                         if(key == 'artworkFile') {
-                            if(this.track[key].value.name.substr(this.track[key].value.name.length - 4) != '.jpg' && this.track[key].value.name.substr(this.track[key].value.name.length - 4) != '.png') {
+                            if(this.track[key].value.name.substr(this.track[key].value.name.length - 4).toLowerCase() != '.jpg' && this.track[key].value.name.substr(this.track[key].value.name.length - 4).toLowerCase() != '.png') {
                                 this.track[key].errors.push('jpg or png files only')
                                 allFieldsValid = false
                             }
