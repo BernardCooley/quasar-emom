@@ -21,8 +21,9 @@
                     {{audioFileValidationMessage}}
                 </div>
             </q-field>
-            <q-field class="formField" v-if="!isCompilation"  label="Artwork file (jpg/png only)">
+            <q-field class="formField artworkField" v-if="!isCompilation"  label="Artwork file (jpg/png only)">
                 <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
+                <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
                 <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in track.artworkFile.errors" :key="index">
                     {{artworkFileValidationMessage}}
                 </div>
@@ -68,7 +69,8 @@ export default {
                     value: 0,
                     errors: []
                 }
-            }
+            },
+            artworkUrl: null
         }
     },
     computed: {
@@ -83,6 +85,7 @@ export default {
     methods: {
         ...mapMutations(['OPEN_CLOSE_TRACK_INPUT_MODAL', 'ADD_TRACK_TO_COMPILATION']),
         closeModal() {
+            this.resetTrackDetails()
             this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', false)
         },
         addTrack() {
@@ -93,8 +96,13 @@ export default {
         },
         getSelectedFile(e) {
             var files = e.target.files || e.dataTransfer.files;
-            
-            files[0].name.includes('.mp3') ? this.track.audioFile.value = files[0] : this.track.artworkFile.value = files[0]
+
+            if(files[0].name.includes('.mp3')) {
+                this.track.audioFile.value = files[0]
+            }else {
+                this.track.artworkFile.value = files[0]
+                this.artworkUrl = URL.createObjectURL(this.track.artworkFile.value);
+            }
         },
         isFormValid() {
             let allFieldsValid = true
@@ -130,6 +138,27 @@ export default {
                 }
             })
             return allFieldsValid
+        },
+        resetTrackDetails() {
+            this.track.artist.value = null
+            this.track.artist.errors = []
+
+            this.track.title.value = null
+            this.track.title.errors = []
+
+            this.track.audioFile.value = null
+            this.track.audioFile.errors = []
+
+            this.track.artworkFile.value = null
+            this.track.artworkFile.errors = []
+
+            this.track.trackNumber.value = null
+            this.track.trackNumber.errors = []
+
+            this.track.uploadPercentage.value = null
+            this.track.uploadPercentage.errors = []
+
+            this.artworkUrl = null
         }
     }
 };
@@ -150,15 +179,18 @@ export default {
     color: white;
     position: relative;
     height: 100%;
-
-    .trackInputModalActions {
-        position: absolute;
-        bottom: 20px;
-        left: 10px;
-    }
 }
 
 .formField {
     margin: 20px 0;
+}
+
+.artworkPreview {
+    width: 100%;
+}
+
+.artworkField > div > div.q-field-content > img.artworkPreview {
+    display: flex;
+    flex-direction: column;
 }
 </style>
