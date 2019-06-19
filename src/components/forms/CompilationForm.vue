@@ -48,8 +48,6 @@
                 </div>
             </div>
             <i class="addCompilationTrack fas fa-plus" v-on:click="openModal()"></i>
-
-            <!-- <q-btn v-if="compilationData.trackDetails.length > 1" class="uploadBtn" v-on:click.prevent="uploadCompilation()">Upload</q-btn> -->
         </div>
         <div class="uploadCompleteComntainer" v-else>
             <div class="uploadCompleteMessage">Upload complete</div>
@@ -206,6 +204,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.compilationContainer {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
 .compilationFieldContainer {
     display: flex;
     align-items: center;
@@ -276,12 +280,10 @@ i {
 .addCompilationTrack {
     font-size: 30px;
     text-align: center;
-    position: fixed;
-    right: 10px;
-    bottom: 63px;
     background-color: rgba(27, 131, 132, 0.4);
     padding: 10px;
     border-radius: 25px;
+    margin: 40px 20px;
 }
 
 .artworkUploadContainer {
