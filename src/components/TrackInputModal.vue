@@ -16,13 +16,13 @@
                 </div>
             </q-field>
             <q-field class="formField" label="Audio file (mp3 only)">
-                <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
+                <input ref="audioUpload" class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
                 <div class="validationMessage" v-for="(audioFileValidationMessage, index) in track.audioFile.errors" :key="index">
                     {{audioFileValidationMessage}}
                 </div>
             </q-field>
             <q-field class="formField artworkField" v-if="!isCompilation"  label="Artwork file (jpg/png only)">
-                <input class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
+                <input ref="artworkUpload" class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
                 <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
                 <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in track.artworkFile.errors" :key="index">
                     {{artworkFileValidationMessage}}
@@ -85,8 +85,8 @@ export default {
     methods: {
         ...mapMutations(['OPEN_CLOSE_TRACK_INPUT_MODAL', 'ADD_TRACK_TO_COMPILATION']),
         closeModal() {
-            this.resetTrackDetails()
             this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', false)
+            this.resetTrackDetails()
         },
         addTrack() {
             if(this.isFormValid()) {
@@ -160,6 +160,14 @@ export default {
             this.track.uploadPercentage.errors = []
 
             this.artworkUrl = null
+
+            const artworkInput = this.$refs.artworkUpload;
+            artworkInput.type = 'text';
+            artworkInput.type = 'file';
+
+            const audiokInput = this.$refs.audioUpload;
+            audiokInput.type = 'text';
+            audiokInput.type = 'file';
         }
     }
 };
