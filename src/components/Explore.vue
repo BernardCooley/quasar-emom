@@ -58,9 +58,13 @@
         </div>
       </div>
       <div v-on:click="toggleExplore(); changeTrack(track)" class="trackCard" v-for="(track, index) in allOrFilteredTracksArray" :key="index">
-        <div class="artist">{{track.metaData.artist}}</div>
-        <div class="title">{{track.metaData.title}}</div>
-        <img class="cardImage" :src="track.metaData.artworkUrl">
+        <div class="trackImageContainer">
+          <img class="cardImage" :src="track.metaData.artworkUrl">
+        </div>
+        <div class="trackInfoContainer">
+          <div class="artist">{{track.metaData.artist}}</div>
+          <div class="title">{{track.metaData.title}}</div>
+        </div>
       </div>
     </div>
     <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
@@ -185,27 +189,34 @@ export default {
 @import "../css/commonStyles.scss";
 
 .trackCard {
-  width: 100%;
-  height: 70px;
-  padding: 8px;
-  background-color: $light-gray;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  border-bottom: 1px solid $turquois-light;
+    width: 100%;
+    height: 70px;
+    padding: 8px;
+    background-color: $light-gray;
+    display: flex;
+    border-bottom: 1px solid $turquois-light;
+    justify-content: flex-start;
+    align-items: center;
 
-  .artist {
-    font-size: 20px;
+  .trackInfoContainer {
+
+    .artist {
+      font-size: 20px;
+    }
+    .title {
+      font-size: 15px;
+    }
   }
-  .title {
-    font-size: 15px;
-  }
-  .cardImage {
+
+  .trackImageContainer {
+    width: 65px;
+    display: flex;
+    justify-content: center;
     height: 100%;
-    position: absolute;
-    right: 0;
-    padding: 5px;
+
+    .cardImage {
+      height: 100%;
+    }
   }
 }
 .trackInfoItem {
