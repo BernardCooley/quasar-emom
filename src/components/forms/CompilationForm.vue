@@ -204,6 +204,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../../css/commonStyles.scss";
+
 .compilationContainer {
     display: flex;
     flex-direction: column;
@@ -238,10 +240,6 @@ export default {
     margin: 0;
     padding: 20px;
     border-bottom: 1px solid lightgray;
-}
-
-i {
-    opacity: 0.8;
 }
 
 .trackActionsContainer {
@@ -280,10 +278,11 @@ i {
 .addCompilationTrack {
     font-size: 30px;
     text-align: center;
-    background-color: rgba(27, 131, 132, 0.4);
+    background-color: $turquois-light;
     padding: 10px;
     border-radius: 25px;
     margin: 40px 20px;
+    color: $white;
 }
 
 .artworkUploadContainer {

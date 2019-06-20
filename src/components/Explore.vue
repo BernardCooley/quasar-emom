@@ -64,9 +64,9 @@
       </div>
     </div>
     <div class="collapsedExplore exploreContainer" v-if="!exploreIsExpanded" v-on:click="toggleExplore()">
-      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+      <i class="fas fa-chevron-down"></i>
       <div class="">Traklist</div>
-      <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+      <i class="fas fa-chevron-down"></i>
     </div>
   </q-pull-to-refresh>
 </template>
@@ -236,10 +236,11 @@ export default {
     top: 0;
     width: 100%;
     background-image: linear-gradient(#009e98, #256f77);
+    color: $white;
 
-    img {
-      transform: rotate(90deg);
-      height: 20px;
+    i {
+      font-size: 20px;
+      color: $white;
     }
 }
 .exploreContainer {

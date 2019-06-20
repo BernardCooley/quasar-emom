@@ -79,7 +79,7 @@
       <div class="accountActionsContainer">
         <q-btn v-on:click.prevent="logout()">Logout</q-btn>
         <q-btn v-on:click.prevent="resetPassword()">Password reset</q-btn>
-        <q-btn v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
+        <q-btn class="deleteAccountButton" v-on:click.prevent="deleteAccount()">Delete Account</q-btn>
       </div>
     </div>
   </q-pull-to-refresh>
@@ -296,10 +296,6 @@ export default {
 .closed {
   transform: rotate(90deg);
 }
-.deleteAccountButton {
-  margin-top: 20px;
-  color: red;
-}
 .allTracksArtistAndTitle {
   width: 100%;
   padding: 10px;
@@ -343,5 +339,15 @@ export default {
   margin-top: 30px;
   display: flex;
   justify-content: space-evenly;
+
+  button {
+    flex-basis: 100%;
+    margin: 5px;
+  }
+
+  .deleteAccountButton {
+    background-image: none;
+    background-color: $error-red !important;
+  }
 }
 </style>

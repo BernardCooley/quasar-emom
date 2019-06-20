@@ -15,7 +15,7 @@
           <div class="title">{{title}}</div>
         </div>
         <a class="trackOptions" v-on:click.prevent="openTrackActionsModal()">
-          <img class="trackInfoIcon" src="statics/icons/menu-white.svg">
+          <i class="fas fa-ellipsis-v trackInfoIcon"></i>
         </a>
       </div>
       <q-card-main v-if="supportedFormat">
@@ -36,19 +36,19 @@
       <q-card-actions>
         <div class="audioActions">
           <a v-on:click.prevent="stop()" title="Stop">
-            <img class="audioControl" :src="playing ? 'statics/icons/stop-active.svg' : 'statics/icons/stop-inactive.svg'">
+            <i :class="[ playing ? 'fa-stop-circle' : 'fa-fast-backward', 'fas', 'audioControl']"></i>
           </a>
           <a v-on:click.prevent="innerLoop = !innerLoop">
-            <img class="audioControl" :src="innerLoop ? 'statics/icons/repeat-active.svg' : 'statics/icons/repeat-inactive.svg'">
+            <i :class="[ innerLoop ? 'controlActive' : 'controlInactive', 'fas', 'fa-retweet', 'audioControl']"></i>
           </a>
           <a v-on:click.prevent="playPause()" title="Play/Pause">
-          <img class="audioControl playPause" :src="playing ? 'statics/icons/pause.svg' : 'statics/icons/play.svg'">
+          <i :class="[ playing ? 'fa-pause-circle' : 'fa-play-circle', 'fas', 'audioControl', 'playPause']"></i>
           </a>
           <a v-on:click.prevent="favourite()" title="Favourite">
-            <img class="audioControl" :src="favourited ? 'statics/icons/favorited.svg' : 'statics/icons/favorite.svg'">
+            <i :class="[favourited ? 'fa-heart' : 'fa-heart', favourited ? 'fas' : 'far', 'audioControl']"></i>
           </a>
           <a v-on:click.prevent="download()">
-            <img class="audioControl" src="statics/icons/download.svg">
+            <i :class="[ 'fas', 'audioControl', 'fa-download']"></i>
           </a>
         </div>
       </q-card-actions>
@@ -441,8 +441,8 @@ input[type="range"].slider:focus::-ms-fill-upper {
   align-items: center;
 }
 .audioControl {
-  height: 30px;
-  opacity: 0.8;
+  font-size: 30px;
+  color: $turquois-light;
 }
 .nextBtn {
   transform: rotate(180deg);
@@ -463,7 +463,14 @@ input[type="range"].slider:focus::-ms-fill-upper {
   margin-top: 20px;
 }
 .playPause {
-  height: 60px;
+  font-size: 60px;
+  color: $turquois-light;
+}
+.controlActive {
+  opacity: 1;
+}
+.controlInactive {
+  opacity: 0.3;
 }
 .audioPlayerContainer {
   width: 100%;
@@ -534,6 +541,7 @@ input[type="range"].slider:focus::-ms-fill-upper {
   flex-direction: column;
   display: flex;
   text-align: center;
+  color: $dark-gray;
 }
 .trackArtistAndTitle {
   flex-grow: 10;
@@ -542,6 +550,9 @@ input[type="range"].slider:focus::-ms-fill-upper {
     font-size: 22px;
     font-weight: bold;
   }
+}
+.trackInfoIcon {
+  transform:rotate(180deg);   
 }
 .trackNumber,
 .trackOptions {

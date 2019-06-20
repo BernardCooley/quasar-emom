@@ -1,9 +1,9 @@
 <template>
     <div class="commentsContainer" :style="{ 'flex-direction': [commentsOpen ? 'column-reverse' : 'column']}">
         <div v-on:click="toggleCommentsSection()" :class="[commentsOpen ? 'commentsOpened' : 'commentsClosed', 'commentsSection']">
-            <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+            <i :class="[commentsOpen ? 'fa-chevron-up': 'fa-chevron-down', 'fas']"></i>
             <div class="">Comments</div>
-            <img class="tracksChevron" src="statics/icons/right-chevron.svg"/>
+            <i :class="[commentsOpen ? 'fa-chevron-up': 'fa-chevron-down', 'fas']"></i>
         </div>
         <div v-if="commentsExpanded" class="commentsExpanded">
             <q-field label="Add comment">
@@ -75,8 +75,9 @@ export default {
     height: 50px;
     align-items: center;
 
-    img {
-        height: 20px;
+    i {
+        font-size: 20px;
+        color: $turquois-dark;
     }
 }
 

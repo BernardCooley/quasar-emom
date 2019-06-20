@@ -198,4 +198,9 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
+.trackInputModalActions {
+    display: flex;
+    justify-content: space-between;
+}
 </style>
