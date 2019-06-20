@@ -4,13 +4,13 @@
       <div class="searchBar">
         <div class="searchAndFilterContainer" v-if="!openFilterModal && !resultsFiltered">
           <q-item :class="[searchExpanded ? 'searchBoxContainerExpanded' : 'searchBoxContainerCollapsed', 'searchBoxContainer']">
-            <q-search v-model="searchModel" :no-icon="false" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)"/>
+            <q-search v-model="searchModel" :no-icon="false" v-on:click.prevent="searchExpanded = true" :hide-underline="!searchExpanded" @change="submitSearch(searchModel)" placeholder=" "/>
             <div class="searchActions" v-if="searchExpanded">
               <i class="fas fa-times" v-on:click="searchExpanded = false; searchModel = ''"></i>
               <i class="fas fa-arrow-right" v-on:click="submitSearch(searchModel)"></i>
             </div>
           </q-item>
-          <div class="filterButton" v-on:click="openFilterModal = true" v-if="!searchExpanded">Filter</div>
+          <i class="fas fa-filter filterButton" v-on:click="openFilterModal = true" v-if="!searchExpanded"></i>
         </div>
         <div class="filterContainer" v-if="openFilterModal">
           <q-list>
@@ -186,26 +186,27 @@ export default {
 
 .trackCard {
   width: 100%;
-  height: 105px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background-color: #256f77;
+  height: 70px;
+  padding: 8px;
+  background-color: $light-gray;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
-}
-.cardImage {
-  height: 100%;
-  position: absolute;
-  right: 0;
-  padding: 15px;
-}
-.artist {
-  font-size: 30px;
-}
-.title {
-  font-size: 20px;
+  border-bottom: 1px solid $turquois-light;
+
+  .artist {
+    font-size: 20px;
+  }
+  .title {
+    font-size: 15px;
+  }
+  .cardImage {
+    height: 100%;
+    position: absolute;
+    right: 0;
+    padding: 5px;
+  }
 }
 .trackInfoItem {
   height: 35px;
@@ -276,6 +277,7 @@ export default {
 
     .filterButton {
       margin-right: 10px;
+      color: $turquois-light;
     }
   }
 
@@ -301,6 +303,7 @@ export default {
   margin-right: 10px;
   position: absolute;
   right: 0;
+  color: $turquois-light;
 }
 .searchBoxContainerCollapsed {
   width: 150px;
@@ -328,6 +331,7 @@ input.q-input-target {
 
   i {
     font-size: 20px;
+    color: $turquois-light;
   }
 }
 

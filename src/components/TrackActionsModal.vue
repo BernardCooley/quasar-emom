@@ -86,10 +86,6 @@ export default {
 .trackActionsModal {
   background-color: rgba(37, 111, 119, 0.9);
 }
-.modalContent {
-  padding: 40px 30px;
-  color: white;
-}
 .menuItem {
   font-size: 22px;
 }

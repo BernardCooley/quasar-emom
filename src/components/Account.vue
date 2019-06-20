@@ -307,8 +307,8 @@ export default {
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
-  border-bottom: 1px solid lightgray;
-  color: white;
+  border-bottom: 1px solid $turquois-dark;
+  color: $dark-gray;
 }
 .compilation {
   flex-direction: column;

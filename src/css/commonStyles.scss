@@ -1,3 +1,5 @@
+@import "../css/brand.scss";
+
 .inputField {
     width: 100%;
 }
@@ -7,12 +9,6 @@
 }
 button {
     background-image: linear-gradient(#009e98, #256f77);
-}
-input[type="text"], input[type="password"] {
-    color: white !important;
-}
-textarea{
-    color: white !important;
 }
 .validationMessage {
     color: red;
@@ -34,6 +30,7 @@ textarea{
 .registerLoginLink {
     position: fixed;
     bottom: 10px;
+    margin: 10px;
     
     .hereLink {
         font-weight: bold;
@@ -52,4 +49,32 @@ textarea{
     display: flex;
     flex-direction: column;
     padding: 20px 10px;
+}
+
+body {
+    color: $dark-gray;
+    background-color: $light-gray;
+}
+
+.q-field-label {
+    color: $dark-gray;
+}
+
+.input-file, button {
+    color: $white;
+}
+
+input[type="text"] {
+    color: $dark-gray;
+}
+
+.q-if-control {
+    color: $turquois-light;
+}
+
+.modalContent {
+    padding: 40px 30px;
+    color: $dark-gray;
+    position: relative;
+    height: 100%;
 }

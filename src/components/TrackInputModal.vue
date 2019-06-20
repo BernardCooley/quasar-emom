@@ -1,6 +1,6 @@
 <template>
   <div class="trackInputModalContainer">
-    <q-modal :content-css="{width: '95%', height: '70%', background: '#11363a'}" class="trackInputModal" transition v-model="modalOpen">
+    <q-modal :content-css="{width: '95%', height: '70%', background: '#dbdada'}" class="trackInputModal" transition v-model="modalOpen">
       <div class="modalContent">
         <q-list>
             <q-field class="formField" label="Artist">
@@ -174,20 +174,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../css/commonStyles.scss";
+
 .trackInputModal {
-  background-color: rgba(37, 111, 119, 0.9);
+  background-color: $light-gray;
 }
 .closeModal {
   position: relative;
   font-size: 25px;
   padding: 5px;
   float: right;
-}
-.modalContent {
-    padding: 40px 30px;
-    color: white;
-    position: relative;
-    height: 100%;
 }
 
 .formField {

@@ -53,7 +53,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .appContainer {
   height: 100%;
   overflow: hidden;
@@ -63,11 +63,6 @@ export default {
   margin-bottom: 50px;
 }
 
-body {
-  color: #ffffff !important;
-  background-color: #11363a;
-}
-
 .q-tab-pane {
   border: none;
   padding: 0;
@@ -75,10 +70,6 @@ body {
 
 .q-card-container {
   padding-bottom: 0;
-}
-
-.q-field-label {
-  color: white;;
 }
 
 .q-field {
