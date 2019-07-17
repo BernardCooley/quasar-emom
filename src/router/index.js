@@ -8,6 +8,7 @@ import AddTrack from "../components/AddTrack"
 import Explore from "../components/Explore"
 import Home from "../components/Home"
 import CompilationForm from "../components/forms/CompilationForm"
+import UploadForm from '../components/forms/UploadForm'
 
 Vue.use(Router)
 export default new Router({
@@ -30,7 +31,7 @@ export default new Router({
     {
       path: '/upload',
       name: 'upload',
-      component: CompilationForm
+      component: UploadForm
     },
     {
       path: '/account',

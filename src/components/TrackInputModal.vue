@@ -1,9 +1,9 @@
 <template>
   <div class="trackInputModalContainer">
-    <q-modal :content-css="{width: '95%', height: '70%', background: '#dbdada'}" class="trackInputModal" transition v-model="modalOpen">
+    <q-modal :content-css="{width: '95%', height: 'auto', background: '#dbdada'}" class="trackInputModal" transition v-model="modalOpen">
       <div class="modalContent">
         <q-list>
-            <q-field class="formField" label="Artist">
+            <q-field class="formField" v-if="isCompilation" label="Artist">
                 <q-input class="" v-model="track.artist.value" type="text" value="" multiple/>
                 <div class="validationMessage" v-for="(artistValidationMessage, index) in track.artist.errors" :key="index">
                     {{artistValidationMessage}}
@@ -21,7 +21,7 @@
                     {{audioFileValidationMessage}}
                 </div>
             </q-field>
-            <q-field class="formField artworkField" v-if="!isCompilation"  label="Artwork file (jpg/png only)">
+            <q-field class="formField artworkField" v-if="!isCompilation" label="Artwork file (jpg/png only)">
                 <input ref="artworkUpload" class="" type="file" value="" multiple="multiple" @change="getSelectedFile($event)"/>
                 <img class="artworkPreview" v-if="artworkUrl" :src="artworkUrl" alt="artwork preview">
                 <div class="validationMessage" v-for="(artworkFileValidationMessage, index) in track.artworkFile.errors" :key="index">
@@ -89,6 +89,7 @@ export default {
             this.resetTrackDetails()
         },
         addTrack() {
+            console.log(this.isFormValid())
             if(this.isFormValid()) {
                 this.$store.commit('OPEN_CLOSE_TRACK_INPUT_MODAL', false)
                 this.$store.commit('ADD_TRACK_TO_COMPILATION', this.track)
@@ -117,6 +118,12 @@ export default {
 
                 let transformedKey = key.capitalize().match(/[A-Z][a-z]+|[0-9]+/g)
                 transformedKey[1] = transformedKey[1] ? transformedKey[1].toLowerCase() : null
+
+                
+
+                if(!this.isUploadACompilation) {
+                    console.log(key)
+                }
 
                 if(key != 'uploadPercentage') {
                     if(!this.track[key].value) {

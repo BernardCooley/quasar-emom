@@ -4,7 +4,7 @@
         <div class="compilationContainer" v-if="!compilationFinished">
             <q-field v-if="isUserAdminComp">
                 <q-toggle v-model="isCompilation"></q-toggle>
-                Is this upload a compilation?
+                Upload a compilation
             </q-field>
             <div class="compilationField" v-if="isCompilation">
                 <q-field label="Compilation title">
@@ -269,7 +269,7 @@ export default {
 .compilationField {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: flex-start;
     width: 100%;
     padding: 10px 20px;
     margin: 25px 0;

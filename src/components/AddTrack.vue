@@ -2,7 +2,8 @@
   <div class="addTrackContainer">
       <div class="content">
         <div class="compilationUpload">
-          <compilation-form></compilation-form>
+          <!-- <compilation-form></compilation-form> -->
+          <upload-form></upload-form>
         </div>
       </div>
     </div>
@@ -13,11 +14,13 @@ import db from "../firestore/firebaseInit";
 import firebase from "firebase/app";
 import { mapMutations, mapState } from "vuex"
 import CompilationForm from './forms/CompilationForm'
+import UploadForm from './forms/UploadForm'
 
 export default {
   name: "add-track",
   components: {
-    CompilationForm
+    CompilationForm,
+    UploadForm
   },
   data() {
     return {
