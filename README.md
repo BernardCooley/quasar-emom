@@ -1,4 +1,4 @@
-# EMOM
+# EMOM (Electronic Music Open Mic)
 
 > Music streaming mobile app for users to create an account/profile and upload their tracks. All users can listen, download, and favourite tracks from other users. Users can only upload 3 tracks each.
 
