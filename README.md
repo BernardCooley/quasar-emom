@@ -5,7 +5,7 @@
 > Technology used is VueJs, Quasar Framework, Cordova, and Firebase Cloud Firestore
 
 
-# quasar-emom
+# Installation
 
 - Node version: 10.0.0
 - clone repo
