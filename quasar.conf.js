@@ -10,10 +10,10 @@ module.exports = function (ctx) {
     ],
     extras: [
       ctx.theme.mat ? 'roboto-font' : null,
-      'material-icons' // optional, you are not bound to it
+      // 'material-icons' // optional, you are not bound to it
       // 'ionicons',
       // 'mdi',
-      // 'fontawesome'
+      'fontawesome'
     ],
     supportIE: false,
     build: {
@@ -23,7 +23,7 @@ module.exports = function (ctx) {
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
       }
     },
     devServer: {
@@ -47,16 +47,44 @@ module.exports = function (ctx) {
         'QListHeader',
         'QItem',
         'QItemMain',
-        'QItemSide'
+        'QItemSide',
+        'QTabs',
+        'QTab',
+        'QTabPane',
+        'QRouteTab',
+        'QField',
+        'QInput',
+        'QCard',
+        'QCardTitle',
+        'QCardMain',
+        'QCardMedia',
+        'QCardSeparator',
+        'QCardActions',
+        'QUploader',
+        'QPageSticky',
+        'QItemSeparator',
+        'QChip',
+        'QPopover',
+        'QModal',
+        'QProgress',
+        'QSearch',
+        'QBtnDropdown',
+        'QItemTile',
+        'QDatetimePicker',
+        'QToggle',
+        'QPullToRefresh',
+        'QDatetime'
       ],
       directives: [
-        'Ripple'
+        'Ripple',
+        'CloseOverlay'
       ],
       // Quasar plugins
       plugins: [
-        'Notify'
-      ]
-      // iconSet: ctx.theme.mat ? 'material-icons' : 'ionicons'
+        'Notify',
+        'Loading'
+      ],
+      iconSet: 'fontawesome'
       // i18n: 'de' // Quasar language
     },
     // animations: 'all' --- includes all animations
@@ -68,7 +96,7 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {},
       manifest: {
-        // name: 'Quasar App',
+        // name: 'EMOM',
         // short_name: 'Quasar-PWA',
         // description: 'Best PWA App in town!',
         display: 'standalone',
@@ -109,7 +137,7 @@ module.exports = function (ctx) {
     },
     electron: {
       // bundler: 'builder', // or 'packager'
-      extendWebpack (cfg) {
+      extendWebpack(cfg) {
         // do something with Electron process Webpack cfg
       },
       packager: {

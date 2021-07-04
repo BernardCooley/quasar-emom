@@ -1,38 +1,38 @@
 <template>
   <div class="loginContainer">
-    <ion-page>
-
-      <ion-content class="content">
-        <div class="pageContainer">
-          <ion-list>
-            <ion-item>
-              <ion-label for="email">Email</ion-label>
-              <ion-input type="text" id="email" v-bind:value="user.email.value" v-on:input="user.email.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.email.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
+    <div class="content">
+      <div class="pageContainer">
+        <q-list class="registerLoginFormContainer">
+          <q-item>
+            <q-field class="inputField" label="Email" error-label>
+              <q-input id="email" v-model="user.email.value"/>
+              <div class="validationMessage" v-for="(emailValidationMessage, index) in user.email.errors" :key="index">
+                {{emailValidationMessage}}
               </div>
-            </ion-item>
-
-            <ion-item>
-              <ion-label for="password">Password</ion-label>
-              <ion-input type="password" id="password" v-bind:value="user.password.value" v-on:input="user.password.value = $event.target.value"></ion-input>
-              <div v-for="(errorMessage) in user.password.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-                <span class="validationMessage">{{errorMessage}}</span>
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field class="inputField" label="Password" error-label>
+              <q-input type="password" id="password" v-model="user.password.value" initial-show-password="false"/>
+              <div class="validationMessage" v-for="(passwordValidationMessage, index) in user.password.errors" :key="index">
+                {{passwordValidationMessage}}
               </div>
-            </ion-item>
-
-            <ion-button v-on:click="login">Log In</ion-button>
-          </ion-list>
-        </div>
-      </ion-content>
-    </ion-page>
+            </q-field>
+          </q-item>
+          <q-btn class="loginRegisterBtn" v-on:click.prevent="login()">Log In</q-btn>
+        </q-list>
+        <div class="errorMessage">{{errorMsgComputed}}</div>
+      </div>
+      <div class="registerLoginLink">Dont have an account? <span class="hereLink" v-on:click="openRegister">Register here...</span></div>
+    </div>
   </div>
 </template>
 
 <script>
-import db from "../firestore/firebaseInit";
-import firebase from "firebase";
-import { mapMutations } from "vuex";
+import db from "../firestore/firebaseInit"
+import firebase from "firebase/app"
+import { mapMutations, mapState } from "vuex"
+import { Loading } from 'quasar'
 
 export default {
   name: "login",
@@ -50,62 +50,104 @@ export default {
       },
       errorsBool: null,
       userID: null,
-      loginMessage: null
-    };
+      loginMessage: null,
+      mailHasError: false,
+      errorMessage: null
+    }
+  },
+  computed: {
+    ...mapState(['loggedInUserId']),
+    errorMsgComputed() {
+      return this.errorMessage
+    }
   },
   methods: {
-    ...mapMutations(["UPDATE_ISLOGGED_IN"]),
-    validation: function(e) {
-      this.errorsBool = false;
-      this.user.email.errors = [];
-      this.user.password.errors = [];
+    ...mapMutations(['UPDATE_ISLOGGED_IN', 'UPDATE_IS_USER_ADMIN']),
+    validation() {
+      this.errorsBool = false
+      this.user.email.errors = []
+      this.user.password.errors = []
 
       if (!this.user.email.value) {
-        this.user.email.errors.push("Email required.");
+        this.user.email.errors.push('Email required.')
       }
-
-      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.");
-      }
-
       if (!this.user.password.value) {
-        this.user.password.errors.push("Password required.");
+        this.user.password.errors.push("Password required.")
       }
 
       for (var x in this.user) {
         if (this.user[x].errors.length > 0) {
-          this.errorsBool = true;
+          this.errorsBool = true
         }
       }
     },
-    login: function() {
-      this.validation();
+    login() {
+      this.errorMessage = ''
+      this.validation()
       if (!this.errorsBool) {
-        console.log("Logging in.....");
-
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(
+        firebase.auth().signInWithEmailAndPassword(
           this.user.email.value,
           this.user.password.value
-          )
-          .then(data => {
-            this.$store.commit("UPDATE_ISLOGGED_IN", true);
-            this.$router.push("/music");
-          });
+        ).then(() => {
+          if(firebase.auth().currentUser.emailVerified) {
+            this.$store.commit("UPDATE_ISLOGGED_IN", true)
+            this.errorMessage = ""
+            this.$router.push('/music')
+
+            db.collection('users').where('userID', '==', this.loggedInUserId).get()
+              .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                  doc.data().admin ? this.$store.commit('UPDATE_IS_USER_ADMIN', true) : this.$store.commit('UPDATE_IS_USER_ADMIN', false)
+                })
+              })
+
+            this.$store.commit('UPDATE_IS_USER_ADMIN', true)
+          }else {
+            alert('Account not verified.')
+            if (window.confirm("Re-send confirmation email")) {
+              this.resendConfirmationEmail()
+            }
+            firebase.auth().signOut().then(() => {
+              this.$store.commit("UPDATE_ISLOGGED_IN", false)
+            }).catch(error => {
+              Loading.hide()
+              console.error(error)
+            })
+          }
+        }).catch(error => {
+          Loading.hide()
+          this.errorMessage = "Email or password incorrect"
+        })
       }
+    },
+    resendConfirmationEmail() {
+      firebase.auth().currentUser.sendEmailVerification().then(() => {
+        alert('Confirmation email sent.')
+      }).catch(error => {
+        console.error(error)
+      });
+    },
+    openRegister() {
+      this.$router.push('/register')
     }
   }
-};
+}
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "../css/commonStyles.scss";
+
 .transparent {
   background-color: transparent;
 }
-
-.pageContainer {
-  padding-top: 50px;
+.q-if-control {
+  width: 50%;
+}
+.errorMessage {
+  color: red;
+  width: 100%;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 20px;
 }
 </style>

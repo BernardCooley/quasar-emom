@@ -1,235 +1,308 @@
 <template>
-	<div>
-		<div class="player">
-
-			<div class="player-controls">
-				<div>
-					<div v-on:click="seek" class="player-progress" title="Time played : Total time">
-						<div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
-					</div>
-					<div class="player-time">
-						<div class="player-time-current">{{ currentTime }}</div>
-						<div class="player-time-total">{{ durationTime }}</div>
-					</div>
-					<div class="artworkContainer">
-						<img v-bind:src="artworkUrl">
-					</div>
-				</div>
-				<div>
-					<div>
-						<a v-on:click.prevent="stop" title="Stop" href="#">
-							<img src="../assets/icons/stop_button.svg">
-						</a>
-					</div>
-					<div>
-						<a v-on:click.prevent="playing = !playing" title="Play/Pause" href="#">
-							<img v-if="!playing" src="../assets/icons/play_button.svg">
-							<img v-else src="../assets/icons/pause_button.svg">
-						</a>
-					</div>
-
-					<div>
-						<a v-on:click.prevent="download" href="#">
-							<img src="../assets/icons/download_button.svg">
-						</a>
-					</div>
-					<div>
-						<a v-on:click.prevent="innerLoop = !innerLoop" href="#">
-							<img v-if="!innerLoop" src="../assets/icons/start_loop_button.svg">
-							<img v-else src="../assets/icons/stop_loop_button.svg">
-						</a>
-					</div>
-					<div>
-						<a v-on:click.prevent="mute" title="Mute" href="#">
-							<img v-if="!muted" src="../assets/icons/mute_button.svg">
-							<img v-else src="../assets/icons/unmute_button.svg">
-						</a>
-					</div>
-				</div>
-			</div>
-			<div class="volumeContainer">
-				<span>Vol</span>
-				<input class="volumeControl slider" v-model.lazy.number="volume" type="range" min="0" max="100" />
-			</div>
-			<audio v-bind:loop="innerLoop" ref="audiofile" preload="auto" style="display: none;">
-				<source v-bind:src="file"></source>
-			</audio>
-		</div>
-	</div>
+  <div class="audioPlayerContainer">
+    <track-actions-modal></track-actions-modal>
+    <q-card inline class="audioCard no-shadow">
+      <div class="artworkContainer q-card-title" :style="{ backgroundImage: 'url(' + artworkURL + ')'}">
+        <q-item class="nextPrevBtns">
+          <img :class="[currenttracknumber == 1 ? 'hideIcon' : 'showIcon', 'audioControl', 'nextBtn']" src="statics/icons/next.svg" v-on:click="prevTrack()">
+          <img :class="[currenttracknumber == totaltracks ? 'hideIcon' : 'showIcon', 'audioControl', 'prevBtn']" src="statics/icons/next.svg" v-on:click="nextTrack()">
+        </q-item>
+      </div>
+      <div class="trackInfo">
+        <div class="trackNumber">{{currenttracknumber}}/{{totaltracks}}</div>
+        <div class="trackArtistAndTitle">
+          <div class="artist">{{artist}}</div>
+          <div class="title">{{title}}</div>
+        </div>
+        <a class="trackOptions" v-on:click.prevent="openTrackActionsModal()">
+          <i class="fas fa-ellipsis-v trackInfoIcon"></i>
+        </a>
+      </div>
+      <q-card-main v-if="supportedFormat">
+        <div class="trackProgress">
+          <div v-on:click="seek" class="player-progress" title="Time played : Total time">
+            <div :style="{ width: this.percentComplete + '%' }" class="player-seeker"></div>
+          </div>
+          <div class="player-time">
+            <div class="player-time-current">{{ currentTime }}</div>
+            <div class="player-time-total">{{ durationTime }}</div>
+          </div>
+        </div>
+        <audio :loop="innerLoop" ref="player" preload="auto" style="display: none;">
+          <source :src="trackurl">
+        </audio>
+      </q-card-main>
+      <q-chip class="unsupportedFormatMessage" v-else>Unsupported format</q-chip>
+      <q-card-actions>
+        <div class="audioActions">
+          <a v-on:click.prevent="stop()" title="Stop">
+            <i :class="[ playing ? 'fa-stop-circle' : 'fa-fast-backward', 'fas', 'audioControl']"></i>
+          </a>
+          <a v-on:click.prevent="innerLoop = !innerLoop">
+            <i :class="[ innerLoop ? 'controlActive' : 'controlInactive', 'fas', 'fa-retweet', 'audioControl']"></i>
+          </a>
+          <a v-on:click.prevent="playPause()" title="Play/Pause">
+          <i :class="[ playing ? 'fa-pause-circle' : 'fa-play-circle', 'fas', 'audioControl', 'playPause']"></i>
+          </a>
+          <a v-on:click.prevent="favourite()" title="Favourite">
+            <i :class="[favourited ? 'fa-heart' : 'fa-heart', favourited ? 'fas' : 'far', 'audioControl']"></i>
+          </a>
+          <a v-on:click.prevent="download()">
+            <i :class="[ 'fas', 'audioControl', 'fa-download']"></i>
+          </a>
+        </div>
+      </q-card-actions>
+    </q-card>
+  </div>
 </template>
 
 <script>
+import { mapMutations, mapState } from "vuex";
+import db from "../firestore/firebaseInit";
+import firebase from "firebase/app";
+import TrackActionsModal from "./TrackActionsModal"
+import Play from "./Play"
 
-const convertTimeHHMMSS = (val) => {
-	let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
+const convertTimeHHMMSS = val => {
+  let hhmmss = new Date(val * 1000).toISOString().substr(11, 8);
 
-	return hhmmss.indexOf("00:") === 0 ? hhmmss.substr(3) : hhmmss;
+  return hhmmss.indexOf("00:") === 0 ? hhmmss.substr(3) : hhmmss;
 };
 
 export default {
-	name: 'audio-player',
-	props: {
-		file: {
-			type: String,
-			default: null
-		},
-		autoPlay: {
-			type: Boolean,
-			default: false
-		},
-		loop: {
-			type: Boolean,
-			default: false
-		},
-		artist: {
-			type: String,
-			default: null
-		},
-		title: {
-			type: String,
-			default: null
-		},
-		artworkUrl: {
-			type: String,
-			default: null
-		}
-	},
-	data: function() {
-		return {
-			audio: undefined,
-			currentSeconds: 0,
-			durationSeconds: 0,
-			innerLoop: false,
-			loaded: false,
-			playing: false,
-			previousVolume: 35,
-			showVolume: false,
-			volume: 100
-		}
-	},
-	computed: {
-		currentTime() {
-			return convertTimeHHMMSS(this.currentSeconds);
-		},
-		durationTime() {
-			return convertTimeHHMMSS(this.durationSeconds);
-		},
-		percentComplete() {
-			return parseInt(this.currentSeconds / this.durationSeconds * 100);
-		},
-		muted() {
-			return this.volume / 100 === 0;
-		}
-	},
-	watch: {
-		playing(value) {
-			if (value) { return this.audio.play(); }
-			this.audio.pause();
-		},
-		volume(value) {
-			this.showVolume = false;
-			this.audio.volume = this.volume / 100;
-		}
-	},
-	methods: {
-		download() {
-			this.stop();
-			window.open(this.file, 'download');
-		},
-		load() {
-			if (this.audio.readyState >= 2) {
-				this.loaded = true;
-				this.durationSeconds = parseInt(this.audio.duration);
-				return this.playing = this.autoPlay;
-			}
+  name: "audio-player",
+  components: {
+    TrackActionsModal,
+    Play
+  },
+  props: {
+    trackurl: {
+      type: String,
+      default: null
+    },
+    autoPlay: {
+      type: Boolean,
+      default: false
+    },
+    loop: {
+      type: Boolean,
+      default: false
+    },
+    artist: {
+      type: String,
+      default: null
+    },
+    title: {
+      type: String,
+      default: null
+    },
+    artworkurl: {
+      type: String,
+      default: null
+    },
+    trackid: {
+      type: String,
+      default: null
+    },
+    currenttracknumber: null,
+    totaltracks: null,
+    uploadedByArtist: {
+      type: String,
+      default: null
+    }
+  },
+  data: function () {
+    return {
+      audio: undefined,
+      currentSeconds: 0,
+      durationSeconds: 0,
+      innerLoop: false,
+      loaded: false,
+      previousVolume: 35,
+      showVolume: false,
+      volume: 100,
+      supportedFormat: true,
+      playing: false
+    };
+  },
+  created() {
+    this.innerLoop = this.loop;
+  },
+  mounted() {
+    this.audio = this.$el.querySelectorAll('audio')[0];
+    this.audio.addEventListener('timeupdate', this.update);
+    this.audio.addEventListener('loadeddata', this.load);
+    this.audio.addEventListener('pause', () => {
+      this.playing = false;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
+    });
+    this.audio.addEventListener('play', () => {
+      this.playing = true;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', true)
+    });
+    this.$watch('trackurl', () => {
+      this.$refs.player.load()
+    });
+  },
+  computed: {
+    ...mapState(['currentTrack', 'tracksArray', 'isTrackPlaying']),
+    currentTime() {
+      return convertTimeHHMMSS(this.currentSeconds);
+    },
+    durationTime() {
+      return convertTimeHHMMSS(this.durationSeconds);
+    },
+    percentComplete() {
+      return parseInt(this.currentSeconds / this.durationSeconds * 100);
+    },
+    muted() {
+      return this.volume / 100 === 0;
+    },
+    isFileATrack() {
+      return this.trackurl.endsWith('.mp3') || this.track.endsWith('.wav') || this.track.endsWith('.aif') ? true : false;
+    },
+    artworkURL() {
+      return this.artworkurl
+    },
+    favourited() {
+      return this.currentTrack.favourite
+    },
+    trackPlaying() {
+      return this.isTrackPlaying
+    }
+  },
+  watch: {
+    playing(value) {
+      if (value) {
+        return this.audio.play();
+      }
+      this.audio.pause();
+    },
+    volume(value) {
+      this.showVolume = false;
+      this.audio.volume = this.volume / 100;
+    }
+  },
+  methods: {
+    ...mapMutations(['UPDATE_TRACK_DETAILS_POPOVER', 'UPDATE_TRACK_ACTIONS_MODAL', 'FAVOURITE_TRACK', 'TOGGLE_TRACK_PLAYING', 'GET_TRACK_COMMENTS']),
+    prevTrack() {
+      this.$store.commit('GET_TRACK_COMMENTS')
+      let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
-			throw new Error('Failed to load sound file.');
-		},
-		mute() {
-			if (this.muted) {
-				return this.volume = this.previousVolume;
-			}
+      if (currentTrackIndex > 0) {
+        this.$store.commit('UPDATE_CURR_TRACK', currentTrackIndex - 1)
+      }
+    },
+    nextTrack() {
+      this.$store.commit('GET_TRACK_COMMENTS')
+      let currentTrackIndex = this.tracksArray.findIndex(track => track === this.currentTrack)
 
-			this.previousVolume = this.volume;
-			this.volume = 0;
-		},
-		seek(e) {
-			if (!this.playing || e.target.tagName === 'SPAN') {
-				return;
-			}
+      if (currentTrackIndex < this.tracksArray.length) {
+        this.$store.commit('UPDATE_CURR_TRACK', currentTrackIndex + 1)
+      }
+    },
+    showTrackDetails() {
+      this.$store.commit('UPDATE_TRACK_DETAILS_POPOVER', true)
+    },
+    download() {
+      this.stop();
+      window.open(this.trackurl, 'download');
+    },
+    load() {
+      if (this.audio.readyState >= 2) {
+        this.loaded = true;
+        this.durationSeconds = parseInt(this.audio.duration);
+        return (this.playing = this.autoPlay);
+      }
 
-			const el = e.target.getBoundingClientRect();
-			const seekPos = (e.clientX - el.left) / el.width;
+      throw new Error('Failed to load sound file.');
+    },
+    mute() {
+      if (this.muted) {
+        return (this.volume = this.previousVolume);
+      }
 
-			this.audio.currentTime = parseInt(this.audio.duration * seekPos);
-		},
-		stop() {
-			this.playing = false;
-			this.audio.currentTime = 0;
-		},
-		update(e) {
-			this.currentSeconds = parseInt(this.audio.currentTime);
-		}
-	},
-	created() {
-		this.innerLoop = this.loop;
-	},
-	mounted() {
-		this.audio = this.$el.querySelectorAll('audio')[0];
-		this.audio.addEventListener('timeupdate', this.update);
-		this.audio.addEventListener('loadeddata', this.load);
-		this.audio.addEventListener('pause', () => { this.playing = false; });
-		this.audio.addEventListener('play', () => { this.playing = true; });
-	}
+      this.previousVolume = this.volume;
+      this.volume = 0;
+    },
+    seek(e) {
+      if (!this.playing || e.target.tagName === "SPAN") {
+        return;
+      }
+
+      const el = e.target.getBoundingClientRect();
+      const seekPos = (e.clientX - el.left) / el.width;
+
+      this.audio.currentTime = parseInt(this.audio.duration * seekPos);
+    },
+    stop() {
+      this.playing = false;
+      this.$store.commit('TOGGLE_TRACK_PLAYING', false)
+      this.audio.currentTime = 0;
+    },
+    update(e) {
+      this.currentSeconds = parseInt(this.audio.currentTime);
+    },
+    favourite() {
+      this.$store.commit('FAVOURITE_TRACK')
+    },
+    openTrackActionsModal() {
+      this.$store.commit('UPDATE_TRACK_ACTIONS_MODAL', true)
+    },
+    playPause() {
+      if(this.isTrackPlaying) {
+        this.$store.commit('TOGGLE_TRACK_PLAYING', false)
+        return this.audio.pause()
+      }else {
+        this.$store.commit('TOGGLE_TRACK_PLAYING', true)
+        return this.audio.play()
+      }
+    }
+  }
 };
-
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+@import "../css/commonStyles.scss";
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
 
 body {
-	font-family: 'Nunito', sans-serif;
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
-	text-rendering: optimizeLegibility;
+  font-family: "Nunito", sans-serif;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-$player-background: #F4F4F4;
-$player-border-color: darken($player-background,
-12%);
-$player-link-color: darken($player-background,
-75%);
+$player-background: #f4f4f4;
+$player-border-color: darken($player-background, 12%);
+$player-link-color: darken($player-background, 75%);
 $player-progress-color: $player-border-color;
 $player-seeker-color: $player-link-color;
 $player-text-color: $player-link-color;
 
 .player-wrapper {
-	background-color: $player-background;
-	display: flex;
-	justify-content: center;
-	padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
-
-input[type=range].slider {
+input[type="range"].slider {
   -webkit-appearance: none;
   width: 100%;
   margin: 0.9px 0;
 }
-input[type=range].slider:focus {
+input[type="range"].slider:focus {
   outline: none;
 }
-input[type=range].slider::-webkit-slider-runnable-track {
+input[type="range"].slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 9.2px;
   cursor: pointer;
-  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41), 0px 0px 0px rgba(13, 13, 13, 0.41);
+  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
+    0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
-input[type=range].slider::-webkit-slider-thumb {
-  box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
+input[type="range"].slider::-webkit-slider-thumb {
   border: 0px solid #ffffff;
   height: 11px;
   width: 24px;
@@ -239,19 +312,20 @@ input[type=range].slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -0.9px;
 }
-input[type=range].slider:focus::-webkit-slider-runnable-track {
+input[type="range"].slider:focus::-webkit-slider-runnable-track {
   background: rgba(13, 13, 13, 0);
 }
-input[type=range].slider::-moz-range-track {
+input[type="range"].slider::-moz-range-track {
   width: 100%;
   height: 9.2px;
   cursor: pointer;
-  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41), 0px 0px 0px rgba(13, 13, 13, 0.41);
+  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
+    0px 0px 0px rgba(13, 13, 13, 0.41);
   background: rgba(0, 0, 0, 0);
   border-radius: 0px;
   border: 0px solid rgba(0, 0, 0, 0);
 }
-input[type=range].slider::-moz-range-thumb {
+input[type="range"].slider::-moz-range-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
   height: 11px;
@@ -260,7 +334,7 @@ input[type=range].slider::-moz-range-thumb {
   background: rgba(0, 0, 0, 0.97);
   cursor: pointer;
 }
-input[type=range].slider::-ms-track {
+input[type="range"].slider::-ms-track {
   width: 100%;
   height: 9.2px;
   cursor: pointer;
@@ -268,19 +342,21 @@ input[type=range].slider::-ms-track {
   border-color: transparent;
   color: transparent;
 }
-input[type=range].slider::-ms-fill-lower {
+input[type="range"].slider::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
-  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41), 0px 0px 0px rgba(13, 13, 13, 0.41);
+  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
+    0px 0px 0px rgba(13, 13, 13, 0.41);
 }
-input[type=range].slider::-ms-fill-upper {
+input[type="range"].slider::-ms-fill-upper {
   background: rgba(0, 0, 0, 0);
   border: 0px solid rgba(0, 0, 0, 0);
   border-radius: 0px;
-  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41), 0px 0px 0px rgba(13, 13, 13, 0.41);
+  box-shadow: 0px 0px 0.6px rgba(0, 0, 0, 0.41),
+    0px 0px 0px rgba(13, 13, 13, 0.41);
 }
-input[type=range].slider::-ms-thumb {
+input[type="range"].slider::-ms-thumb {
   box-shadow: 15px 15px 15px #ffffff, 0px 0px 15px #ffffff;
   border: 0px solid #ffffff;
   height: 11px;
@@ -290,89 +366,202 @@ input[type=range].slider::-ms-thumb {
   cursor: pointer;
   height: 9.2px;
 }
-input[type=range].slider:focus::-ms-fill-lower {
+input[type="range"].slider:focus::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
 }
-input[type=range].slider:focus::-ms-fill-upper {
+input[type="range"].slider:focus::-ms-fill-upper {
   background: rgba(13, 13, 13, 0);
 }
-
-
-
-.artworkContainer {
-	width: 200px;
-}
-
 .player {
-	background-color: white;
-	border: 1px solid $player-border-color;
-	border-radius: 5px;
-	box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
-	color: $player-text-color;
-	display: inline-block;
-	line-height: 1.5625;
-	padding: 20px;
-
-	.volumeControl {
-		width: 100%;
-	}
-	.volumeContainer {
-		display: flex;
-
-		span {
-			padding-right: 10px;
-		}
-	}
+  border: 1px solid $player-border-color;
+  border-radius: 5px;
+  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
+  color: $player-text-color;
+  display: inline-block;
+  line-height: 1.5625;
+  padding: 20px;
 }
-
 .player-controls {
-	display: flex;
+  display: flex;
 
-	>div {
-		border-right: 1px solid $player-border-color;
+  > div {
+    border-right: 1px solid $player-border-color;
 
-		&:last-child {
-			border-right: none;
-		}
+    &:last-child {
+      border-right: none;
+    }
 
-		a {
-			color: $player-link-color;
-			display: block;
-			line-height: 0;
-			padding: 1em;
-			text-decoration: none;
-		}
-	}
+    a {
+      color: $player-link-color;
+      display: block;
+      line-height: 0;
+      padding: 1em;
+      text-decoration: none;
+    }
+  }
 }
-
 .player-progress {
-	background-color: $player-progress-color;
-	cursor: pointer;
-	height: 20px;
-	min-width: 200px;
-	position: relative;
+  background-color: white;
+  cursor: pointer;
+  height: 13px;
+  min-width: 200px;
+  position: relative;
+  opacity: 0.3;
 
-	.player-seeker {
-		background-color: $player-seeker-color;
-		bottom: 0;
-		left: 0;
-		position: absolute;
-		top: 0;
-	}
+  .player-seeker {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    top: 0;
+    background-color: dimgray;
+  }
 }
-
+.q-card-container {
+  padding: 0 10px;
+}
 .player-time {
-	display: flex; // font-size: 18px;
-	justify-content: space-between;
+  display: flex; // font-size: 18px;
+  justify-content: space-between;
 
-	.player-time-current {
-		font-weight: 700;
-		padding-left: 5px;
-	}
+  .player-time-current {
+    font-weight: 700;
+    padding-left: 5px;
+  }
 
-	.player-time-total {
-		opacity: 0.5;
-		padding-right: 5px;
-	}
+  .player-time-total {
+    opacity: 0.5;
+    padding-right: 5px;
+  }
+}
+.audioActions {
+  width: 100%;
+  margin: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.audioControl {
+  font-size: 30px;
+  color: $turquois-light;
+}
+.nextBtn {
+  transform: rotate(180deg);
+}
+.nextPrevBtns {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .prevBtn,
+  .nextBtn {
+    height: 35px;
+    background-color: white;
+    border-radius: 30px;
+  }
+}
+.trackProgress {
+  margin-top: 20px;
+}
+.playPause {
+  font-size: 60px;
+  color: $turquois-light;
+}
+.controlActive {
+  opacity: 1;
+}
+.controlInactive {
+  opacity: 0.3;
+}
+.audioPlayerContainer {
+  width: 100%;
+}
+.audioCard {
+  width: 100%;
+}
+.saveButton {
+  background-color: rgb(2, 123, 227);
+  color: white;
+  font-weight: bold;
+}
+.q-card-title {
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.artworkContainer {
+  background-size: 400px;
+  height: 400px;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  .artist {
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+.q-card-actions {
+  padding: 0 8px;
+}
+.q-card-main {
+  font-size: 18px;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  height: 50px;
+}
+.unsupportedFormatMessage {
+  display: flex !important;
+  text-align: center;
+  font-size: 20px;
+  margin: 10px;
+}
+.trackDetailsPopoverContainer {
+  width: 80%;
+}
+.artworkImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.trackInfo {
+  color: white;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.trackArtistAndTitle,
+.trackNumber,
+.trackOptions {
+  padding: 9px;
+  border-radius: 5px;
+  flex-direction: column;
+  display: flex;
+  text-align: center;
+  color: $dark-gray;
+}
+.trackArtistAndTitle {
+  flex-grow: 10;
+
+  .artist {
+    font-size: 22px;
+    font-weight: bold;
+  }
+}
+.trackInfoIcon {
+  transform:rotate(180deg);   
+}
+.trackNumber,
+.trackOptions {
+  flex-grow: 1;
+}
+.hideIcon {
+  opacity: 0;
+}
+.showIcon {
+  opacity: 1;
 }
 </style>

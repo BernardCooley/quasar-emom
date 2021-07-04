@@ -1,57 +1,68 @@
 <template>
   <div class="registerContainer">
-    <ion-content class="content">
+    <div class="content">
       <div class="pageContainer">
-        <ion-list>
-          <ion-item>
-
-            <ion-label for="artistName">Artist name</ion-label>
-            <ion-input type="text" id="artistName" v-bind:value="user.artistName.value" v-on:input="user.artistName.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in user.artistName.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
-
-          <ion-item>
-            <ion-label for="email">Email</ion-label>
-            <ion-input type="email" id="email" v-bind:value="user.email.value" v-on:input="user.email.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in user.email.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
-
-          <ion-item>
-            <ion-label for="password">Password</ion-label>
-            <ion-input type="password" id="password" v-bind:value="user.password.value" v-on:input="user.password.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in user.password.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
-
-          <ion-item>
-            <ion-label for="passwordConfirm">Confirm password</ion-label>
-            <ion-input type="password" id="passwordConfirm" v-bind:value="user.passwordConfirm.value" v-on:input="user.passwordConfirm.value = $event.target.value"></ion-input>
-            <div v-for="(errorMessage) in user.passwordConfirm.errors" v-bind:data="errorMessage" v-bind:key="errorMessage.index">
-              <span class="validationMessage">{{errorMessage}}</span>
-            </div>
-          </ion-item>
-
-          <ion-button v-on:click="register">Register</ion-button>
-
-          <span>{{registerMessage}}</span>
-        </ion-list>
+        <q-list class="registerLoginFormContainer">
+          <q-item>
+            <q-field class="inputField" label="Artist Name (this will be used for all track uploads)" error-label="">
+              <q-input id="artistName" v-model="user.artistName.value" />
+                <div class="validationMessage" v-for="(artistNameValidationMessage, index) in user.artistName.errors" :key="index">
+                  {{artistNameValidationMessage}}
+                </div>
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field class="inputField" label="Email" error-label="">
+              <q-input id="email" v-model="user.email.value" />
+                <div class="validationMessage" v-for="(emailValidationMessage, index) in user.email.errors" :key="index">
+                  {{emailValidationMessage}}
+                </div>
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field class="inputField" label="Password" error-label="">
+              <q-input type="password" id="password" v-model="user.password.value"/>
+                <div class="validationMessage" v-for="(passwordValidationMessage, index) in user.password.errors" :key="index">
+                  {{passwordValidationMessage}}
+                </div>
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field class="inputField" label="Confirm Password" error-label="">
+              <q-input type="password" id="passwordConfirm" v-model="user.passwordConfirm.value"/>
+                <div class="validationMessage" v-for="(passwordConfirmValidationMessage, index) in user.passwordConfirm.errors" :key="index">
+                  {{passwordConfirmValidationMessage}}
+                </div>
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field label="Band Image (optional)">
+              <input type="file" ref="bandImageFileToUpload" multiple @change="getSelectedFile()" class="input-file">
+            </q-field>
+          </q-item>
+          <q-item>
+            <q-field label="Artist Bio (optional)">
+                <q-input class="artistBio" type="textarea" v-model="user.artistBio.value"/>
+            </q-field>
+          </q-item>
+          <q-btn class="loginRegisterBtn" v-on:click.prevent="register()">Register</q-btn>
+        </q-list>
+        <div class="registerLoginLink">Already have an account? <span class="hereLink" v-on:click="openLogin">Log in here...</span></div>
+        <div class="regMessage">{{registerMessage}}</div>
       </div>
-    </ion-content>
+    </div>
   </div>
 </template>
 
 <script>
 import db from "../firestore/firebaseInit";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import { Loading } from 'quasar'
+import { mapMutations, mapState } from "vuex"
 
 export default {
   name: 'register',
-  data: function() {
+  data() {
     return {
       user: {
         artistName: {
@@ -69,43 +80,49 @@ export default {
         passwordConfirm: {
           value: "",
           errors: []
+        },
+        artistBio: {
+          value: "",
+          errors: []
         }
       },
+      bandImageFileToUpload: null,
       errorsBool: null,
       userID: null,
       registerMessage: null
     };
   },
   methods: {
-    validation: function(e) {
-      this.errorsBool = false;
-      this.user.artistName.errors = [];
-      this.user.email.errors = [];
-      this.user.password.errors = [];
-      this.user.passwordConfirm.errors = [];
+    ...mapMutations(['UPDATE_ISLOGGED_IN']),
+    validation() {
+      this.errorsBool = false
+      this.user.artistName.errors = []
+      this.user.email.errors = []
+      this.user.password.errors = []
+      this.user.passwordConfirm.errors = []
 
       if (!this.user.artistName.value) {
-        this.user.artistName.errors.push("Artist name required.");
+        this.user.artistName.errors.push("Artist name required.")
       }
       if (!this.user.email.value) {
-        this.user.email.errors.push("Email required.");
+        this.user.email.errors.push("Email required.")
       }
 
-      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      var emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if (!emailRegex.test(this.user.email.value)) {
-        this.user.email.errors.push("Invalid email format.");
+        this.user.email.errors.push("Invalid email format.")
       }
 
       if (this.user.password.value.length < 6) {
-        this.user.password.errors.push("Minimum 6 characters.");
+        this.user.password.errors.push("Minimum 6 characters required.")
       }
 
       if (!this.user.password.value) {
-        this.user.password.errors.push("Password required.");
+        this.user.password.errors.push("Password required.")
       }
 
       if (this.user.password.value != this.user.passwordConfirm.value) {
-        this.user.passwordConfirm.errors.push("Password does not match.");
+        this.user.passwordConfirm.errors.push("Password does not match.")
       }
 
       if (!this.user.passwordConfirm.value) {
@@ -120,48 +137,104 @@ export default {
         }
       }
     },
-    register: function(e) {
-      this.validation();
+    getSelectedFile() {
+      this.bandImageFileToUpload = this.$refs.bandImageFileToUpload.files[0]
+    },
+    register(e) {
+      this.validation()
       if (!this.errorsBool) {
-        console.log("registering.....");
-        this.registerUser();
-        e.preventDefault()
+        Loading.show({
+          message: 'Registering...'
+        })
+        this.registerUser()
       }
     },
-    registerUser: function() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(
-        this.user.email.value,
-        this.user.password.value
+    registerUser() {
+      firebase.auth().createUserWithEmailAndPassword(
+          this.user.email.value,
+          this.user.password.value
         )
         .then(data => {
-          this.createUserAccount(data.user.uid);
+          this.sendVerificationEmail(data)
+        }).catch(error => {
+          Loading.hide()
+          this.registerMessage = error.message == 'The email address is already in use by another account.' ? 'Email address already exists' : ''
+          Loading.hide()
         })
     },
-    createUserAccount: function(userID) {
-      db
-        .collection("users")
-        .add({
-          userID: userID,
-          artistName: this.user.artistName.value
-        })
-        .then(data => {
-          if (data.id) {
-            this.registerMessage = "Registration successful";
-            this.$router.push("/music");
-            this.registerMessage = null
+    createUserAccount(userID) {
+      db.collection('users').doc(userID).set({
+        userID: userID,
+        artistName: this.user.artistName.value,
+        bandImage: this.bandImageFileToUpload ? this.bandImageFileToUpload.name : '',
+        artistBio: this.user.artistBio.value
+      }).then(() => {
+        this.uploadImage(this.bandImageFileToUpload)
+      }).catch(error => {
+        Loading.hide()
+        firebase.auth().currentUser.delete()
+        console.error(error)
+      })
+    },
+    sendVerificationEmail(data) {
+      firebase.auth().currentUser.sendEmailVerification().then(() => {
+        alert('Confirmation email sent.')
+        this.createUserAccount(data.user.uid)
+      }).catch(error => {
+        Loading.hide()
+        alert('email verification failed. Please try again later.')
+        console.error(error)
+      });
+    },
+    uploadImage(image) {
+      if(image) {
+        let storageRef = firebase.storage().ref()
+
+        let focusedArtwork = storageRef.child('bandImages').child(image.name)
+
+        var artworkMetadata = {
+          customMetadata: {
+            'uploadedById': firebase.auth().currentUser.uid
           }
-        })
-        .catch(error => console.log(err));
+        }
+        focusedArtwork.put(image, artworkMetadata).then(data => {
+          Loading.hide()
+          firebase.auth().signOut().then(() => {
+          }).catch(error => {
+            Loading.hide()
+            console.error(error)
+          });
+          this.$router.push('/login')
+        }).catch(error => console.error(error))
+      }else {
+        Loading.hide()
+        firebase.auth().signOut().then(() => {
+          }).catch(error => {
+            Loading.hide()
+            console.error(error)
+          })
+          this.$router.push('/login')
+      }
+    },
+    openLogin() {
+      this.$router.push('/login')
     }
   }
 };
 </script>
 
-<style>
-.validationMessage {
-  color: red;
+<style lang="scss" scoped>
+@import "../css/commonStyles.scss";
+
+.regMessage {
+  width: 100%;
+  height: 75px;
   text-align: center;
+  margin: auto;
+  padding-top: 30px;
+  font-size: 20px;
+}
+.artistBio {
+  min-height: 30px;
 }
 </style>

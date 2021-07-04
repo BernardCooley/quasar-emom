@@ -1,0 +1,80 @@
+@import "../css/brand.scss";
+
+.inputField {
+    width: 100%;
+}
+.trackInfoIcon {
+    height: 15px;
+    transform: (rotate(90deg));
+}
+button {
+    background-image: linear-gradient(#009e98, #256f77);
+}
+.validationMessage {
+    color: red;
+    font-size: 18px;
+    text-align: left;
+    height: 20px;
+}
+.input-file {
+    width: 100%;
+    height: 25px;
+    opacity: 1;
+    overflow: hidden;
+    background-image: linear-gradient(#009e98, #256f77);
+}
+#q-app {
+    height: 100%;
+}
+
+.registerLoginLink {
+    position: fixed;
+    bottom: 10px;
+    margin: 10px;
+    
+    .hereLink {
+        font-weight: bold;
+    }
+}
+
+.q-list {
+    border: none;
+}
+
+.loginRegisterBtn {
+    margin-top: 50px;
+}
+
+.registerLoginFormContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 10px;
+}
+
+body {
+    color: $dark-gray;
+    background-color: $light-gray;
+}
+
+.q-field-label {
+    color: $dark-gray;
+}
+
+.input-file, button {
+    color: $white;
+}
+
+input[type="text"] {
+    color: $dark-gray;
+}
+
+.q-if-control {
+    color: $turquois-light;
+}
+
+.modalContent {
+    padding: 40px 30px;
+    color: $dark-gray;
+    position: relative;
+    height: 100%;
+}
