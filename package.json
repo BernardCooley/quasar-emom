@@ -16,7 +16,7 @@
   "devDependencies": {
     "quasar-cli": "^0.17.0",
     "strip-ansi": "=3.0.1",
-    "node-sass": "4.9.2",
+    "node-sass": "7.0.0",
     "sass-loader": "7.1.0"
   },
   "engines": {
